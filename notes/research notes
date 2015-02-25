@@ -1,0 +1,59 @@
+### TODO
+
+  * Download the 'BusyBox' code, and experiment on that. It is not as big, and
+    is therefore faster to compile.
+    [DONE!]
+  * Try to get it to make some errors, and make it report back in the format we
+    want (see section 'ERROR DATA')
+  * Find out if running `make` actually runs `gcc -Wall`
+      - maybe [5](ntu.edu.sg) can help figure something out
+      - It looks like that both busybox and linuxkernel uses the -Wall flags in
+        their makefiles. But I guess there are like multiple 100s of makefiles
+        that I will have to check if all are using the  -Wall flag?
+
+### QUESTIONS
+
+  * Does `make randomconfig` always make a valid config file?
+      - Shall I do some Kconfig validity testing?
+  * Can I replicate one of the bugs from VBDb.itu.dk?
+      - How can I tell what kernel version the commits are from?
+  * What kind of bugs can `cgg -Wall` find?
+      - Look at [3](gnu.org), it states what types of errors `gcc -Wall` will find.
+      ! But maybe start by defining what types of errors I would like. Maybe use
+        the types they use in [4](VBDb.itu.dk).
+      
+
+
+### ERROR DATA
+
+[config, 
+    analyzer used, 
+    buginfo: [
+        line no, 
+        filename, 
+        error type,
+        error message ]
+    derived bug info: [
+        Location in code ] ]
+
+
+### REFERENCES
+
+[1] http://www.linux.org/threads/the-linux-kernel-configuring-the-kernel-part-1.4274/
+    A tutorial on how to compile the kernel with info on different 
+    configuration methods and such There is also a part two, that I have not 
+    read.
+
+[2] https://www.kernel.org/pub/software/scm/git/docs/user-manual.html#how-to-check-out
+    A tutorial on git, which I can probably use to dig around old versions of 
+    the kernel on their git site.
+
+[3] https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+    A long documentation on gcc. It specifies what gcc -Wall does for example.
+    Which can probably come in handy at some point.
+
+[4] http://vbdb.itu.dk/
+    An online database which belongs to the paper '42 Variability Bugs In Linux'
+
+[5] http://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
+    Something about the use of gcc and make.
