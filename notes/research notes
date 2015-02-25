@@ -1,15 +1,21 @@
 ### TODO
 
-  * Download the 'BusyBox' code, and experiment on that. It is not as big, and
-    is therefore faster to compile.
-    [DONE!]
   * Try to get it to make some errors, and make it report back in the format we
     want (see section 'ERROR DATA')
+      - I have started on the regular expressions, but they are not all done. I
+        only get half of the errors on the regexps.
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
         their makefiles. But I guess there are like multiple 100s of makefiles
         that I will have to check if all are using the  -Wall flag?
+  * Go back to version python 3.0 you silly.
+
+### DONE
+
+  * Download the 'BusyBox' code, and experiment on that. It is not as big, and
+    is therefore faster to compile.
+    [DONE!]
 
 ### QUESTIONS
 
@@ -18,11 +24,10 @@
   * Can I replicate one of the bugs from VBDb.itu.dk?
       - How can I tell what kernel version the commits are from?
   * What kind of bugs can `cgg -Wall` find?
-      - Look at [3](gnu.org), it states what types of errors `gcc -Wall` will find.
+      - Look at [3](gnu.org), it states what types of errors `gcc -Wall` will 
+        find.
       ! But maybe start by defining what types of errors I would like. Maybe use
         the types they use in [4](VBDb.itu.dk).
-      
-
 
 ### ERROR DATA
 
