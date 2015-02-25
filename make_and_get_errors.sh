@@ -32,7 +32,7 @@ then
 fi
 
 configmd5=`md5sum .config | awk '{print $1}'`
-logdir="$logroot/$configmd5"
+logdir="../$logroot/$configmd5"
 
 if [ ! -d "$logdir" ]
 then
