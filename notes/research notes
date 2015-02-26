@@ -11,6 +11,13 @@
         that I will have to check if all are using the  -Wall flag? (in linux,
         in busybox, there only seem to be 3 makefiles, and only 1 of these 
         contain the word `gcc`)
+  * Find out what the bottom lines in the buginfo files mean.
+      - make: *** Waiting for unfinished jobs...
+      - Maybe it has something to do with me compiling with multiple cores. that
+        would make sense, I think.
+  * Can I use `make clean` or `make distclean` in stead of deleting the whole
+    directory and untarring again?
+  * Should I run `make all` in stead of just `make`?
    
 
 ### DONE
