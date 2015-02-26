@@ -1,0 +1,23 @@
+
+Notes for PROJECT DESCRIPTION:
+- introduce research area
+- particular focus aspect
+- problem to solve
+- why important (motivation)
+- must be a new research question
+- methodology (how reach solution)
+(perhaps a Plan B)
+
+OUTCOMES = OUTCOMES + "compare #bugs in Linux vs BusyBox?"
+
+FOR NEXT TIME:
+- iterate project specification (cf. above notes)
+- read papers (42 bugs, scalable analysis of variable software)
+- guestimate how many configs could we potentially cover (i.e., energy consumption)
+- random configuration process (RANDCONFIG)?
+- representativeness / generalizability (external validity)
+- analyse same config twice?
+- think about what we could potentially conclude in the end
+
+(Jean will distribute paper and look further at Related Work.)
+

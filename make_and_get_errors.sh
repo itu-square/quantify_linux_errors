@@ -45,11 +45,16 @@ echo "Beginning the compiling process"
 
 # -j5 means I am using all 4 cores of my CPU.
 # It should be (# of cores + 1) for some reason.
-make -j5 2> "$logdir"/buginfo 1> /dev/null
+time_format="real %E\ncpuK %S\ncpuU %U\n\nmaxR %M\navgR %t\navgS %K\npage %Z"
+time_format="$time_format""\n\ninp  %I\noutp %O\nrecM %r\nsenM %s\nsign %k\n"
+time_format="$time_format""comm %C"
+/usr/bin/time -o "$logdir"/time -f"$time_format" make -j5 2> \
+    "$logdir"/buginfo 1> /dev/null \
+    /
 echo "gcc -Wall" > "$logdir"/analyser
 
 echo "Done compiling - results in folder $logdir"
 
 no_errors=`grep "\^" "$logdir"/buginfo | wc | awk '{print $1}'`
-echo "Found $no_errors errors"
+echo "Found $no_errors errors (by counting lines containing  '^')"
 
