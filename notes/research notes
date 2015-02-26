@@ -8,8 +8,10 @@
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
         their makefiles. But I guess there are like multiple 100s of makefiles
-        that I will have to check if all are using the  -Wall flag?
-  * Go back to version python 3.0 you silly.
+        that I will have to check if all are using the  -Wall flag? (in linux,
+        in busybox, there only seem to be 3 makefiles, and only 1 of these 
+        contain the word `gcc`)
+   
 
 ### DONE
 

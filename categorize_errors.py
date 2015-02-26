@@ -24,7 +24,7 @@ for line in lines:
     if not bugtype_re == None:
         bugtype = bugtype_re.group(0)
 
-    filename_re = re.search(r"(\w+|\/|_)+(\.c|\.h)", line)
+    filename_re = re.search(r"(\w+\/)*\w+(\.c|\.h)", line)
     if not filename_re == None:
         file_names.append(filename_re.group(0))
     #file_re = re.split(":", line)
@@ -32,6 +32,7 @@ for line in lines:
 
     
 
-
-print(bugs)
+for bug in bugs:
+    print(bug)
+#print(bugs)
 
