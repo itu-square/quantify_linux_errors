@@ -1,9 +1,5 @@
 ### TODO
 
-  * Try to get it to make some errors, and make it report back in the format we
-    want (see section 'ERROR DATA')
-      - I have started on the regular expressions, but they are not all done. I
-        only get half of the errors on the regexps.
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
@@ -32,6 +28,11 @@
   * Download the 'BusyBox' code, and experiment on that. It is not as big, and
     is therefore faster to compile.
     [DONE!]
+  * Try to get it to make some errors, and make it report back in the format we
+    want (see section 'ERROR DATA')
+      - I have started on the regular expressions, but they are not all done. I
+        only get half of the errors on the regexps.
+    [DONE]
 
 ### QUESTIONS
 
