@@ -16,6 +16,7 @@ fi
 
 for i in `seq 1 "$runs"`
 do
+    echo "### Compiling and checking $i/$runs"
     ./make_and_get_errors.sh "$version"
 done
 

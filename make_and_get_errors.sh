@@ -68,9 +68,12 @@ echo "Beginning the compiling process (and also testing with gcc -Wall)"
 analyzer="gcc"
 mkdir "$logdir"/"$analyzer"
 
-/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" \
-    make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
-    /
+#/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" \
+    #make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
+    #/
+
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
+
 echo "$tardir" > "$logdir"/"$versionfile"
 
 echo "Done compiling - results in folder $logdir"
