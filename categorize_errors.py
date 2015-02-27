@@ -3,8 +3,9 @@ import re
 
 
 logmd5 = sys.argv[1]
-logdir = 'results/' + logmd5
-lines = [line.strip() for line in open(logdir + '/buginfo')]
+analyzer = sys.argv[2]
+logdir = 'results/' + logmd5 + analyzer
+lines = [line.strip() for line in open(logdir + '/buginfo_raw')]
 
 bugs = []
 files = []
