@@ -18,6 +18,10 @@
   * Should I run `make all` in stead of just `make`?
       - I am pretty sure that `make all` is the same as just `make`
 
+  * It turns out, that `busybox` has some weird dependencies that generate
+    errors when running `make`. They are some `selinux` packages. I don't know
+    what to do about that.
+
   * Maybe make lots of configurations, and look at the statistically. How random
     are they really?
   * Try to see how many kernels can be compiled in a day by a normal laptop.
