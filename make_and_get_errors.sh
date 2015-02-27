@@ -1,8 +1,29 @@
 #!/bin/bash
 
-tardir="busybox-1.23.1"
-tarfile="busybox-1.23.1.tar.bz2"
-logroot="results"
+# Auto configuration
+tarfile="$1"
+tardir=(${tarfile//.tar*/}) # Takes only the basename.
+no_cores=`grep processor /proc/cpuinfo|wc|awk '{print $1}'`
+no_cores=`expr "$no_cores" + 1`
+
+# Semi configuration
+logrootdir="results"
+buginfofile="buginfo_raw"
+timefile="time"
+versionfile="program_version"
+
+time_format="real %E\ncpuK %S\ncpuU %U\n\nmaxR %M\navgR %t\navgS %K\npage %Z"
+time_format="$time_format""\n\ninp  %I\noutp %O\nrecM %r\nsenM %s\nsign %k\n"
+time_format="$time_format""comm %C"
+
+
+## Testing if everything is there
+
+if [ "$tarfile" == "" ]
+then
+    echo "Error: You must specify a tarball to compile"
+    exit
+fi
 
 if [ -d "$tardir" ]
 then
@@ -13,10 +34,11 @@ fi
 echo "Unpacking the tar file..."
 if [ ! -f "$tarfile" ]
 then
-    echo "The tar file $tarfile does not exist in this folder."
-    echo "Please go get the busybox code, and place the tar in this folder."
+    echo "The tar file $tarfile does not exist in this folder. Exiting..."
     exit
 fi
+
+## Beginning the process
 
 tar xvf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
@@ -32,7 +54,7 @@ then
 fi
 
 configmd5=`md5sum .config | awk '{print $1}'`
-logdir="../$logroot/$configmd5"
+logdir="../$logrootdir/$configmd5"
 
 if [ ! -d "$logdir" ]
 then
@@ -41,20 +63,18 @@ fi
 
 cp ".config" "$logdir"/config
 
-echo "Beginning the compiling process"
+echo "Beginning the compiling process (and also testing with gcc -Wall)"
 
-# -j5 means I am using all 4 cores of my CPU.
-# It should be (# of cores + 1) for some reason.
-time_format="real %E\ncpuK %S\ncpuU %U\n\nmaxR %M\navgR %t\navgS %K\npage %Z"
-time_format="$time_format""\n\ninp  %I\noutp %O\nrecM %r\nsenM %s\nsign %k\n"
-time_format="$time_format""comm %C"
-/usr/bin/time -o "$logdir"/time -f"$time_format" make -j5 2> \
-    "$logdir"/buginfo 1> /dev/null \
+analyzer="gcc"
+mkdir "$logdir"/"$analyzer"
+
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" \
+    make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
     /
-echo "gcc -Wall" > "$logdir"/analyser
+echo "$tardir" > "$logdir"/"$versionfile"
 
 echo "Done compiling - results in folder $logdir"
 
-no_errors=`grep "\^" "$logdir"/buginfo | wc | awk '{print $1}'`
+no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
 echo "Found $no_errors errors (by counting lines containing  '^')"
 
