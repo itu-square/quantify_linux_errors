@@ -15,9 +15,16 @@
       - make: *** Waiting for unfinished jobs...
       - Maybe it has something to do with me compiling with multiple cores. that
         would make sense, I think.
+  * Should I report errors that occur in filenames that end with `.o`?
+      - Are these the same lines, that start with `make: ***` ?
   * Can I use `make clean` or `make distclean` in stead of deleting the whole
     directory and untarring again?
   * Should I run `make all` in stead of just `make`?
+      - I am pretty sure that `make all` is the same as just `make`
+
+  * Maybe make lots of configurations, and look at the statistically. How random
+    are they really?
+  * Try to see how many kernels can be compiled in a day by a normal laptop.
    
 
 ### DONE
