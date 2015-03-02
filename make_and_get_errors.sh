@@ -27,11 +27,11 @@ fi
 
 if [ -d "$tardir" ]
 then
-    echo -n "rm tar\t"
+    echo -ne "rm tar\t"
     rm -r "$tardir"
 fi
 
-echo -n "Untar\t"
+echo -ne "Untar\t"
 if [ ! -f "$tarfile" ]
 then
     echo "The tar file $tarfile does not exist in this folder. Exiting..."
@@ -43,6 +43,7 @@ fi
 tar xvf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
 
+echo -ne "Conf\t"
 make randconfig 2> /dev/null 1> /dev/null
 configError="$?"
 
@@ -63,7 +64,7 @@ fi
 
 cp ".config" "$logdir"/config
 
-echo -n "gcc\t"
+echo -ne "gcc\t"
 
 analyzer="gcc"
 mkdir "$logdir"/"$analyzer"
@@ -76,9 +77,9 @@ mkdir "$logdir"/"$analyzer"
 
 echo "$tardir" > "$logdir"/"$versionfile"
 
-echo -n "$configmd5\t"
+echo -ne "$configmd5\t"
 
 no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
-echo -n "$no_errors errors\t"
-echo -n `grep "real" "$logdir"/"$timefile"`"\t"
+echo -ne "$no_errors errors\t"
+echo -ne `grep "real" "$logdir"/"$timefile"`"\n"
 
