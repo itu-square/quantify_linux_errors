@@ -27,11 +27,11 @@ fi
 
 if [ -d "$tardir" ]
 then
-    echo "The tar has already been unpacked. removing... "
+    echo -n "rm tar\t"
     rm -r "$tardir"
 fi
 
-echo "Unpacking the tar file..."
+echo -n "Untar\t"
 if [ ! -f "$tarfile" ]
 then
     echo "The tar file $tarfile does not exist in this folder. Exiting..."
@@ -63,7 +63,7 @@ fi
 
 cp ".config" "$logdir"/config
 
-echo "Beginning the compiling process (and also testing with gcc -Wall)"
+echo -n "gcc\t"
 
 analyzer="gcc"
 mkdir "$logdir"/"$analyzer"
@@ -76,8 +76,9 @@ mkdir "$logdir"/"$analyzer"
 
 echo "$tardir" > "$logdir"/"$versionfile"
 
-echo "Done compiling - results in folder $logdir"
+echo -n "$configmd5\t"
 
 no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
-echo "Found $no_errors errors (by counting lines containing  '^')"
+echo -n "$no_errors errors\t"
+echo -n `grep "real" "$logdir"/"$timefile"`"\t"
 
