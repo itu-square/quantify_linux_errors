@@ -3,3 +3,4 @@
 results/*
 busybox*
 linux*
+randconfig_results/*
