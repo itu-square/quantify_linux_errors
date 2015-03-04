@@ -3,7 +3,7 @@
 # Auto configuration
 tarfile="$1"
 tardir=(${tarfile//.tar*/}) # Takes only the basename.
-no_cores=`grep processor /proc/cpuinfo|wc|awk '{print $1}'`
+no_cores=`grep "processor\ *:" /proc/cpuinfo|wc|awk '{print $1}'`
 no_cores=`expr "$no_cores" + 1`
 
 # Semi configuration
