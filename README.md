@@ -2,19 +2,19 @@
 Elvis' master thesis
 
 ## Programs and versions
-`$ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.19.tar.xz`
-`$ wget https://www.kernel.org/pub/linux/kernel/v4.x/testing/linux-4.0-rc1.tar.xz`
-`$ wget http://www.busybox.net/downloads/busybox-1.23.1.tar.bz2`
+`$ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.19.tar.xz`  
+`$ wget https://www.kernel.org/pub/linux/kernel/v4.x/testing/linux-4.0-rc1.tar.xz`  
+`$ wget http://www.busybox.net/downloads/busybox-1.23.1.tar.bz2`  
 
 ## Dependencies
-python3 (maybe older versions will work)
-bash
-gcc (or build-tools, or whatever it is called in your distribution)
-GNU time (not built-in bash-time or zsh-time, but GNU time)
+  * python3 (maybe older versions will work)
+  * bash (installed on almost all distributions)
+  * gcc (or build-tools, or whatever it is called in your distribution)
+  * GNU time (not built-in bash-time or zsh-time, but GNU time)
 
-In Arch:
-`# sudo pacman -Syu python time`
-`# sudo pacman -Syu --needed base-devel`
+In Arch:  
+`# sudo pacman -Syu python time`  
+`# sudo pacman -Syu --needed base-devel`  
 
 ## Scripts
 
