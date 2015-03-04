@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ ! -d "./randconfig_results" ]
+then
+    echo "You should run ./generate_configs first to crate some configs..."
+    exit
+fi
+
+
 echo -en "Total\tunset\t=n\t=y\tmod\tsum\tvar\n"
 function find_ratio
 {

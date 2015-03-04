@@ -27,7 +27,12 @@
 
   * Make an alias from `make install`, so I don't accidentally install a weird
     kernel.
-   
+
+  * Dig into running `make O=dir` to create all the output files in another dir.
+    This could maybe help me save some time, since I would not have to untar 
+    everything again.
+      - This TOTALLY works. This can possibly save me some time..
+
 
 ### DONE
 
@@ -78,6 +83,40 @@ buginfo: [
     filename, 
     line no, 
     error message ]
+
+### -Wall
+
+-Waddress   
+-Warray-bounds=1 (only with -O2)  
+-Wc++11-compat  -Wc++14-compat
+-Wchar-subscripts  
+-Wenum-compare (in C/ObjC; this is on by default in C++) 
+-Wimplicit-int (C and Objective-C only) 
+-Wimplicit-function-declaration (C and Objective-C only) 
+-Wcomment  
+-Wformat   
+-Wmain (only for C/ObjC and unless -ffreestanding)  
+-Wmaybe-uninitialized 
+-Wmissing-braces (only for C/ObjC) 
+-Wnonnull  
+-Wopenmp-simd 
+-Wparentheses  
+-Wpointer-sign  
+-Wreorder   
+-Wreturn-type  
+-Wsequence-point  
+-Wsign-compare (only in C++)  
+-Wstrict-aliasing  
+-Wstrict-overflow=1  
+-Wswitch  
+-Wtrigraphs  
+-Wuninitialized  
+-Wunknown-pragmas  
+-Wunused-function  
+-Wunused-label     
+-Wunused-value     
+-Wunused-variable  
+-Wvolatile-register-var 
 
 
 ### REFERENCES
