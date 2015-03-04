@@ -1,0 +1,84 @@
+*** PROJECT DESCRIPTION ***
+
+TITLE: 
+- "A Quantitative Analysis of Variability Bugs in Linux"
+- "Finding and Quantifying Variability Bugs in Linux via the [Brute-Force] Generate-and-Analyze Strategy"
+
+// GOAL:
+
+The goal of this project is to systematically find and 
+quantify variability errors in Linux using the brute-force
+"generate-and-analyze" strategy.
+
+// LINUX (highly configurable systems with #ifdefs):
+
+Linux is a well-known highly-configurable open-source system. It has
+12M+ single lines of  code involving 10,000+ features each of which 
+can be enabled or disabled. 
+
+Given a configuration (a selection of enabled features), a
+preprocessor can be used to generate a program variant by
+conditionally including/excluding fragments of code guarded
+by #ifdefs.
+
+Linux is thus, in fact, a "family of programs" with an astronomical
+number of possible program variants (2^{10,000} minus invalid feature
+combinations). Errors in such highly configurable systems are known as
+"variability bugs" and since they only occur in specific
+configurations, they are very hard to detect and cannot be detected
+using conventional program analysis tools.
+
+Earlier work indicates that despite Linux having many developers and
+users, there are still many errors in Linux which may be found by
+running simple static analysis tools (e.g., errors and warnings like:
+uninitialized variables, undefined symbols, incompatible types, unused
+functions, and wrong number of arguments to function).
+
+// METHODOLOGY:
+
+This Master's Thesis project proposes to deploy conventional static
+error detection tools (in particular, "gcc -Wall") on Linux using the
+generate-and-analyze strategy. The idea is to set up a controlled
+experiment: To randomly select valid configurations, use the
+preprocessor to generate convential programs, and then run
+conventional error detection tools on those program variants. (Note
+that since configurations are independent, it is possible to run
+analyses in parallel which could significantly increase the number of
+configurations covered in the experiment.) The outcome of the
+experiment is a collection of variability errors.
+
+// QUANTIFICATION:
+
+Even if this process will only scale to analyzing a fraction of
+program variants, if configurations are selected representatively, it
+could reveal quantitative information about variability bugs in all of
+Linux. Potentially, it might even be possible to answer questions such
+as: How frequently do certain types of errors occur in Linux? How
+frequent are types of errors relative to each other?
+
+Possibly some comments about power and time consumption can be made 
+about the analysis.
+
+Compare #bugs in Linux vs BusyBox?
+
+***
+
+Notes for PROJECT DESCRIPTION:
+- introduce research area
+- particular focus aspect
+- problem to solve
+- why important (motivation)
+- must be a new research question
+- methodology (how reach solution)
+(perhaps a Plan B)
+
+FOR NEXT TIME:
+- iterate project specification (cf. above notes)
+- read papers (42 bugs, scalable analysis of variable software)
+- guestimate how many configs could we potentially cover (i.e., energy consumption)
+- random configuration process (RANDCONFIG)?
+   - representativeness / generalizability (external validity)
+   - analyse same config twice?
+- think about what we could potentially conclude in the end
+
+(Jean will distribute paper and look further at Related Work.)

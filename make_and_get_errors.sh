@@ -27,11 +27,11 @@ fi
 
 if [ -d "$tardir" ]
 then
-    echo "The tar has already been unpacked. removing... "
+    echo -ne "rm tar\t"
     rm -r "$tardir"
 fi
 
-echo "Unpacking the tar file..."
+echo -ne "Untar\t"
 if [ ! -f "$tarfile" ]
 then
     echo "The tar file $tarfile does not exist in this folder. Exiting..."
@@ -40,9 +40,10 @@ fi
 
 ## Beginning the process
 
-tar xvf "$tarfile" 1> /dev/null 2> /dev/null
+tar xf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
 
+echo -ne "Conf\t"
 make randconfig 2> /dev/null 1> /dev/null
 configError="$?"
 
@@ -63,7 +64,7 @@ fi
 
 cp ".config" "$logdir"/config
 
-echo "Beginning the compiling process (and also testing with gcc -Wall)"
+echo -ne "gcc\t"
 
 analyzer="gcc"
 mkdir "$logdir"/"$analyzer"
@@ -76,8 +77,9 @@ mkdir "$logdir"/"$analyzer"
 
 echo "$tardir" > "$logdir"/"$versionfile"
 
-echo "Done compiling - results in folder $logdir"
+echo -ne "$configmd5\t"
 
 no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
-echo "Found $no_errors errors (by counting lines containing  '^')"
+echo -ne "$no_errors errors\t"
+echo -ne `grep "real" "$logdir"/"$timefile"`"\n"
 

@@ -13,14 +13,13 @@
         would make sense, I think.
   * Should I report errors that occur in filenames that end with `.o`?
       - Are these the same lines, that start with `make: ***` ?
-  * Can I use `make clean` or `make distclean` in stead of deleting the whole
-    directory and untarring again?
-  * Should I run `make all` in stead of just `make`?
-      - I am pretty sure that `make all` is the same as just `make`
 
   * It turns out, that `busybox` has some weird dependencies that generate
     errors when running `make`. They are some `selinux` packages. I don't know
     what to do about that.
+
+  * Read [6](kernel.org) - maybe there is something about kconfig that is worth
+    knowing.
 
   * Maybe make lots of configurations, and look at the statistically. How random
     are they really?
@@ -30,6 +29,13 @@
 
   * Make the status into one single line in stead of 6 lines per compile.
    
+  * Make an alias from `make install`, so I don't accidentally install a weird
+    kernel.
+
+  * Dig into running `make O=dir` to create all the output files in another dir.
+    This could maybe help me save some time, since I would not have to untar 
+    everything again.
+      - This TOTALLY works. This can possibly save me some time..
 
 ### DONE
 
@@ -41,11 +47,25 @@
       - I have started on the regular expressions, but they are not all done. I
         only get half of the errors on the regexps.
     [DONE]
+  * Should I run `make all` in stead of just `make`?
+      - I am pretty sure that `make all` is the same as just `make`
+      - It is the same. It is stated at the last line in `make help`
+    [DONE]
+  * Can I use `make clean` or `make distclean` in stead of deleting the whole
+    directory and untarring again?
+      - I would not count on it. I tried taking the md5sum of the files list
+        before `make distclean` and after unpacking the tar, and it was not
+        the same. So better off just untarring.
+    [DONE]
 
 ### QUESTIONS
 
   * Does `make randomconfig` always make a valid config file?
       - Shall I do some Kconfig validity testing?
+      - If `make randconfig` does not create a valid config (which has happened
+        to me a couple of times), it will say so itself.
+        I am not sure, though, if it will output it to `stderr` or how I can 
+        check if there were any kconfig errors.
   * Can I replicate one of the bugs from VBDb.itu.dk?
       - How can I tell what kernel version the commits are from?
   * What kind of bugs can `cgg -Wall` find?
@@ -53,18 +73,53 @@
         find.
       ! But maybe start by defining what types of errors I would like. Maybe use
         the types they use in [4](VBDb.itu.dk).
+      ! At the meeting 26. feb 2015 it was decided to use the error types from
+        `gcc -Wall`. Not the ones from [4](VBDb.itu.dk).
 
 ### ERROR DATA
 
 [config, 
-    analyzer used, 
-    buginfo: [
-        line no, 
-        filename, 
-        error type,
-        error message ]
-    derived bug info: [
-        Location in code ] ]
+analyzer used, 
+time,
+buginfo: [
+    error type,
+    filename, 
+    line no, 
+    error message ]
+
+### -Wall
+
+-Waddress   
+-Warray-bounds=1 (only with -O2)  
+-Wc++11-compat  -Wc++14-compat
+-Wchar-subscripts  
+-Wenum-compare (in C/ObjC; this is on by default in C++) 
+-Wimplicit-int (C and Objective-C only) 
+-Wimplicit-function-declaration (C and Objective-C only) 
+-Wcomment  
+-Wformat   
+-Wmain (only for C/ObjC and unless -ffreestanding)  
+-Wmaybe-uninitialized 
+-Wmissing-braces (only for C/ObjC) 
+-Wnonnull  
+-Wopenmp-simd 
+-Wparentheses  
+-Wpointer-sign  
+-Wreorder   
+-Wreturn-type  
+-Wsequence-point  
+-Wsign-compare (only in C++)  
+-Wstrict-aliasing  
+-Wstrict-overflow=1  
+-Wswitch  
+-Wtrigraphs  
+-Wuninitialized  
+-Wunknown-pragmas  
+-Wunused-function  
+-Wunused-label     
+-Wunused-value     
+-Wunused-variable  
+-Wvolatile-register-var 
 
 
 ### REFERENCES
@@ -87,3 +142,6 @@
 
 [5] http://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
     Something about the use of gcc and make.
+
+[6] https://www.kernel.org/doc/Documentation/kbuild/kconfig.txt
+    Something about kconfig
