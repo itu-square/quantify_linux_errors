@@ -40,7 +40,7 @@ fi
 
 ## Beginning the process
 
-tar xvf "$tarfile" 1> /dev/null 2> /dev/null
+tar xf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
 
 echo -ne "Conf\t"
