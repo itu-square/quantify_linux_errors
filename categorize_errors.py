@@ -9,6 +9,7 @@ lines = [line.strip() for line in open(logdir + '/buginfo_raw')]
 
 bugs = []
 files = []
+bugtype = ""
 
 for line in lines:
 
@@ -18,7 +19,7 @@ for line in lines:
     #if not re.search(r"\^", line) == None:
     if line.strip() == "^":
         bugs.append([bugtype, files])
-        del bugtype
+        bugtype = ""
         files = []
         continue
 

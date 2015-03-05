@@ -7,12 +7,16 @@
         that I will have to check if all are using the  -Wall flag? (in linux,
         in busybox, there only seem to be 3 makefiles, and only 1 of these 
         contain the word `gcc`)
+      - I can run `make V=1` to see all the commands that `make` are issuing, 
+        and then grep those without `-Wall` to see if there are any.
   * Find out what the bottom lines in the buginfo files mean.
       - make: *** Waiting for unfinished jobs...
       - Maybe it has something to do with me compiling with multiple cores. that
         would make sense, I think.
   * Should I report errors that occur in filenames that end with `.o`?
       - Are these the same lines, that start with `make: ***` ?
+      - Those are binary files, and are gibberish, so do not count those, I 
+        guess. But still find out, and be sure.
 
   * It turns out, that `busybox` has some weird dependencies that generate
     errors when running `make`. They are some `selinux` packages. I don't know
@@ -32,13 +36,16 @@
   * Make an alias from `make install`, so I don't accidentally install a weird
     kernel.
 
+
+### DONE
+
   * Dig into running `make O=dir` to create all the output files in another dir.
     This could maybe help me save some time, since I would not have to untar 
     everything again.
       - This TOTALLY works. This can possibly save me some time..
-
-### DONE
-
+      - I was wrong. When running `make` it cannot find the config, and stuff.
+        So I will just go back.
+    [DONE]
   * Download the 'BusyBox' code, and experiment on that. It is not as big, and
     is therefore faster to compile.
     [DONE!]
