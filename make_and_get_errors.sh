@@ -4,17 +4,19 @@
 tarfile="$1"
 tardir=(${tarfile//.tar*/}) # Takes only the basename.
 no_cores=`grep "processor.*:" /proc/cpuinfo|wc|awk '{print $1}'`
-no_cores=`expr "$no_cores" + 1`
+no_hz=`grep "model\ name" -m 1 /proc/cpuinfo|awk '{print $NF}'`
+no_ram=`grep MemTotal /proc/meminfo|awk '{print $2}'`
+no_jobs=`expr "$no_cores" + 1`
 
 # Semi configuration
 logrootdir="results"
 buginfofile="buginfo_raw"
 timefile="time"
 versionfile="program_version"
+cpufile="cpu"
+ramfile="ram"
 
-time_format="real %E\ncpuK %S\ncpuU %U\n\nmaxR %M\navgR %t\navgS %K\npage %Z"
-time_format="$time_format""\n\ninp  %I\noutp %O\nrecM %r\nsenM %s\nsign %k\n"
-time_format="$time_format""comm %C"
+time_format="real %E\ncpuK %S\ncpuU %U\nmaxR %M\noutp %O"
 
 
 ## Testing if everything is there
@@ -70,12 +72,14 @@ analyzer="gcc"
 mkdir "$logdir"/"$analyzer"
 
 #/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" \
-    #make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
+    #make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
     #/
 
-/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -j"$no_cores" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
 
 echo "$tardir" > "$logdir"/"$versionfile"
+echo "$no_cores"x"$no_hz" > "$logdir"/"$cpufile"
+echo "$no_ram" > "$logdir"/"$ramfile"
 
 echo -ne "$configmd5\t"
 

@@ -1,5 +1,15 @@
 ### TODO
 
+  * Does `make randomconfig` always make a valid config file?
+      - If `make randconfig` does not create a valid config (which has happened
+        to me a couple of times), it will say so itself.
+        I am not sure, though, if it will output it to `stderr` or how I can 
+        check if there were any kconfig errors.
+          o It outputs to stderr
+      - Try to look into the code.
+      - Also try to see the `tinyconfig` and `allnoconfig`, the features that 
+        exist in those configs - I guess - will always be enabled, and not 
+        randomized.
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
@@ -25,20 +35,46 @@
   * Read [6](kernel.org) - maybe there is something about kconfig that is worth
     knowing.
 
-  * Maybe make lots of configurations, and look at the statistically. How random
-    are they really?
-  * Try to see how many kernels can be compiled in a day by a normal laptop.
-
-  * Make sure I also save what computer it has been run on. Maybe in the timefile
-
-  * Make the status into one single line in stead of 6 lines per compile.
-   
-  * Make an alias from `make install`, so I don't accidentally install a weird
-    kernel.
-
 
 ### DONE
 
+  * Implement a MapReduce kind of logfile, for easier plotting later on.
+      - Time
+          o Real time
+          o Sys time
+          o User time
+          o Output
+          o maxR
+          o All the other values always report 0, so do not bother.
+      - Number of errors
+      - The filename it should append to should be [#cores]x[clock]
+      - Number of features enabled
+      - Append [# of distinct error types] to matching filenames.
+          o Wunused
+          o Wunitialized
+          o etc...
+      - Maybe first find out how long time it will take to run the python script
+        on many results. If it is fast enough, then this would be a better 
+        solution, since mapreduce sum files can be inconsistent with the real 
+        data.
+    [DONE - pending]
+  * Maybe make lots of configurations, and look at the statistically. How random
+    are they really?
+      - Claus said, that the chinese guys had already done this, and I should
+        not try to do it. So I will not spend more time on it for now.
+    [DONE - pending]
+  * Make an alias from `make install`, so I don't accidentally install a weird
+    kernel.
+    [DONE - will not do]
+  * Make the status into one single line in stead of 6 lines per compile.
+    [DONE]
+  * Try to see how many kernels can be compiled in a day by a normal laptop.
+      - It really depends. All from 50 to 250 a day.
+    [DONE]
+  * make_and_get_errors.sh should also write down the computer specs.
+      - CPU
+      - RAM
+    [DONE]
   * Dig into running `make O=dir` to create all the output files in another dir.
     This could maybe help me save some time, since I would not have to untar 
     everything again.
@@ -64,17 +100,9 @@
         before `make distclean` and after unpacking the tar, and it was not
         the same. So better off just untarring.
     [DONE]
-
-### QUESTIONS
-
-  * Does `make randomconfig` always make a valid config file?
-      - Shall I do some Kconfig validity testing?
-      - If `make randconfig` does not create a valid config (which has happened
-        to me a couple of times), it will say so itself.
-        I am not sure, though, if it will output it to `stderr` or how I can 
-        check if there were any kconfig errors.
   * Can I replicate one of the bugs from VBDb.itu.dk?
       - How can I tell what kernel version the commits are from?
+        [DONE - will not do]
   * What kind of bugs can `cgg -Wall` find?
       - Look at [3](gnu.org), it states what types of errors `gcc -Wall` will 
         find.
@@ -86,13 +114,16 @@
 ### ERROR DATA
 
 [config, 
-analyzer used, 
 time,
-buginfo: [
-    error type,
-    filename, 
-    line no, 
-    error message ]
+cpu,
+ram,
+analyzer used: 
+    raw buginfo,
+    beautified buginfo: [
+        error type,
+        filename, 
+        line no, 
+        error message ]
 
 ### -Wall
 
@@ -128,6 +159,8 @@ buginfo: [
 -Wunused-variable  
 -Wvolatile-register-var 
 
+And there are often extra flags to the gcc command. Here are some examples.
+
 
 ### REFERENCES
 
@@ -152,3 +185,6 @@ buginfo: [
 
 [6] https://www.kernel.org/doc/Documentation/kbuild/kconfig.txt
     Something about kconfig
+
+[7] http://www.mjmwired.net/kernel/Documentation/kbuild/kconfig.txt
+    Ca. down 40% there is some notes on randconfig and what KCONFIG_SEED means.
