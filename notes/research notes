@@ -29,6 +29,11 @@
       - I can run `make V=1` to see all the commands that `make` are issuing, 
         and then grep those without `-Wall` to see if there are any.
 
+  * Find out if I need a dependency for busybox... Maybe.
+      - Maybe I do not need it, since it really is about Linux after all.
+      - Yeah, but then again.. Maybe the report could say something about the
+        difference between Linux and Busybox.
+
   * Should I report errors that occur in filenames that end with `.o`?
       - Are these the same lines, that start with `make: ***` ?
       - Those are binary files, and are gibberish, so do not count those, I 
