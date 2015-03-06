@@ -2,24 +2,28 @@
 
 # Auto configuration
 tarfile="$1"
+def_or_rnd="$2"
 tardir=(${tarfile//.tar*/}) # Takes only the basename.
 no_cores=`grep "processor.*:" /proc/cpuinfo|wc|awk '{print $1}'`
 no_hz=`grep "model\ name" -m 1 /proc/cpuinfo|awk '{print $NF}'`
 no_ram=`grep MemTotal /proc/meminfo|awk '{print $2}'`
 no_jobs=`expr "$no_cores" + 1`
+rootdir=`pwd`
 
 # Semi configuration
-logrootdir="results"
+logrootdir="$rootdir/results/$tardir"
 buginfofile="buginfo_raw"
 timefile="time"
 versionfile="program_version"
 cpufile="cpu"
 ramfile="ram"
+conferrfile="conf_errors"
 
 time_format="real %E\ncpuK %S\ncpuU %U\nmaxR %M\noutp %O"
 
-
-## Testing if everything is there
+####################################
+## Testing if everything is there ##
+####################################
 
 if [ "$tarfile" == "" ]
 then
@@ -40,31 +44,42 @@ then
     exit
 fi
 
-## Beginning the process
+###################################
+## Making the configuration file ##
+###################################
 
 tar xf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
 
 echo -ne "Conf\t"
-make randconfig 2> /dev/null 1> /dev/null
+make randconfig 2> /tmp/stderr.log 1> /dev/null
 configError="$?"
 
 if [ ! $configError == "0" ]
 then
     echo "Error making a random configuration. Stopping..."
-    echo "The configuration file is $logdir/randconfig.conf"
+    echo "The configuration file is $logdir/$tardir/randconfig.conf"
     exit
 fi
 
+
 configmd5=`md5sum .config | awk '{print $1}'`
-logdir="../$logrootdir/$configmd5"
+logdir="$logrootdir/$configmd5"
 
 if [ ! -d "$logdir" ]
 then
     mkdir -p "$logdir"
 fi
 
+grep "warning" /tmp/stderr.log > "$logdir"/"$conferrfile"
 cp ".config" "$logdir"/config
+
+num_conf_errs=`wc "$logdir"/"$conferrfile"|awk '{print $1}'`
+echo -en "$num_conf_errs errs\t"
+
+###########################
+## Compiling  the source ##
+###########################
 
 echo -ne "gcc\t"
 
