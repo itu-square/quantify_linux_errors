@@ -10,6 +10,15 @@
       - Also try to see the `tinyconfig` and `allnoconfig`, the features that 
         exist in those configs - I guess - will always be enabled, and not 
         randomized.
+      - Check [7](kconfig) out. It says something about the percentages of when
+        randconfig ansers y/n and y/n/m.
+
+  * Look at what errors occur, and how many of which type.
+
+  * Find out how the VM works.
+      - What VM client does ITU have
+      - Can it run a .vbox file?
+
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
@@ -19,10 +28,7 @@
         contain the word `gcc`)
       - I can run `make V=1` to see all the commands that `make` are issuing, 
         and then grep those without `-Wall` to see if there are any.
-  * Find out what the bottom lines in the buginfo files mean.
-      - make: *** Waiting for unfinished jobs...
-      - Maybe it has something to do with me compiling with multiple cores. that
-        would make sense, I think.
+
   * Should I report errors that occur in filenames that end with `.o`?
       - Are these the same lines, that start with `make: ***` ?
       - Those are binary files, and are gibberish, so do not count those, I 
@@ -37,6 +43,14 @@
 
 
 ### DONE
+
+  * Find out what the bottom lines in the buginfo files mean.
+      - make: *** Waiting for unfinished jobs...
+      - Maybe it has something to do with me compiling with multiple cores. that
+        would make sense, I think.
+      - I am preetty sure, it has something to do with the multicore, and is neg-
+        legitible. Marked as done.
+    [DONE]
 
   * Implement a MapReduce kind of logfile, for easier plotting later on.
       - Time
@@ -58,23 +72,29 @@
         solution, since mapreduce sum files can be inconsistent with the real 
         data.
     [DONE - pending]
+
   * Maybe make lots of configurations, and look at the statistically. How random
     are they really?
       - Claus said, that the chinese guys had already done this, and I should
         not try to do it. So I will not spend more time on it for now.
     [DONE - pending]
+
   * Make an alias from `make install`, so I don't accidentally install a weird
     kernel.
     [DONE - will not do]
+
   * Make the status into one single line in stead of 6 lines per compile.
     [DONE]
+
   * Try to see how many kernels can be compiled in a day by a normal laptop.
       - It really depends. All from 50 to 250 a day.
     [DONE]
+
   * make_and_get_errors.sh should also write down the computer specs.
       - CPU
       - RAM
     [DONE]
+
   * Dig into running `make O=dir` to create all the output files in another dir.
     This could maybe help me save some time, since I would not have to untar 
     everything again.
@@ -82,27 +102,33 @@
       - I was wrong. When running `make` it cannot find the config, and stuff.
         So I will just go back.
     [DONE]
+
   * Download the 'BusyBox' code, and experiment on that. It is not as big, and
     is therefore faster to compile.
     [DONE!]
+
   * Try to get it to make some errors, and make it report back in the format we
     want (see section 'ERROR DATA')
       - I have started on the regular expressions, but they are not all done. I
         only get half of the errors on the regexps.
     [DONE]
+
   * Should I run `make all` in stead of just `make`?
       - I am pretty sure that `make all` is the same as just `make`
       - It is the same. It is stated at the last line in `make help`
     [DONE]
+
   * Can I use `make clean` or `make distclean` in stead of deleting the whole
     directory and untarring again?
       - I would not count on it. I tried taking the md5sum of the files list
         before `make distclean` and after unpacking the tar, and it was not
         the same. So better off just untarring.
     [DONE]
+
   * Can I replicate one of the bugs from VBDb.itu.dk?
       - How can I tell what kernel version the commits are from?
         [DONE - will not do]
+
   * What kind of bugs can `cgg -Wall` find?
       - Look at [3](gnu.org), it states what types of errors `gcc -Wall` will 
         find.
