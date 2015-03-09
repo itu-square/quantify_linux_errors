@@ -27,7 +27,7 @@ for line in lines:
     if not bugtype_re == None:
         bugtype = bugtype_re.group(0)
 
-    filename_re = re.search(r"(\w+\/)*\w+(\.c|\.h|\.o)", line) # `.o` or not?
+    filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*\w+(\.c|\.h|\.o)", line) # `.o` or not?
     if not filename_re == None:
         filename = filename_re.group(0)
     
