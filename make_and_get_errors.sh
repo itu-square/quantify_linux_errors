@@ -83,8 +83,10 @@ echo -en "$num_conf_errs errs\t"
 
 echo -ne "gcc\t"
 
-analyzer=`gcc -dumpversion`
-mkdir "$logdir"/gcc_"$analyzer"
+analyzer_version=`gcc -dumpversion`
+analyzer="gcc"
+mkdir "$logdir"/"$analyzer"
+echo "$analyzer_version" > "$logdir"/"$analyzer"/version
 
 #/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" \
     #make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \

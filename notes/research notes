@@ -1,5 +1,17 @@
 ### TODO
 
+  * `categorize.py` has an error, which makes it output an 'error' that is 
+    multiple lines long.
+
+  * Set up an online service, which collects all data that is sent to it.
+    Instead of me having to collect all data from a USBdisk or something.
+      - But talk to ITU. Maybe I can borrow a server there.
+
+  * `gcc` outputs in danish. This is a problem for python later on. Therefore it
+    should be changed somehow.
+      - Or maybe I should just make the script aware of this. Or somehow make it
+        able to handle it.
+
   * Does `make randomconfig` always make a valid config file?
       - If `make randconfig` does not create a valid config (which has happened
         to me a couple of times), it will say so itself.
