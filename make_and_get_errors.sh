@@ -3,11 +3,11 @@
 # Auto configuration
 tarfile="$1"
 def_or_rnd="$2"
+job_count="$3"
 tardir=(${tarfile//.tar*/}) # Takes only the basename.
 no_cores=`grep "processor.*:" /proc/cpuinfo|wc|awk '{print $1}'`
 no_hz=`grep "model\ name" -m 1 /proc/cpuinfo|awk '{print $NF}'`
 no_ram=`grep MemTotal /proc/meminfo|awk '{print $2}'`
-no_jobs=`expr "$no_cores" + 1`
 rootdir=`pwd`
 
 # Semi configuration
@@ -19,8 +19,15 @@ cpufile="cpu"
 ramfile="ram"
 conferrfile="conf_errors"
 exitstatusfile="exit_status"
-
-time_format="real %E\ncpuK %S\ncpuU %U\nmaxR %M\noutp %O"
+all=`echo "$LC_ALL"`
+ctype=`echo "$LC_CTYPE"`
+messages=`echo "$LC_MESSAGES"`
+lang=`echo "$LANG"`
+export LC_ALL=""
+export LC_CTYPE=""
+export LC_MESSAGES=""
+export LANG=""
+time_format="real %E\ncpuK %S\ncpuU %U\nmaxR %M\noutp %O\ncomm %C"
 
 ####################################
 ## Testing if everything is there ##
@@ -45,6 +52,13 @@ then
     exit
 fi
 
+if [ "$3" == "" ]
+then
+    no_jobs=`expr "$no_cores" + 1`
+else
+    no_jobs="$3"
+fi
+
 ###################################
 ## Making the configuration file ##
 ###################################
@@ -53,7 +67,28 @@ tar xf "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
 
 echo -ne "Conf\t"
-make randconfig 2> /tmp/stderr.log 1> /dev/null
+
+if [ "$2" == "randconfig" ]
+then
+    make randconfig 2> /tmp/stderr.log 1> /dev/null
+elif [ "$2" == "tinyconfig" ]
+then
+    make tinyconfig 2> /tmp/stderr.log 1> /dev/null
+elif [ "$2" == "defconfig" ]
+then
+    make defconfig 2> /tmp/stderr.log 1> /dev/null
+elif [ "$2" == "allnoconfig" ]
+then
+    make defconfig 2> /tmp/stderr.log 1> /dev/null
+elif [ "$2" == "allyesconfig" ]
+then
+    make defconfig 2> /tmp/stderr.log 1> /dev/null
+else
+    echo "The 2nd argument is not understood. It should be the config"
+    echo "type. Exiting"
+    exit
+fi
+    
 configError="$?"
 
 if [ ! $configError == "0" ]
@@ -65,7 +100,7 @@ fi
 
 
 configmd5=`md5sum .config | awk '{print $1}'`
-logdir="$logrootdir/$configmd5"
+logdir="$logrootdir/$configmd5.$no_jobs"
 
 if [ ! -d "$logdir" ]
 then
@@ -107,3 +142,7 @@ no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
 echo -ne "$no_errors errors\t"
 echo -ne `grep "real" "$logdir"/"$timefile"`"\n"
 
+export LC_ALL="$all"
+export LC_CTYPE="$ctype"
+export LC_MESSAGES="$messages"
+export LANG="$lang"
