@@ -20,13 +20,19 @@ def extract_errors(dir):
 kconf_errors = {}
 dirlist = []
 
+print("Reading dirs")
 for _, dirs, _ in os.walk(rootdir):
     for dir in dirs:
         if not dir == "":
             dirlist.append(dir)
 
 
-for dir in dirlist:
+print("Going through the list")
+
+for counter, dir in enumerate(dirlist):
+    if counter%100 == 0:
+        print(counter)
+
     errors = extract_errors(dir)
 
     if not errors:

@@ -1,4 +1,4 @@
-import sys, re, os
+import sys, re, os, codecs
 
 
 result_dir = "results/"
