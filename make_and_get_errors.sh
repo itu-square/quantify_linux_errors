@@ -18,6 +18,7 @@ versionfile="program_version"
 cpufile="cpu"
 ramfile="ram"
 conferrfile="conf_errors"
+exitstatusfile="exit_status"
 
 time_format="real %E\ncpuK %S\ncpuU %U\nmaxR %M\noutp %O"
 
@@ -92,11 +93,13 @@ echo "$analyzer_version" > "$logdir"/"$analyzer"/version
     #make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
     #/
 
-/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -k -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
+exitstatus="$?"
 
 echo "$tardir" > "$logdir"/"$versionfile"
 echo "$no_cores"x"$no_hz" > "$logdir"/"$cpufile"
 echo "$no_ram" > "$logdir"/"$ramfile"
+echo "$exitstatus" > "$logdir"/"$exitstatusfile"
 
 echo -ne "$configmd5\t"
 
