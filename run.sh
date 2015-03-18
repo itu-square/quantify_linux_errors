@@ -2,6 +2,8 @@
 
 version="$1"
 runs="$2"
+lang=`echo $LC_ALL`
+export LC_ALL=C
 
 if [ "$version" == "" ]
 then
@@ -20,4 +22,4 @@ do
     ./make_and_get_errors.sh "$version"
 done
 
-
+export LC_ALL="$lang"
