@@ -12,7 +12,8 @@ rootdir=`pwd`
 
 # Semi configuration
 logrootdir="$rootdir/results/$tardir"
-buginfofile="buginfo_raw"
+buginfofile="stderr_raw"
+stdoutfile="stdout_raw"
 timefile="time"
 versionfile="program_version"
 cpufile="cpu"
@@ -111,7 +112,7 @@ grep "warning" /tmp/stderr.log > "$logdir"/"$conferrfile"
 cp ".config" "$logdir"/config
 
 num_conf_errs=`wc "$logdir"/"$conferrfile"|awk '{print $1}'`
-echo -en "$num_conf_errs errs\t"
+echo -en "$num_conf_errs wrns\t"
 
 ###########################
 ## Compiling  the source ##
@@ -128,7 +129,7 @@ echo "$analyzer_version" > "$logdir"/"$analyzer"/version
     #make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
     #/
 
-/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -k -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -k -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> "$logdir"/"$analyzer"/"$stdoutfile"
 exitstatus="$?"
 
 echo "$tardir" > "$logdir"/"$versionfile"
@@ -139,7 +140,7 @@ echo "$exitstatus" > "$logdir"/"$exitstatusfile"
 echo -ne "$configmd5\t"
 
 no_errors=`grep "\^" "$logdir"/"$analyzer"/"$buginfofile"|wc|awk '{print $1}'`
-echo -ne "$no_errors errors\t"
+echo -ne "$no_errors wrns\t"
 echo -ne `grep "real" "$logdir"/"$timefile"`"\n"
 
 export LC_ALL="$all"

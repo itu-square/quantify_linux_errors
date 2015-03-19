@@ -1,16 +1,16 @@
+### NOTES
+
+  * In average (out of 600 results), one compilation takes 7.85 minutes.
+      - This is wrong.. I forgot that there are not 100 seconds per minute :(
+      - It is actually 8.05 minutes, which is 8:03 minutes.
+      - This makes for 1440/8 = 180/day, not 250 as I first thought.
+
+  * To search for gcc not followed by Wall in Vim, you have to search for:
+    `/gcc\ \(.*Wall\)\@!`
+    There are like 55 lines in the output of `make V=1` that match this pattern
+    out of 2144 lines, which match `gcc\ `.
+
 ### TODO
-
-  * `categorize.py` has an error, which makes it output an 'error' that is 
-    multiple lines long.
-
-  * Set up an online service, which collects all data that is sent to it.
-    Instead of me having to collect all data from a USBdisk or something.
-      - But talk to ITU. Maybe I can borrow a server there.
-
-  * `gcc` outputs in danish. This is a problem for python later on. Therefore it
-    should be changed somehow.
-      - Or maybe I should just make the script aware of this. Or somehow make it
-        able to handle it.
 
   * Does `make randomconfig` always make a valid config file?
       - If `make randconfig` does not create a valid config (which has happened
@@ -18,12 +18,28 @@
         I am not sure, though, if it will output it to `stderr` or how I can 
         check if there were any kconfig errors.
           o It outputs to stderr
+        [DONE]
       - Try to look into the code.
+        [WILL NOT]
       - Also try to see the `tinyconfig` and `allnoconfig`, the features that 
         exist in those configs - I guess - will always be enabled, and not 
         randomized.
+        [TODO]
       - Check [7](kconfig) out. It says something about the percentages of when
         randconfig ansers y/n and y/n/m.
+        [WILL NOT]
+
+  * Try to make a script that will randomize the KConfig tree, so that we can
+    run `make randconfig`, but we permutate the order of the KConfig files.
+
+  * `categorize.py` has an error, which makes it output an 'error' that is 
+    multiple lines long.
+
+  * Set up an online service, which collects all data that is sent to it.
+    Instead of me having to collect all data from a USBdisk or something.
+      - But talk to ITU. Maybe I can borrow a server there.
+      - Also put the data into a database when it arrives. 
+          o Maybe sqlite, since it is filebased, so easy to move.
 
   * Look at what errors occur, and how many of which type.
 
@@ -40,6 +56,7 @@
         contain the word `gcc`)
       - I can run `make V=1` to see all the commands that `make` are issuing, 
         and then grep those without `-Wall` to see if there are any.
+        [TODO]
 
   * Find out if I need a dependency for busybox... Maybe.
       - Maybe I do not need it, since it really is about Linux after all.
@@ -51,15 +68,28 @@
       - Those are binary files, and are gibberish, so do not count those, I 
         guess. But still find out, and be sure.
 
-  * It turns out, that `busybox` has some weird dependencies that generate
-    errors when running `make`. They are some `selinux` packages. I don't know
-    what to do about that.
+
+### DONE
+
+  * Find out if `make -j` needs to be (#cores * 2 + 1) instead of (#cores + 1)
+      - Someone said (1.5 x #cores), but I think (#cores + 1) is fine.
+      - But maybe set up a controlled experiment with the defaultconfig
+        [DONE]  It seems like (# of cores + 1) is fastest on my computer, and if
+                you have more than that, it does not get slower, so having it be
+                -j20 might not be a problem.
 
   * Read [6](kernel.org) - maybe there is something about kconfig that is worth
     knowing.
+    [MAYBE LATER]
 
+  * `gcc` outputs in danish. This is a problem for python later on. Therefore it
+    should be changed somehow.
+      - Or maybe I should just make the script aware of this. Or somehow make it
+        able to handle it.
+    [DONE]
 
-### DONE
+  * Set the gcc output to english
+    [DONE]
 
   * Find out what the bottom lines in the buginfo files mean.
       - make: *** Waiting for unfinished jobs...

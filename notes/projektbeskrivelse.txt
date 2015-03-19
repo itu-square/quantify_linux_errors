@@ -40,7 +40,7 @@ This Master's Thesis project proposes to deploy conventional static
 error detection tools (in particular, "gcc -Wall") on Linux using the
 generate-and-analyze strategy. The idea is to set up a controlled
 experiment: To randomly select valid configurations, use the
-preprocessor to generate convential programs, and then run
+preprocessor to generate conventional programs, and then run
 conventional error detection tools on those program variants. (Note
 that since configurations are independent, it is possible to run
 analyses in parallel which could significantly increase the number of
@@ -49,17 +49,16 @@ experiment is a collection of variability errors.
 
 // QUANTIFICATION:
 
-Even if this process will only scale to analyzing a fraction of
+Even if this process will only scale to analyzing a fraction of all
 program variants, if configurations are selected representatively, it
 could reveal quantitative information about variability bugs in all of
 Linux. Potentially, it might even be possible to answer questions such
 as: How frequently do certain types of errors occur in Linux? How
-frequent are types of errors relative to each other?
+frequent are types of errors relative to each other? In what sections
+of the code base do most errors exist?
 
-Possibly some comments about power and time consumption can be made 
-about the analysis.
-
-Compare #bugs in Linux vs BusyBox?
+Also, it could be possible to comment on what error detection tools 
+find the most bugs, and what tools are most suitable. 
 
 ***
 
