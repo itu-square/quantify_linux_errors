@@ -9,12 +9,20 @@ Elvis' master thesis
 ## Dependencies
   * python3 (maybe older versions will work)
   * bash (installed on almost all distributions)
-  * gcc (or build-tools, or whatever it is called in your distribution)
+  * gcc-multilib (or build-tools, or whatever it is called in your distribution)
+      - IMPORTANT - I got some compile errors, where it stated, that I needed
+        `lgcc`. The interweb told me, I should have used `gcc-multilib` in-
+        stead of `gcc`. So I have now changed it to `gcc-multilib`
   * GNU time (not built-in bash-time or zsh-time, but GNU time)
+  * `lzop` - I got some compilation errors stating that I needed `lzop` (It is
+    a kind of compression format (think zip-zop))
+
+I will probably create a virtual machine with all the dependencies resolved, and
+post a link here, for everyone to download. But it is not ready yet.
 
 In Arch:  
-`# sudo pacman -Syu python time`  
-`# sudo pacman -Syu --needed base-devel`  
+`# pacman -Syu --needed base-devel`  
+`# pacman -Syu python time gcc-multilib lzop`  
 
 ## Scripts
 
