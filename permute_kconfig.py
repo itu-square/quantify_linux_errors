@@ -1,15 +1,15 @@
-import sys, os, random
+import sys, os, random, string
 
 
 # Configuration (of this script. Not the program)
 dir = sys.argv[1]
 kconfs = []
-oneline_delimiters = ["config", "menu"
+oneline_delimiters = ["config", "menu"]
 
-for root, dirs, files in os.walk(dir):
-    for file in files:
-        if file[:7] == "Kconfig":
-            kconfs.append(root + "/" + file)
+#for root, dirs, files in os.walk(dir):
+    #for file in files:
+        #if file[:7] == "Kconfig":
+            #kconfs.append(root + "/" + file)
 
 
 def permutate(file):
@@ -43,11 +43,54 @@ def print_permutation(segments):
         print()
 
 
-segments = permutate(kconfs[5])
-print_permutation(segments)
+lines = []
+files = []
 
-random.shuffle(segments)
-print_permutation(segments)
+
+def concatenate(file):
+    files.append(file)
+    for line in open(file):
+        tmpline = line.replace("$SRCARCH", "x86")
+        tmpline = tmpline.replace("\"", "")
+        tmpline = tmpline.replace("\n", "")
+        if tmpline[:7] == "source ":
+            file_to_add = dir + "/" + tmpline.strip()[7:]
+            #print(file_to_add)
+            concatenate(file_to_add)
+            continue
+        line = line.replace("\n", "")
+        lines.append(line)
+        
+
+concatenate("linux-3.19/Kconfig")
+
+def print_all():
+    for line in lines:
+        print(line)
+
+configs = []
+segments = []
+
+def put_in_segments(lines):
+    layer = 0
+    for line in lines:
+        print(layer)
+        if line[:3] == "if ":
+            layer += 1
+        if line[:5] == "endif":
+            layer -= 1
+        if line[:5] == "menu ":
+            layer += 1
+        if line[:7] == "endmenu":
+            layer -= 1
+
+put_in_segments(lines)
+
+#segments = permutate(kconfs[5])
+#print_permutation(segments)
+
+#random.shuffle(segments)
+#print_permutation(segments)
 
 
 
