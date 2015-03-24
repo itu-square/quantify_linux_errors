@@ -12,6 +12,12 @@
 
 ### TODO
 
+  * "You won't be able to produce a 64 bit kernel unless the compile tools are 
+    already designed to output 64bit programs"
+    - [8](LinuxQuestions.org)
+    Look into what types of configurations I will not be able to compile, and if
+    that is a problem.
+
   * Does `make randomconfig` always make a valid config file?
       - If `make randconfig` does not create a valid config (which has happened
         to me a couple of times), it will say so itself.
@@ -32,20 +38,22 @@
   * Try to make a script that will randomize the KConfig tree, so that we can
     run `make randconfig`, but we permutate the order of the KConfig files.
 
-  * `categorize.py` has an error, which makes it output an 'error' that is 
-    multiple lines long.
-
   * Set up an online service, which collects all data that is sent to it.
     Instead of me having to collect all data from a USBdisk or something.
       - But talk to ITU. Maybe I can borrow a server there.
       - Also put the data into a database when it arrives. 
           o Maybe sqlite, since it is filebased, so easy to move.
 
-  * Look at what errors occur, and how many of which type.
-
   * Find out how the VM works.
       - What VM client does ITU have
       - Can it run a .vbox file?
+
+# Laterbase
+
+  * `categorize.py` has an error, which makes it output an 'error' that is 
+    multiple lines long.
+
+  * Look at what errors occur, and how many of which type.
 
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
@@ -57,6 +65,9 @@
       - I can run `make V=1` to see all the commands that `make` are issuing, 
         and then grep those without `-Wall` to see if there are any.
         [TODO]
+          o There are like 55 / 2000 lines that contain `gcc` that do not have 
+            the `-Wall` flag... This is not a lot, so I am not sure I will look
+            into this.
 
   * Find out if I need a dependency for busybox... Maybe.
       - Maybe I do not need it, since it really is about Linux after all.
@@ -261,3 +272,6 @@ And there are often extra flags to the gcc command. Here are some examples.
 
 [7] http://www.mjmwired.net/kernel/Documentation/kbuild/kconfig.txt
     Ca. down 40% there is some notes on randconfig and what KCONFIG_SEED means.
+
+[8] http://www.linuxquestions.org/questions/linux-hardware-18/compiling-64-bit-kernel-in-32-bit-linux-240183/
+    A note on crosscompiling
