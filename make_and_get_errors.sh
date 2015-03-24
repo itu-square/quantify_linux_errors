@@ -64,8 +64,11 @@ fi
 ## Making the configuration file ##
 ###################################
 
-tar xf "$tarfile" 1> /dev/null 2> /dev/null
+tar xfJ "$tarfile" 1> /dev/null 2> /dev/null
 cd "$tardir"
+
+# Ensures that the kernel tree is absolutely clean.
+make mrproper
 
 echo -ne "Conf\t"
 
@@ -101,7 +104,7 @@ fi
 
 
 configmd5=`md5sum .config | awk '{print $1}'`
-logdir="$logrootdir/$configmd5.$no_jobs"
+logdir="$logrootdir/$configmd5"
 
 if [ ! -d "$logdir" ]
 then
