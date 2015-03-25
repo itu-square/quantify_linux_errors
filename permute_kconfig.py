@@ -3,50 +3,59 @@ import sys, os, random, string
 
 # Configuration (of this script. Not the program)
 dir = sys.argv[1]
-kconfs = []
-oneline_delimiters = ["config", "menu"]
-
-#for root, dirs, files in os.walk(dir):
-    #for file in files:
-        #if file[:7] == "Kconfig":
-            #kconfs.append(root + "/" + file)
-
-
-def permutate(file):
-    segments = []
-    lines = []
-    for line in open(file):
-        if line.strip() == "":
-            segments.append(lines)
-            lines = []
-            continue
-        lines.append(line.strip())
-    segments.append(lines) # append the last segment
-    return segments
-
-def print_permutation(segments):
-    for segment in segments:
-        first = 1
-        help = 0
-        for line in segment:
-            if first == 1:
-                print(line)
-                first = 0
-            else:
-                if help == 0:
-                    print("    " + line)
-                else:
-                    print("      " + line)
-
-            if line.strip() == "help":
-                help = 1
-        print()
-
-
 lines = []
 files = []
 configs = []
 
+
+        
+class Layer:
+    def __init__(self, name, parent):
+        self.name = name
+        self.configs = []
+        self.layers = []
+        self.prefix = []
+        self.suffix = ""
+        self.parent = parent
+
+    
+    def __repr__(self):
+        output = []
+        for layer in self.layers:
+            output.append(layer.name)
+        return str(output)
+
+
+    def get_name(self):
+        return self.name
+
+
+    def get_parent(self):
+        return self.parent
+
+
+    def add_configs(self, configs):
+        self.configs = configs
+
+
+    def add_layer(self, layer):
+        self.layers.append(layer)
+
+
+    def add_suffix(self, suffix):
+        self.suffix = suffix
+
+        
+    def add_prefix(self, prefix):
+        self.prefix.append(prefix)
+
+
+
+# This goes deep into the kernel directory and concatenates all the Kconfig
+# files to one big list.
+# NOTE: the architecture must be specified. Right now "x86" is hardcoded.
+# But this can be changed. But I will have to look into cross-compiling, 
+# before it can be anything other than "x86" or "i386"
 
 def concatenate(file):
     files.append(file)
@@ -59,39 +68,21 @@ def concatenate(file):
             #print(file_to_add)
             concatenate(file_to_add)
             continue
+
+        # Removing all tabs from the Kconfigs. They mess up my regex.
+        line = line.replace("\t", "    ") 
+
         line = line.replace("\n", "")
-        line = line.replace("\t", "    ") # Removing all tabs from the Kconfigs. They mess up my regex.
         lines.append(line)
         
 
-concatenate(dir + "/Kconfig")
 
-
-tree = {}
-tree["configs"] = []
-
-def add_layer(tree, location, lines):
-    print(len(location))
-    print(location)
-    tree[lines[0]]["prefix"] = lines
-    pass
-
-
-def rm_layer(tree, location, line):
-    pass
-
-
-def add_config(tree, location, lines):
-    
-    pass
-    
-
-
-def create_tree(tree, lines):
+def create_tree(lines):
     config = []
     prefix = [] # Can be multiple lines. eg. menu [..] \n depends [..]
     suffix = "" # Can only be contents of rm_layer_words
-    location = [] # The path as a stack, so use pop()
+    root_layer = Layer("root", None) # The current layer name
+    current_layer = root_layer
 
     add_layer_words = ["if", "menu", "choice"]
     rm_layer_words = ["endif", "endmenu", "endchoice"]
@@ -99,62 +90,53 @@ def create_tree(tree, lines):
 
     mode = "config"
 
-    for line in lines:
+
+    for key, line in enumerate(lines):
         firstword = line.split(' ', 1)[0]
 
+        if firstword in rm_layer_words:
+            suffix = line
+            mode = "suffix"
+        if firstword in add_layer_words:
+            mode = "prefix"
+        if firstword in config_words:
+            mode = "config"
+
+
         if firstword in add_layer_words + rm_layer_words + config_words:
+            #print(str(current_layer.get_name))
             if not config == []:
-                add_config(tree, location, config)
+                #print("new config" + str(config))
+                current_layer.add_configs(config)
             if not prefix == []:
-                add_layer(tree, location, prefix)
-            if not suffix == []:
-                rm_layer(tree, location, suffix)
+                #print(str(key)+prefix[0])
+                current_layer.add_prefix(prefix)
+                new_layer = Layer(str(key)+prefix[0], current_layer)
+                current_layer.add_layer(new_layer)
+                current_layer = new_layer
+            if not suffix == "":
+                #print(suffix)
+                current_layer.add_suffix(suffix)
+                current_layer = current_layer.get_parent()
+                
 
             config = []
             prefix = []
             suffix = ""
 
-        if firstword in add_layer_words:
-            location.append(line)
-            mode = "add_layer"
-        elif firstword in config_words:
-            mode = "config"
-        elif firstword in rm_layer_words:
-            location.pop()
-            mode = "rm_layer"
-
 
         if mode == "config":
             config.append(line)
 
-        if mode == "add_layer":
+        if mode == "prefix":
             prefix.append(line)
 
 
-        if mode == "rm_layer":
-            suffix = line
 
         #print(mode + " " +  line)
-        #print(location)
+    return root_layer
 
 
-create_tree(tree, lines)
-
-def print_all():
-    for i in tree:
-        print(i)
-        for j in tree[i]:
-            print("   " + str(j))
-
-#print_all()
-
-#segments = permutate(kconfs[5])
-#print_permutation(segments)
-
-#random.shuffle(segments)
-#print_permutation(segments)
-
-
-
-
-
+concatenate(dir + "/Kconfig")
+tree = create_tree(lines)
+print(tree)
