@@ -45,6 +45,7 @@ def print_permutation(segments):
 
 lines = []
 files = []
+configs = []
 
 
 def concatenate(file):
@@ -59,32 +60,93 @@ def concatenate(file):
             concatenate(file_to_add)
             continue
         line = line.replace("\n", "")
+        line = line.replace("\t", "    ") # Removing all tabs from the Kconfigs. They mess up my regex.
         lines.append(line)
         
 
-concatenate("linux-3.19/Kconfig")
+concatenate(dir + "/Kconfig")
+
+
+tree = {}
+tree["configs"] = []
+
+def add_layer(tree, location, lines):
+    print(len(location))
+    print(location)
+    tree[lines[0]]["prefix"] = lines
+    pass
+
+
+def rm_layer(tree, location, line):
+    pass
+
+
+def add_config(tree, location, lines):
+    
+    pass
+    
+
+
+def create_tree(tree, lines):
+    config = []
+    prefix = [] # Can be multiple lines. eg. menu [..] \n depends [..]
+    suffix = "" # Can only be contents of rm_layer_words
+    location = [] # The path as a stack, so use pop()
+
+    add_layer_words = ["if", "menu", "choice"]
+    rm_layer_words = ["endif", "endmenu", "endchoice"]
+    config_words = ["config", "menuconfig"]
+
+    mode = "config"
+
+    for line in lines:
+        firstword = line.split(' ', 1)[0]
+
+        if firstword in add_layer_words + rm_layer_words + config_words:
+            if not config == []:
+                add_config(tree, location, config)
+            if not prefix == []:
+                add_layer(tree, location, prefix)
+            if not suffix == []:
+                rm_layer(tree, location, suffix)
+
+            config = []
+            prefix = []
+            suffix = ""
+
+        if firstword in add_layer_words:
+            location.append(line)
+            mode = "add_layer"
+        elif firstword in config_words:
+            mode = "config"
+        elif firstword in rm_layer_words:
+            location.pop()
+            mode = "rm_layer"
+
+
+        if mode == "config":
+            config.append(line)
+
+        if mode == "add_layer":
+            prefix.append(line)
+
+
+        if mode == "rm_layer":
+            suffix = line
+
+        #print(mode + " " +  line)
+        #print(location)
+
+
+create_tree(tree, lines)
 
 def print_all():
-    for line in lines:
-        print(line)
+    for i in tree:
+        print(i)
+        for j in tree[i]:
+            print("   " + str(j))
 
-configs = []
-segments = []
-
-def put_in_segments(lines):
-    layer = 0
-    for line in lines:
-        print(layer)
-        if line[:3] == "if ":
-            layer += 1
-        if line[:5] == "endif":
-            layer -= 1
-        if line[:5] == "menu ":
-            layer += 1
-        if line[:7] == "endmenu":
-            layer -= 1
-
-put_in_segments(lines)
+#print_all()
 
 #segments = permutate(kconfs[5])
 #print_permutation(segments)
