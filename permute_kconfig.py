@@ -137,6 +137,9 @@ def create_tree(lines):
     return root_layer
 
 
+
 concatenate(dir + "/Kconfig")
 tree = create_tree(lines)
-print(tree)
+#print(tree)
+for line in lines:
+    print(line)

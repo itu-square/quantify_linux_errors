@@ -12,6 +12,8 @@
 
 ### TODO
 
+  * In file "permute_....py" the concatenate() function overlooks a few 
+    lines, which start with `source` because they are indented.
   * "You won't be able to produce a 64 bit kernel unless the compile tools are 
     already designed to output 64bit programs"
     - [8](LinuxQuestions.org)
@@ -194,6 +196,22 @@
         the types they use in [4](VBDb.itu.dk).
       ! At the meeting 26. feb 2015 it was decided to use the error types from
         `gcc -Wall`. Not the ones from [4](VBDb.itu.dk).
+
+### MEETINGS
+
+AGENDA:
+- KConfig: Syntactic Specification
+    Read the kconfig-language.txt file
+- Find a Parser for Kconfig and figure out how to get an AST (Abstract Syntax Tree)
+    Look for parsers to KConfig
+    Maybe `make randconfig` is a parser?
+- Write a couple of Kconfig transformation examples
+    Try to get rid of the `menu` and `prompt` stuff, and see if it outputs the same
+    Try to rewrite everything from `if FOO;config BAR;endif` to `config BAR; depends FOO`
+- Try to find an error (and a "good" warning) in Linux and show the format!
+    Look at 42 bugs homepage[4] to see what bugs they have found
+    Try to classify all the bugs, and know what types there are, Elvis
+
 
 ### ERROR DATA
 
