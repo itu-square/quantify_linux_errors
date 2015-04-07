@@ -36,6 +36,14 @@
       - Check [7](kconfig) out. It says something about the percentages of when
         randconfig ansers y/n and y/n/m.
         [WILL NOT]
+      - When cross-compiling, I have to figure out the ratio to how often I
+        should set the ARCH to what.
+        See line 224 in the Makefile in root linux dir to see how it finds the
+        ARCH.
+      - Maybe I can try to look into all the different architectures, to see how
+        many different features there are in each, and then create the ratio 
+        from that.
+        
 
   * Try to make a script that will randomize the KConfig tree, so that we can
     run `make randconfig`, but we permutate the order of the KConfig files.
@@ -196,6 +204,50 @@
         the types they use in [4](VBDb.itu.dk).
       ! At the meeting 26. feb 2015 it was decided to use the error types from
         `gcc -Wall`. Not the ones from [4](VBDb.itu.dk).
+
+### KCONFIG LANGUAGE
+
+`mainmenu` does not matter
+
+## if
+
+It states in the kconfig-language.txt file, that
+
+    "if" <expr>
+    <if block>
+    "endif"
+
+    This defines an if block. The dependecy expression <expr> is appended
+    to all enclosed menu entries.
+
+I take it that this:
+
+    if FOO
+    config BAR
+        bool
+    config BARBAR
+        bool
+    endif
+
+is the same as this:
+
+    config BAR
+        bool
+        depends on FOO
+    config BARBAR
+        bool
+        depends on FOO
+
+which is more better when I have to randomize the stuff.
+
+
+## FILES TO LOOK AT
+
+source/scripts/kconfig/conf.c:645
+source/scripts/kconfig/confdata.c:1116
+    conf_set_all_new_symbols()
+  - this is something about randconfig and how it flips the coin.. I think
+
 
 ### MEETINGS
 
