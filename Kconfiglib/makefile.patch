@@ -1,0 +1,59 @@
+From 61cfb087f144aeb17f4c663a998acbda03053943 Mon Sep 17 00:00:00 2001
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Fri, 13 Mar 2015 01:22:48 +0100
+Subject: [PATCH] Kconfiglib scripts/kconfig/Makefile patch.
+
+---
+ scripts/kconfig/Makefile | 36 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 9645c07..be21e03 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -11,6 +11,42 @@ else
+ Kconfig := Kconfig
+ endif
+ 
++PHONY += scriptconfig iscriptconfig kconfiglibtestconfig
++
++ifneq ($(filter scriptconfig iscriptconfig,$(MAKECMDGOALS)),)
++PYTHONCMD ?= python
++endif
++
++ifneq ($(filter scriptconfig,$(MAKECMDGOALS)),)
++ifndef SCRIPT
++$(error Use "make scriptconfig SCRIPT=<path to script> [SCRIPT_ARG=<argument>]")
++endif
++endif
++
++scriptconfig:
++ifdef SCRIPT_ARG
++	$(Q)PYTHONPATH="$(srctree)/Kconfiglib:$$PYTHONPATH" \
++	  "$(PYTHONCMD)" "$(SCRIPT)" "$(srctree)/$(Kconfig)" "$(SCRIPT_ARG)"
++else
++	$(Q)PYTHONPATH="$(srctree)/Kconfiglib:$$PYTHONPATH" \
++	  "$(PYTHONCMD)" "$(SCRIPT)" "$(srctree)/$(Kconfig)"
++endif
++
++iscriptconfig:
++	$(Q)PYTHONPATH="$(srctree)/Kconfiglib:$$PYTHONPATH" "$(PYTHONCMD)" -i -c \
++	  "import kconfiglib; \
++	   import sys; \
++	   c = kconfiglib.Config(sys.argv[4 if \"$(PYTHONCMD)\".startswith(\"ipython\") else 1]); \
++	   print \"A Config instance 'c' for the architecture ({0}) has been created.\".format(c.get_arch())" \
++	  $(srctree)/$(Kconfig)
++
++# Used by testsuite.py to be able to compare output for nonsensical
++# arch/defconfig combinations, which has proven effective for finding obscure
++# bugs
++kconfiglibtestconfig: $(obj)/conf
++	$(Q)$< --defconfig=.config $(srctree)/$(Kconfig)
++
++
+ # We need this, in case the user has it in its environment
+ unexport CONFIG_
+ 
+-- 
+2.1.0
+
