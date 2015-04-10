@@ -6,6 +6,7 @@ dir = sys.argv[1]
 lines = []
 files = []
 configs = []
+arch = "x86" # NOTE: This should not be hardcoded.
 
 
         
@@ -57,10 +58,12 @@ class Layer:
 # But this can be changed. But I will have to look into cross-compiling, 
 # before it can be anything other than "x86" or "i386"
 
+## This will take all Kconfig files and concatenate to one large list
+## called *lines*
 def concatenate(file):
     files.append(file)
     for line in open(file):
-        tmpline = line.replace("$SRCARCH", "x86")
+        tmpline = line.replace("$SRCARCH", arch)
         tmpline = tmpline.replace("\"", "")
         tmpline = tmpline.replace("\n", "")
         if tmpline[:7] == "source ":
@@ -70,11 +73,48 @@ def concatenate(file):
             continue
 
         # Removing all tabs from the Kconfigs. They mess up my regex.
+        # NOTE: This seems to mess up `make xxxconfig` a bit, because
+        #       the *help* text is not in the same indention level... 
         line = line.replace("\t", "    ") 
 
         line = line.replace("\n", "")
         lines.append(line)
         
+
+def remove_help_text(list):
+    output_list = []
+    help_words = ['help', '---help---']
+    block_words = ['config', 'menu', 'menuconfig', 'endif', 'endmenu']
+    lone_block_words = ['choice', 'endchoice']
+    mode = 'append'
+
+    for line in list:
+        if line.strip() in help_words:
+            mode = 'skip'
+        if not line.strip() == "":
+            if line.strip().split()[0] in block_words:
+                mode = 'append'
+            if line[:2] ==  "if":
+                mode = 'append'
+            if line.strip() in lone_block_words:
+                mode = 'append'
+
+        if mode == 'append':
+            output_list.append(line)
+        
+    return output_list
+
+
+def remove_comments(list):
+    output_list = []
+    comment_words = ['#']
+
+    for line in list:
+        if not line.strip() == "":
+            if not line.strip().split()[0] in comment_words:
+                output_list.append(line)
+
+    return output_list
 
 
 def create_tree(lines):
@@ -139,7 +179,10 @@ def create_tree(lines):
 
 
 concatenate(dir + "/Kconfig")
-tree = create_tree(lines)
+lines = remove_help_text(lines)
+lines = remove_comments(lines)
+
+#tree = create_tree(lines)
 #print(tree)
 for line in lines:
     print(line)
