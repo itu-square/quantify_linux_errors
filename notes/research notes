@@ -16,6 +16,9 @@
         But it didn't. the `.config` files were the same exept for the line
         `64BIT=y`, when I ran `make defconfig` on both of the Kconfig files.
 
+  * Presentation
+      - Look at error types. Learn about them. 
+
 ### NOTES
 
   * In average (out of 600 results), one compilation takes 7.85 minutes.
