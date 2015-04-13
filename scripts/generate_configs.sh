@@ -2,6 +2,7 @@
 
 folder="$1"
 runs="$2"
+cwd=`pwd`"/"
 
 if [ "$folder" == "" ]
 then
@@ -14,14 +15,15 @@ then
     runs="1"
 fi
 
-logdir=`pwd`"/randconfig_results/"
+logdir="$cwd/results/randconfig_results/"
 
 if [ ! -d "$logdir" ] 
 then
     mkdir -p "$logdir"
 fi
 
-cd "$folder"
+# Entering folder
+cd "$cwd$folder"
 
 function randconfigcreate 
 {

@@ -4,7 +4,7 @@ Kconfig
 ### Grammar and syntax
 
 The Context-free grammar for Kconfig can be read in the file:
-`kernel/Documentation/kbuild/kconfig-language.txt`
+`<kernel source>/Documentation/kbuild/kconfig-language.txt`
 
 I have translated this to the *Extended Backus-Naur Form* (EBNF)[1]
 
@@ -164,6 +164,42 @@ This is also clearly stated in the article [6], so maybe reference to them,
 and not write so much about this. They also say something about the `menuconfig`
 expression.
 
+### DEPENDENCY TREE
+
+When creating the dependency tree, some features can have a variable, that look 
+like this: `FOO && BAR`. This is basically the same as `FOO` and `BAR`. So as 
+long as it is on 'and's it could just be one long list. Example:
+
+~~~
+config FOO
+    depends on BAR && FOOBAR
+    depends on BARBAR
+    depends on BARFOO && FOOFOO
+~~~
+
+could be rewritten to 
+
+~~~
+config FOO
+    depends on BAR && FOOBAR && BARBAR && BARFOO && FOOFOO
+~~~
+
+or
+
+~~~
+config FOO
+    depends on BAR
+    depends on FOOBAR
+    depends on BARBAR
+    depends on BARFOO
+    depends on FOOFOO
+~~~
+
+But when we have 'or's in the game, they will have to be kept intact. So no 
+concatenating into one big list. We will have to have a list of all the 'or's.
+So the data structure for a feature's dependencies should contain two lists.
+One list with the 'and's and one list with the 'or'-expressions.
+
 ### References
 
 [1] https://en.wikipedia.org/wiki/Extended_Backus–Naur_Form
@@ -187,3 +223,12 @@ expression.
 
 [7] https://dl.dropboxusercontent.com/u/10406197/kconfiglib.html
     Python documentation for Kconfiglib python parser
+
+[8] https://en.wikipedia.org/wiki/Feature_model
+    There's a little image depicting a small feature model with dependencies
+
+[9] http://www.spinics.net/lists/linux-kbuild/
+    A mailing list about kbuild
+
+[A] http://freetz.org/browser/trunk/tools/developer/create-kconfig-warnings
+    Somebody's script which creates 1000s of randconfigs?

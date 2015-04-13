@@ -1,3 +1,21 @@
+### TODO tmp
+
+  * Maybe look at how to get Kconfiglib.py to open a .config file
+      - It can first open a .config file when it has opened a Kconfig file - 
+        I think. It looks that way in one of the examples (maybe grep_help)
+    [WILL NOT - kconfiglib.py can itself create the .config file for me
+                                                                I think]
+
+  * Just start creating a script, that will transform the Kconfig-files
+
+  * Begin permuting the kconfig file.
+      - I took the concatenated Kconfig file, and moved the `config 64BIT` part
+        all the way down to the bottom. 64BIT is a dependency for many many 
+        features, so if I moved that to the bottom something could maybe go 
+        wrong.
+        But it didn't. the `.config` files were the same exept for the line
+        `64BIT=y`, when I ran `make defconfig` on both of the Kconfig files.
+
 ### NOTES
 
   * In average (out of 600 results), one compilation takes 7.85 minutes.
@@ -345,3 +363,9 @@ And there are often extra flags to the gcc command. Here are some examples.
 
 [8] http://www.linuxquestions.org/questions/linux-hardware-18/compiling-64-bit-kernel-in-32-bit-linux-240183/
     A note on crosscompiling
+
+[9] Gnu Make manpage
+    A reference to how Gnu Make works, and the exit statuses
+
+[A] https://code.google.com/p/distcc/
+    A distributed C/C++ compiler. It may be useful. But probably not.
