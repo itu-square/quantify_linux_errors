@@ -30,9 +30,9 @@ function find_ratio
 }
 
 
-find_ratio "CONFIG_64BIT"
 find_ratio "CONFIG_ELVIS"
-find_ratio "CONFIG_X86"
-find_ratio "CONFIG_GENERIC_PENDING_IRQ"
-find_ratio "CONFIG_SBUS"
-find_ratio "CONFIG_MMU"
+find_ratio "CONFIG_FOO"
+find_ratio "CONFIG_BAR"
+find_ratio "CONFIG_FOOBAR"
+find_ratio "CONFIG_BARBAR"
+find_ratio "CONFIG_BARFOO"

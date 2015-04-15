@@ -1,0 +1,15 @@
+mainmenu "Linux/$ARCH $KERNELVERSION Kernel Configuration"
+config ELVIS
+    def_bool y
+config FOO
+    bool "foo"
+    select BAR=n
+    select FOOBAR=n
+config BAR
+    bool "bar"
+    select FOO=n
+    select FOOBAR=n
+config FOOBAR
+    bool "foobar"
+    select FOO=n
+    select BAR=n

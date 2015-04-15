@@ -1,0 +1,18 @@
+mainmenu "Linux/$ARCH $KERNELVERSION Kernel Configuration"
+config ELVIS
+    def_bool y
+config FOO
+    bool "foo"
+config BAR
+    bool
+    prompt "bar"
+    depends on FOO
+    depends on FOOBAR
+    select BARBAR
+    select BARFOO
+config FOOBAR
+    bool "foobar"
+config BARBAR
+    bool "barbar"
+config BARFOO
+    bool "barfoo"
