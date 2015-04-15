@@ -103,7 +103,8 @@ then
 fi
 
 
-configmd5=`md5sum .config | awk '{print $1}'`
+sorted_config=`grep -v "^#" .config | grep -v "^$" | sort`
+configmd5=`echo "$sorted_config"  | md5sum | awk '{print $1}'`
 logdir="$logrootdir/$configmd5"
 
 if [ ! -d "$logdir" ]
@@ -113,6 +114,7 @@ fi
 
 grep "warning" /tmp/stderr.log > "$logdir"/"$conferrfile"
 cp ".config" "$logdir"/config
+echo "$sorted_config" > "$logdir"/config_sorted
 
 num_conf_errs=`wc "$logdir"/"$conferrfile"|awk '{print $1}'`
 echo -en "$num_conf_errs wrns\t"

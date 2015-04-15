@@ -203,4 +203,8 @@ Notice HAVE_BAR has no dependencies.
 
 --------------------------
 
+-> More <-
+=========
 
+- collisions in configuration files (md5sum)
+- statistics on a tree structure

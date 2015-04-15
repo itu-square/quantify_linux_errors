@@ -26,6 +26,11 @@
 
   * How to unclause `choice`
 
+  * The md5sum is calculated from the config. But sometimes, there may be
+    comments, that are included in some configs, but not in others. This can 
+    mean two effectively equal configs, but md5sum wise not equal configs.
+    Mitigation: remove all comments (lines starting with '#') and sorting.
+
 ### How to unclause `choice`
 
 There are two kinds of choice blocks. A one-choice, and a multiple-choice one.                      
