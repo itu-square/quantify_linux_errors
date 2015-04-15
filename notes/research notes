@@ -3,7 +3,6 @@
   * Maybe look at how to get Kconfiglib.py to open a .config file
       - It can first open a .config file when it has opened a Kconfig file - 
         I think. It looks that way in one of the examples (maybe grep_help)
-    [WILL NOT - kconfiglib.py can itself create the .config file for me
                                                                 I think]
 
   * Just start creating a script, that will transform the Kconfig-files
@@ -15,9 +14,72 @@
         wrong.
         But it didn't. the `.config` files were the same exept for the line
         `64BIT=y`, when I ran `make defconfig` on both of the Kconfig files.
+    [PENDING - will hear with Claus first]
 
   * Presentation
       - Look at error types. Learn about them. 
+
+      * What is:
+          - PreProcessing. See [B]
+
+  * Find out why some HAVE_FOOs have dependencies.
+
+  * How to unclause `choice`
+
+### How to unclause `choice`
+
+There are two kinds of choice blocks. A one-choice, and a multiple-choice one.                      
+multi-choice has:
+
+    choice 
+        tristate "some text"
+    config FOO
+
+one-choice has:
+    choice
+    config FOO
+    config BAR
+
+But so far, I have only found one multiple-choice (USB Gadget Drivers)
+There will probably be some more, or the same in all the different 
+architectures. (I only searched through the x86 one)
+
+Here is a suggestion on how to maybe unclause the choice.
+    choice
+        config FOO
+        config BAR
+        config FOOBAR
+
+will probably be something like:
+
+    config FOO
+        select BAR=n
+        select FOOBAR=n
+    config BAR
+        select FOO=n
+        select FOOBAR=n
+    config FOOBAR
+        select FOO=n
+        select BAR=n
+
+But I will probably have to create some pseudo-configs like the HAVE_FOO
+to not break any dependencies. (Because `select` does not consider deps)
+
+    config HAVE_FOO
+        select HAVE_BAR=n
+        select HAVE_FOOBAR=n
+    config HAVE_BAR
+        select HAVE_FOOBAR=n
+        select HAVE_FOO=n
+    config HAVE_FOOBAR
+        select HAVE_BAR=n
+        select HAVE_FOO=n
+    config FOO
+        depends on HAVE_FOO
+    config BAR
+        depends on HAVE_BAR
+    config FOOBAR
+        depends on HAVE_FOOBAR
 
 ### NOTES
 
@@ -262,22 +324,15 @@ is the same as this:
 which is more better when I have to randomize the stuff.
 
 
-## FILES TO LOOK AT
+### NEWEST MEETING AGENDA
 
-source/scripts/kconfig/conf.c:645
-source/scripts/kconfig/confdata.c:1116
-    conf_set_all_new_symbols()
-  - this is something about randconfig and how it flips the coin.. I think
-
-
-### MEETINGS
-
-AGENDA:
 - KConfig: Syntactic Specification
     Read the kconfig-language.txt file
 - Find a Parser for Kconfig and figure out how to get an AST (Abstract Syntax Tree)
     Look for parsers to KConfig
     Maybe `make randconfig` is a parser?
+    - TypeChef
+    - Kconfiglib
 - Write a couple of Kconfig transformation examples
     Try to get rid of the `menu` and `prompt` stuff, and see if it outputs the same
     Try to rewrite everything from `if FOO;config BAR;endif` to `config BAR; depends FOO`
@@ -372,3 +427,6 @@ And there are often extra flags to the gcc command. Here are some examples.
 
 [A] https://code.google.com/p/distcc/
     A distributed C/C++ compiler. It may be useful. But probably not.
+
+[B] http://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
+    About Preprocessing

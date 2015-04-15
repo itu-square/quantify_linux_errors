@@ -2,6 +2,23 @@
 %author: Elvis Flesborg
 %date: today > 1st Sep 2015
 
+-> About Me and the Project <-
+=========
+
+
+o Master Thesis on ITU Copenhagen
+
+o Claus Brabrand as supervisor
+
+o Jean as co-supervisor
+
+
+o Can we make a representative sample of all configs in Linux?
+
+o Can we then say something statistically about this?
+
+----------------------
+
 -> About the Linux Kernel <-
 =========
 
@@ -176,5 +193,14 @@ Notice HAVE_BAR has no dependencies.
 =========
 
 - uninitialized variable
+
+# Notes
+# Tell about I had 3 different ways of permuting.
+#   - rewrite randconfig
+#   - intercept AST
+#   - permute Kconfig
+#   ^ Or something like it. Look in my notebook, I don`t remember
+
+--------------------------
 
 
