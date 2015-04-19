@@ -1,4 +1,26 @@
+TABLE OF CONTENTS
+=================
+
 ### TODO tmp
+## Kconfig
+### How to unclause `choice`
+### Compilation times
+### TODO
+# Laterbase
+### DONE
+### NEWEST MEETING AGENDA
+### -Wall
+### REFERENCES
+
+
+
+### TODO tmp
+
+## Kconfig
+
+  * Find out why some HAVE_FOOs have dependencies.
+
+  * How to unclause `choice`
 
   * Maybe look at how to get Kconfiglib.py to open a .config file
       - It can first open a .config file when it has opened a Kconfig file - 
@@ -16,20 +38,6 @@
         `64BIT=y`, when I ran `make defconfig` on both of the Kconfig files.
     [PENDING - will hear with Claus first]
 
-  * Presentation
-      - Look at error types. Learn about them. 
-
-      * What is:
-          - PreProcessing. See [B]
-
-  * Find out why some HAVE_FOOs have dependencies.
-
-  * How to unclause `choice`
-
-  * The md5sum is calculated from the config. But sometimes, there may be
-    comments, that are included in some configs, but not in others. This can 
-    mean two effectively equal configs, but md5sum wise not equal configs.
-    Mitigation: remove all comments (lines starting with '#') and sorting.
 
 ### How to unclause `choice`
 
@@ -86,7 +94,7 @@ to not break any dependencies. (Because `select` does not consider deps)
     config FOOBAR
         depends on HAVE_FOOBAR
 
-### NOTES
+### Compilation times
 
   * In average (out of 600 results), one compilation takes 7.85 minutes.
       - This is wrong.. I forgot that there are not 100 seconds per minute :(
@@ -151,8 +159,6 @@ to not break any dependencies. (Because `select` does not consider deps)
   * `categorize.py` has an error, which makes it output an 'error' that is 
     multiple lines long.
 
-  * Look at what errors occur, and how many of which type.
-
   * Find out if running `make` actually runs `gcc -Wall`
       - maybe [5](ntu.edu.sg) can help figure something out
       - It looks like that both busybox and linuxkernel uses the -Wall flags in
@@ -166,6 +172,7 @@ to not break any dependencies. (Because `select` does not consider deps)
           o There are like 55 / 2000 lines that contain `gcc` that do not have 
             the `-Wall` flag... This is not a lot, so I am not sure I will look
             into this.
+            BTW: `make -d` and `make V=1` is sortof the same, I think.
 
   * Find out if I need a dependency for busybox... Maybe.
       - Maybe I do not need it, since it really is about Linux after all.
@@ -179,6 +186,12 @@ to not break any dependencies. (Because `select` does not consider deps)
 
 
 ### DONE
+
+  * The md5sum is calculated from the config. But sometimes, there may be
+    comments, that are included in some configs, but not in others. This can 
+    mean two effectively equal configs, but md5sum wise not equal configs.
+    Mitigation: remove all comments (lines starting with '#') and sorting.
+    [DONE]
 
   * Find out if `make -j` needs to be (#cores * 2 + 1) instead of (#cores + 1)
       - Someone said (1.5 x #cores), but I think (#cores + 1) is fine.
@@ -293,42 +306,6 @@ to not break any dependencies. (Because `select` does not consider deps)
       ! At the meeting 26. feb 2015 it was decided to use the error types from
         `gcc -Wall`. Not the ones from [4](VBDb.itu.dk).
 
-### KCONFIG LANGUAGE
-
-`mainmenu` does not matter
-
-## if
-
-It states in the kconfig-language.txt file, that
-
-    "if" <expr>
-    <if block>
-    "endif"
-
-    This defines an if block. The dependecy expression <expr> is appended
-    to all enclosed menu entries.
-
-I take it that this:
-
-    if FOO
-    config BAR
-        bool
-    config BARBAR
-        bool
-    endif
-
-is the same as this:
-
-    config BAR
-        bool
-        depends on FOO
-    config BARBAR
-        bool
-        depends on FOO
-
-which is more better when I have to randomize the stuff.
-
-
 ### NEWEST MEETING AGENDA
 
 - KConfig: Syntactic Specification
@@ -345,20 +322,6 @@ which is more better when I have to randomize the stuff.
     Look at 42 bugs homepage[4] to see what bugs they have found
     Try to classify all the bugs, and know what types there are, Elvis
 
-
-### ERROR DATA
-
-[config, 
-time,
-cpu,
-ram,
-analyzer used: 
-    raw buginfo,
-    beautified buginfo: [
-        error type,
-        filename, 
-        line no, 
-        error message ]
 
 ### -Wall
 
@@ -435,3 +398,13 @@ And there are often extra flags to the gcc command. Here are some examples.
 
 [B] http://www3.ntu.edu.sg/home/ehchua/programming/cpp/gcc_make.html
     About Preprocessing
+
+[C] http://www.linuxfromscratch.org/lfs/view/stable/chapter08/kernel.html
+    Howto on compiling the kernel. Do not rely on the kernel tree to be clean 
+    after untarring.
+
+[D] http://www.buildroot.org/downloads/manual/manual.html
+    They have some clarifications on Kconfig language
+
+[E] http://www.tldp.org/HOWTO/Lex-YACC-HOWTO.html
+    yacc and bison explaination

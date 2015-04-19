@@ -27,12 +27,12 @@ cd "$cwd$folder"
 
 function randconfigcreate 
 {
-    echo -en "clean\t"
-    make clean 1> /dev/null 2> /dev/null
+    #echo -en "clean\t"
+    #make clean 1> /dev/null 2> /dev/null
     echo -en "randconf\t"
     make V=1 randconfig 1> /tmp/1.log  2> /tmp/2.log
 
-    md5sum=`md5sum .config | awk '{print $1}'`
+    md5sum=`grep -v "^#" .config | grep -v "^$" | md5sum | awk '{print $1}'`
     echo -en "$md5sum\n"
     mkdir -p "$logdir$md5sum"
     cp .config "$logdir$md5sum/config"

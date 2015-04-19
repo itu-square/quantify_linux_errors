@@ -1,5 +1,21 @@
 Kconfig
--------
+=======
+
+Table of contents
+=================
+### Grammar and syntax
+## EBNF (freestyle)
+## BNF (inspired by [2](Lua))
+#### Rewriting the concatenated Kconfig file
+### IF clauses
+### Menu clauses
+### DEPENDENCY TREE
+### Interesting files and functions
+### References
+
+
+
+
 
 ### Grammar and syntax
 
@@ -7,6 +23,7 @@ The Context-free grammar for Kconfig can be read in the file:
 `<kernel source>/Documentation/kbuild/kconfig-language.txt`
 
 I have translated this to the *Extended Backus-Naur Form* (EBNF)[1]
+(tried to translate)
 
 ## EBNF (freestyle)
 
@@ -200,6 +217,17 @@ concatenating into one big list. We will have to have a list of all the 'or's.
 So the data structure for a feature's dependencies should contain two lists.
 One list with the 'and's and one list with the 'or'-expressions.
 
+### Interesting files and functions
+
+I have extracted all the function names in both files. They are in this folder
+in the files `confdata.c.functions` and `conf.c.functions`.
+
+<src>/scripts/kconfig/confdata.c
+  - 
+
+<src>/scripts/kconfig/conf.c
+  -
+
 ### References
 
 [1] https://en.wikipedia.org/wiki/Extended_Backus–Naur_Form
@@ -232,3 +260,6 @@ One list with the 'and's and one list with the 'or'-expressions.
 
 [A] http://freetz.org/browser/trunk/tools/developer/create-kconfig-warnings
     Somebody's script which creates 1000s of randconfigs?
+
+[B] http://www.linuxjournal.com/content/kbuild-linux-kernel-build-system
+    2012 article about Kbuild
