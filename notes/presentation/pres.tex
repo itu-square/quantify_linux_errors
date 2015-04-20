@@ -5,6 +5,10 @@
 
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{amsfonts}
+\usepackage{courier}
+\usepackage{alltt}
+\usepackage{fancyvrb}
 
 \newenvironment{items}{
 \begin{itemize}
@@ -13,71 +17,213 @@
   \setlength{\parsep}{4pt}
 }{\end{itemize}}
 
+\title{A Quantitative Analysis of Errors in Linux}
+\subtitle{@ Helekilde Badehotel, Tisvildeleje}
+
 \begin{document}
+
+\frame{\titlepage}
 
 \begin{frame}[t]
     \frametitle{About Me}
 
     \begin{items}
         \item Elvis Flesborg
-
-        \item Master thesis on ITU Copenhagen
+        \item Master thesis at IT University of Copenhagen
         \item Claus Brabrand as supervisor
         \item Jean Melo as co-supervisor
     \end{items}
 \end{frame}
 
-\begin{frame}[t]{About the Project}
+\begin{frame}[t]{Objective}
     
 
     \begin{items}
-        \item Make a representative sample of all configurations
-        \item Look for errors in those configurations
+        \item Quantify errors in Linux
+        \pause
+        \item In contrast to [42bugs], which is a qualitative analysis
+        \pause
         \begin{items}
-            \item If too few are found, scale down to warnings
-        \end{items}
-    \end{items}
-
-    
-    Answer questions like:
-    
-
-    \begin{items}
-        \item How many bugs are there in total?
-        \item What types of bugs are there most of?
-        \item Where are the bugs mostly located?
-        \item \color{red}{... Any ideas?}
-    \end{items}
-\end{frame}
-
-\begin{frame}[t]{About the Linux Kernel}
-    
-
-    \begin{items}
-        \item 14172 different features \footnote{ grep -r "$\wedge\setminus$ *config\ " $|$ grep Kconfig $|$ awk -F':' '$\{$print \$ 2$\}$' $|$ sort $|$ uniq $|$ wc }.
-        \item That is $2^{14172}$ different configurations minus invalid 
+            \item 14,172 different features 
+            \begin{items}
+                \item \color{lightgray}{grep -r "$\wedge\setminus$ *config\ " $|$ grep Kconfig $|$ awk -F':' '$\{$print \$ 2$\}$' $|$ sort $|$ uniq $|$ wc }
+            \end{items}
+            \item That is \underline{$2^{14,172}$} different configurations minus invalid 
                 configurations.
-        \item Still more than estimated number of atoms in the known universe.
-        \item Will use the already existing tool \emph{make randconfig}.
-        \item Run 1 million times.
-        \begin{items}
-            \item Average compile time is 8 minutes
-            \item 1 million times 8 minutes
-            \item 55 computers
-            \item 3 months
+            \item More than estimated number of atoms in the known universe.
         \end{items}
+    \end{items}
+
+\end{frame}
+
+\begin{frame}[t]{Research Questions}
+
+    \begin{items}
+        \item How many bugs?
+        \pause
+        \item What are the most common types of bugs?
+        \pause
+        \item Where are most bugs?
+        \pause
+        \item Which features are error-prone?
     \end{items}
 \end{frame}
 
-\begin{frame}[t]
-    
-    \frametitle{The Sample}
-    
+\begin{frame}[t]{Metric}
 
-    It is important to get a representative sample
+    \begin{items}
+        \item \textbf{A representative sample of configurations}
+    \end{items}
 
-    \includegraphics[scale=.5]{sample.png}
+    \begin{columns}[T]
+    \column{.5\textwidth}
+        \includegraphics[scale=.5]{sample.png}
+    \column{.5\textwidth}
+        \pause
+        \begin{items}
+            \item If it is representative, I can generalize
+            \pause
+            \item Need a method of generating random configurations from the 
+                        feature model
+        \end{items}
+    \end{columns}
 \end{frame}
+
+\begin{frame}[t]{Research Questions - Revisited}
+
+    \begin{items}
+        \item How many bugs?
+        \item What are the most common types of bugs?
+        \item Where are most bugs?
+        \item Which features are error-prone?
+        \pause
+        \item \color{red}{... Additional questions?}
+        \item \color{red}{... Prioritization?}
+        \item \color{red}{... Take 2 minutes to brainstorm about it}
+    \end{items}
+\end{frame}
+
+\begin{frame}[t]{Methodology}
+
+
+    \begin{columns}[T]
+    \column{.5\textwidth}
+        \includegraphics[scale=.5]{machine.png}
+    \column{.5\textwidth}
+        \begin{items}
+            \item Feed it with the feature model
+            \pause
+            \item Collect $\kappa_{random}$
+            \pause
+            \item Assure $\kappa_{random} \in \mathbb{K}$
+        \end{items}
+    \end{columns}
+\end{frame}
+    
+
+\begin{frame}[t]{Methodology - }
+
+    \begin{columns}[T]
+    \column{.33\textwidth}
+        \textbf{Existing randconfig}
+        % Introduction to randconfig
+        % Flip a coin for every feature
+        % Will look at dependencies first
+        % Designed for Testing purpose
+        % They have maybe not laid much work in on this
+        \pause
+        \begin{items}
+            \item Concatenate Kconfig files
+            \item Permute the order
+            \item Flatten the structure
+            \pause
+            \item Still biased in the coin flipping !
+            \item See following Kconfig example
+        \end{items}
+    \column{.33\textwidth}
+    \column{.33\textwidth}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}[t,fragile]{randconfig bias}
+
+    \begin{columns}[T]
+    \column{.3\textwidth}
+    \begin{Verbatim}
+config A
+    bool
+
+config B
+    bool
+    depends on A
+
+config C
+    bool
+    depends on B
+
+config D
+    bool
+    depends on C
+    \end{Verbatim}
+
+    \pause
+    \column{.6\textwidth}
+
+    \begin{items}
+        \item Possible configurations with \emph{randconfigs} chances  are:
+        \begin{items}
+            \item () \emph{50\%}
+            \item (A) \emph{50\%}
+            \item (A,B) \emph{25\%}
+            \item (A,B,C) \emph{12.5\%}
+            \item (A,B,C,D) \emph{6.25\%}
+        \end{items}
+        \pause
+        \item This is biased, and not representative.
+    \end{items}
+
+    \end{columns}
+\end{frame}
+
+\begin{frame}[t,fragile]{randconfig bias 2}
+
+    \begin{columns}[T]
+    \column{.3\textwidth}
+
+    \begin{lstlisting}
+config A
+    bool
+
+config B
+    bool
+    depends on A
+
+config C
+    bool
+    depends on B
+
+config D
+    bool
+    depends on C
+    \end{lstlisting}
+
+    \column{.6\textwidth}
+
+    \begin{items}
+        \item We would prefer a totally equal chance:
+        \begin{items}
+            \item () \emph{20\%}
+            \item (A) \emph{20\%}
+            \item (A,B) \emph{20\%}
+            \item (A,B,C) \emph{20\%}
+            \item (A,B,C,D) \emph{20\%}
+        \end{items}
+    \end{items}
+
+    \end{columns}
+\end{frame}
+
 
 \begin{frame}[t]{Compiling a Linux Kernel}
 
@@ -364,83 +510,6 @@ config NUMBERS
         \item \emph{randconfig} is not visual
         \item Also the \emph{comment} options is purely visual, and irrelevant to
                 this project.
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{randconfig bias}
-
-    \begin{columns}[T]
-    \column{.3\textwidth}
-
-    \begin{lstlisting}
-config A
-    bool
-
-config B
-    bool
-    depends on A
-
-config C
-    bool
-    depends on B
-
-config D
-    bool
-    depends on C
-    \end{lstlisting}
-
-    \column{.6\textwidth}
-
-    \begin{items}
-        \item Possible configurations with \emph{randconfigs} chances  are:
-        \begin{items}
-            \item () \emph{50\%}
-            \item (A) \emph{50\%}
-            \item (A,B) \emph{25\%}
-            \item (A,B,C) \emph{12.5\%}
-            \item (A,B,C,D) \emph{6.25\%}
-        \end{items}
-        \item This is biased, and not representative.
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{randconfig bias 2}
-
-    \begin{columns}[T]
-    \column{.3\textwidth}
-
-    \begin{lstlisting}
-config A
-    bool
-
-config B
-    bool
-    depends on A
-
-config C
-    bool
-    depends on B
-
-config D
-    bool
-    depends on C
-    \end{lstlisting}
-
-    \column{.6\textwidth}
-
-    \begin{items}
-        \item We would prefer a totally equal chance:
-        \begin{items}
-            \item () \emph{20\%}
-            \item (A) \emph{20\%}
-            \item (A,B) \emph{20\%}
-            \item (A,B,C) \emph{20\%}
-            \item (A,B,C,D) \emph{20\%}
-        \end{items}
     \end{items}
 
     \end{columns}
