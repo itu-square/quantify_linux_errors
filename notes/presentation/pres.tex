@@ -4,11 +4,11 @@
 \beamertemplatenavigationsymbolsempty
 
 \usepackage{graphicx}
-\usepackage{listings}
 \usepackage{amsfonts}
 \usepackage{courier}
-\usepackage{alltt}
+
 \usepackage{fancyvrb}
+\fvset{commandchars=\\\{\}}
 
 \newenvironment{items}{
 \begin{itemize}
@@ -18,7 +18,7 @@
 }{\end{itemize}}
 
 \title{A Quantitative Analysis of Errors in Linux}
-\subtitle{@ Helekilde Badehotel, Tisvildeleje}
+\subtitle{Elvis Flesborg \\ @ Helenekilde Badehotel, Tisvildeleje}
 
 \begin{document}
 
@@ -30,6 +30,7 @@
     \begin{items}
         \item Elvis Flesborg
         \item Master thesis at IT University of Copenhagen
+        \item Specialization in scalable computing
         \item Claus Brabrand as supervisor
         \item Jean Melo as co-supervisor
     \end{items}
@@ -44,9 +45,9 @@
         \item In contrast to [42bugs], which is a qualitative analysis
         \pause
         \begin{items}
-            \item 14,172 different features 
+            \item Linux has 14,172 different features
             \begin{items}
-                \item \color{lightgray}{grep -r "$\wedge\setminus$ *config\ " $|$ grep Kconfig $|$ awk -F':' '$\{$print \$ 2$\}$' $|$ sort $|$ uniq $|$ wc }
+                \item \color{gray}{grep -r "$\wedge\setminus$ *config\ " $|$ grep Kconfig $|$ awk -F':' '$\{$print \$ 2$\}$' $|$ sort $|$ uniq $|$ wc }
             \end{items}
             \item That is \underline{$2^{14,172}$} different configurations minus invalid 
                 configurations.
@@ -59,11 +60,11 @@
 \begin{frame}[t]{Research Questions}
 
     \begin{items}
-        \item How many bugs?
+        \item How many bugs? (percentage)
         \pause
         \item What are the most common types of bugs?
         \pause
-        \item Where are most bugs?
+        \item Where are most bugs located?
         \pause
         \item Which features are error-prone?
     \end{items}
@@ -83,7 +84,7 @@
         \begin{items}
             \item If it is representative, I can generalize
             \pause
-            \item Need a method of generating random configurations from the 
+            \item Need a method of generating very random configurations from the 
                         feature model
         \end{items}
     \end{columns}
@@ -99,7 +100,11 @@
         \pause
         \item \color{red}{... Additional questions?}
         \item \color{red}{... Prioritization?}
-        \item \color{red}{... Take 2 minutes to brainstorm about it}
+        \item \color{red}{... Take a few minutes to brainstorm about it}
+    \end{items}
+    
+    \begin{items}
+        \item \color{gray}{(One-disabled vs. randconfig)}
     \end{items}
 \end{frame}
 
@@ -121,11 +126,11 @@
 \end{frame}
     
 
-\begin{frame}[t]{Methodology - }
+\begin{frame}[t]{Methodology}
 
     \begin{columns}[T]
     \column{.33\textwidth}
-        \textbf{Existing randconfig}
+        \textbf{Exploit existing randconfig}
         % Introduction to randconfig
         % Flip a coin for every feature
         % Will look at dependencies first
@@ -137,7 +142,10 @@
             \item Permute the order
             \item Flatten the structure
             \pause
+            \item Run \emph{randconfig}
+            \pause
             \item Still biased in the coin flipping !
+            \pause
             \item See following Kconfig example
         \end{items}
     \column{.33\textwidth}
@@ -157,27 +165,17 @@ config A
 config B
     bool
     depends on A
-
-config C
-    bool
-    depends on B
-
-config D
-    bool
-    depends on C
     \end{Verbatim}
 
     \pause
     \column{.6\textwidth}
 
     \begin{items}
-        \item Possible configurations with \emph{randconfigs} chances  are:
+        \item Possible configurations with \emph{randconfig}'s probabilities  are:
         \begin{items}
-            \item () \emph{50\%}
-            \item (A) \emph{50\%}
-            \item (A,B) \emph{25\%}
-            \item (A,B,C) \emph{12.5\%}
-            \item (A,B,C,D) \emph{6.25\%}
+            \item () \textbf{\emph{50\%}}
+            \item (A) \textbf{\emph{25\%}}
+            \item (A,B) \textbf{\emph{25\%}}
         \end{items}
         \pause
         \item This is biased, and not representative.
@@ -186,57 +184,205 @@ config D
     \end{columns}
 \end{frame}
 
-\begin{frame}[t,fragile]{randconfig bias 2}
+\begin{frame}[t,fragile]{randconfig bias}
 
     \begin{columns}[T]
     \column{.3\textwidth}
 
-    \begin{lstlisting}
+    \begin{Verbatim}
 config A
     bool
 
 config B
     bool
     depends on A
-
-config C
-    bool
-    depends on B
-
-config D
-    bool
-    depends on C
-    \end{lstlisting}
+    \end{Verbatim}
 
     \column{.6\textwidth}
 
     \begin{items}
-        \item We would prefer a totally equal chance:
+        \item We would prefer a totally equal probability:
         \begin{items}
-            \item () \emph{20\%}
-            \item (A) \emph{20\%}
-            \item (A,B) \emph{20\%}
-            \item (A,B,C) \emph{20\%}
-            \item (A,B,C,D) \emph{20\%}
+            \item () \textbf{\emph{33\%}}
+            \item (A) \textbf{\emph{33\%}}
+            \item (A,B) \textbf{\emph{33\%}}
         \end{items}
+        \pause
+        \item And so maybe we could invent something
     \end{items}
 
     \end{columns}
 \end{frame}
 
+\begin{frame}[t]{Methodology}
 
-\begin{frame}[t]{Compiling a Linux Kernel}
+    \begin{columns}[T]
+    \column{.33\textwidth}
+        \color{lightgray}{
+        \textbf{Exploit existing randconfig}
+        % Introduction to randconfig
+        % Flip a coin for every feature
+        % Will look at dependencies first
+        % Designed for Testing purpose
+        % They have maybe not laid much work in on this
+        \begin{items}
+        \color{lightgray}{
+            \item Concatenate Kconfig files
+            \item Permute the order
+            \item Flatten the structure
+            \item Run \emph{randconfig}
+            \item Still biased in the coin flipping !
+            \item See following Kconfig example
+        }
+        \end{items}
+        }
+    \column{.33\textwidth}
+        \textbf{Invent elvisconfig}
+        \begin{items}
+            \item Same idea as \emph{randconfig}
+            \pause
+            \item Try to fix bias in coin flipping
+            \pause
+            \item Need to know \#configs(A) vs. \#configs($\neg$A)
+            \pause
+            \item May be impossible
+        \end{items}
+    \column{.33\textwidth}
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}[t]{Methodology}
+
+    \begin{columns}[T]
+    \column{.33\textwidth}
+        \color{lightgray}{
+        \textbf{Exploit existing randconfig}
+        % Introduction to randconfig
+        % Flip a coin for every feature
+        % Will look at dependencies first
+        % Designed for Testing purpose
+        % They have maybe not laid much work in on this
+        \begin{items}
+        \color{lightgray}{
+            \item Concatenate Kconfig files
+            \item Permute the order
+            \item Flatten the structure
+            \item Run \emph{randconfig}
+            \item Still biased in the coin flipping !
+            \item See following Kconfig example
+        }
+        \end{items}
+        }
+    \column{.33\textwidth}
+        \color{lightgray}{
+        \textbf{Invent elvisconfig}
+        \begin{items}
+        \color{lightgray}{
+            \item Same idea as \emph{randconfig}
+            \item Try to fix bias in coin flipping
+            \item Need to know \#configs(A) vs. \#configs($\neg$A)
+            \item May be impossible
+        }
+        \end{items}
+    }
+    \column{.33\textwidth}
+        \textbf{Generate 'n' Filter}
+        \begin{items}
+            \item Flip a coin for every feature
+            \pause
+            \item Do not visit dependencies
+            \pause
+            \item Check for validity
+            \pause
+            \begin{items}
+                \item Kconfig tool
+                \item SAT checker
+            \end{items}
+            \pause
+            \item Uniform distribution
+            \pause
+            \item May take much time
+        \end{items}
+    \end{columns}
+
+\end{frame}
+
+\begin{frame}[t]{Methodology}
+
+    \begin{columns}[T]
+    \column{.33\textwidth}
+        \textbf{Exploit existing randconfig}
+        % Introduction to randconfig
+        % Flip a coin for every feature
+        % Will look at dependencies first
+        % Designed for Testing purpose
+        % They have maybe not laid much work in on this
+        \begin{items}
+        \color{lightgray}{
+            \item Concatenate Kconfig files
+            \item Permute the order
+            \item Flatten the structure
+            \item Run \emph{randconfig}
+            \item Still biased in the coin flipping !
+            \item See following Kconfig example
+        }
+        \end{items}
+    \column{.33\textwidth}
+        \textbf{Invent elvisconfig}
+        \begin{items}
+        \color{lightgray}{
+            \item Same idea as \emph{randconfig}
+            \item Try to fix bias in coin flipping
+            \item Need to know \#configs(A) vs. \#configs($\neg$A)
+            \item May be impossible
+        }
+        \end{items}
+    \column{.33\textwidth}
+        \textbf{Generate 'n' Filter}
+        \begin{items}
+        \color{lightgray}{
+            \item Flip a coin for every feature
+            \item Do not visit dependencies
+            \item Check for validity
+            \begin{items}
+            \color{lightgray}{
+                \item Kconfig tool
+                \item SAT checker
+            }
+            \end{items}
+            \item Uniform distribution
+            \item May take much time
+        }
+        \end{items}
+    \end{columns}
+
+
+    \begin{center}
+    \textbf{\color{red}{Other ideas? Best solution?}}
+    \end{center}
+
+\end{frame}
+
+
+\begin{frame}[t]{Analysing - Data collection}
 
     \begin{items}
-        \item `make randconfig` - create a random configuration.
-        \item `make` - compile the Linux Kernel.
-        \item Save all kinds of information about the compilation.
+        \item Analyse one random configuration \pause(with \textbf{gcc})
+        \pause
+        \item Save all kinds of information
         \begin{items}
-            \item Errors / warnings.
             \item Configuration.
+            \pause
+            \item Errors / warnings
+            \pause
+            \item Program versions (Linux / gcc)
+            \pause
+            \item Make a bug reproducable
         \end{items}
-        \item Do it over and over again.
-        \item Take cross-compiling into account.
+        \pause
+        \item Do it over and over again (with a new random configuration)
     \end{items}
 
 
@@ -245,303 +391,103 @@ config D
 \begin{frame}[t]{Kconfig}
 
     \begin{items}
-        \item The language of the configurations.
+        \item The language of the feature model in Linux \color{gray}{(Busybox and others)}
+        \pause
         \begin{items}
+            \item Grammar
             \item Data types
-            \item Dependencies
-            \item Menu structure (irrelevant to this project)
+            \item Transformation
         \end{items}
 
-
-    Example code, and explaination will be given.
     \end{items}
 \end{frame}
 
 \begin{frame}[t,fragile]{Kconfig - Grammar}
-    \begin{lstlisting}
-K ->      'config' ID TYPE OPTS
-        | 'menuconfig' ID
-        | 'if' ID K 'endif'
-        | 'choice' K K+ 'endchoice'
-        | 'menu' STRING K 'endmenu'
+    \begin{Verbatim}
+K ->      "config" ID TYPE OPT*
+        | "if" ID K "endif"
+        | "choice" K+ "endchoice"
 
-TYPE ->   'bool' | 'tristate' | 'string' | 'int'
+TYPE ->   "bool" | "tristate" | "string" | "int"
 
-OPTS ->   'default' STRING
-        | 'help' STRING
-        | 'range' INT
-        | 'depends on' ID
-        | 'select' ID
-    \end{lstlisting}
+OPT  ->   "default" STRING
+        | "range" INT
+        | "depends on" ID
+        | "select" ID
+    \end{Verbatim}
 \end{frame}
 
 \begin{frame}[t,fragile]{Kconfig - Data types}
     \begin{columns}[T]
     \column{.5\textwidth}
-    \begin{lstlisting}
+    \begin{Verbatim}
 config A
-    bool
+    \textbf{bool}
 config B
-    tristate
+    \textbf{tristate}
 config C
-    int
+    \textbf{int}
     range 5 15
 config D
-    hex
+    \textbf{hex}
     default "c0000000"
 config E
-    string
+    \textbf{string}
     default "FOO"
-    \end{lstlisting}
+    \end{Verbatim}
     \column{.5\textwidth}
-    \begin{lstlisting}
+    \begin{Verbatim}
 
-yes, no (tristate)
+y (ENABLED), n (DISABLED)
 
-yes, no, module
+y, n, module
 
-integers (string)
+integers 
 
 
-hexadecimals (string)
+hexadecimals 
 
 
 string
-    \end{lstlisting}
+    \end{Verbatim}
     \end{columns}
 \end{frame}
 
-\begin{frame}[t,fragile]{Kconfig - Dependencies example}
-    \begin{columns}[t]
-    \column{.4\textwidth}
-    \begin{lstlisting}
+\begin{frame}[t,fragile]{Kconfig - Transformation}
+    \begin{columns}[c]
+    \column{.3\textwidth}
+    \begin{Verbatim}
 config A
     bool
 
-config B
-    bool
-    depends on A
-
-config C
-    bool
-    depends on A
-    \end{lstlisting}
-
-    \column{.2\textwidth}
-    \textbf{Same as}
-
-    \column{.4\textwidth}
-    \begin{lstlisting}
-config A
-    bool
-
-if A
+\textbf{if A}
     config B
         bool
     
     config C
         bool
-endif
-    \end{lstlisting}
-    \end{columns}
-\end{frame}
+\textbf{endif}
+    \end{Verbatim}
 
-\begin{frame}[t,fragile]{Kconfig - Dependencies explaination}
+    \column{.3\textwidth}
+    \includegraphics[scale=.3]{arrowright.png}
 
-    \begin{columns}[T]
-    \column{.4\textwidth}
-    \begin{lstlisting}
-config A
-    bool
-    depends on B
-
-config B
-    bool
-    depends on C
-
-config C
-    bool
-    \end{lstlisting}
-    \column{.6\textwidth}
-    \begin{items}
-        \item B can only be enabled if \emph{A} is enabled.
-        \item `make randconfig` will roll a dice for the dependencies first.
-        \begin{items}
-            \item C, B, then A
-        \end{items}
-        \item Will not just autoselect \emph{A}. We have `select` for that.
-    \end{items}
-
-    \end{columns}
+    \textbf{Transformation}
     
-\end{frame}
 
-\begin{frame}[t,fragile]{Kconfig - Select}
-
-    \begin{columns}[T]
-    \column{.4\textwidth}
-    \begin{lstlisting}
+    \column{.3\textwidth}
+    \begin{Verbatim}
 config A
     bool
-    select B
 
 config B
     bool
-    depends on C
+    \textbf{depends on A}
 
 config C
     bool
-    \end{lstlisting}
-
-    \column{.6\textwidth}
-
-    \begin{items}
-        \item \emph{select} forces the feature to be enabled without looking a 
-                dependencies
-        \item This will give and error in the case of $A \wedge  \neg C$
-        \item In the Linux Kernel, they use pseudo-features to avoid problems.
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{Kconfig - Pseudo-features}
-
-    \begin{columns}[T]
-    \column{.5\textwidth}
-
-    \begin{lstlisting}
-config A
-    bool
-    depends on D
-    select HAVE_B
-config HAVE_B
-    bool
-config B
-    bool
-    depends on HAVE_B && C
-
-config C
-    bool
-config D
-    bool
-    \end{lstlisting}
-
-    \column{.5\textwidth}
-
-    \begin{items}
-        \item If \emph{A} is enabled, it will force \emph{HAVE\_B} to be enabled
-        \item \emph{HAVE\_B} does not have any dependencies that could break.
-        \item This way, multiple features can force enable a dependency.
-        \item No need for a `depends on A $\mid\mid$ B $\mid\mid$ C $\mid\mid$ D`
-        \item The usual way to do it - but there are exceptions.
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{Kconfig - Choice}
-
-    \begin{columns}[T]
-    \column{.4\textwidth}
-
-    \begin{lstlisting}
-choice
-    prompt "Choose"
-    default B
-    depends on FOO
-
-    config A
-        bool
-    config B
-        bool
-    config C
-        bool
-
-endchoice    
-    \end{lstlisting}
-
-    \column{.6\textwidth}
-
-    \begin{items}
-        \item Will only choose one of the features
-        \begin{items}
-            \item Unless it is a multiple-choice
-            \item But I have only encountered one
-            \item Plus - what's the point in those?
-            \item Probably only visual
-        \end{items}
-        \item \emph{randconfig} counts the number of elements, and makes them 
-                equally likely
-        \item Inherit dependencies
-        \item Default value
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{Kconfig - Menu structure}
-
-    \begin{columns}[T]
-    \column{.5\textwidth}
-
-    \begin{lstlisting}
-menu "Letters"
-    depends on ALPHABETH
-    depends on !NUMBERS
-
-    config A
-        bool
-    config B
-        bool
-endmenu
-
-config ALPHABETH
-    bool
-config NUMBERS
-    bool
-    \end{lstlisting}
-
-    \column{.5\textwidth}
-
-    \begin{items}
-        \item Gives dependencies to A and B
-        \item Is for the visual representation
-        \item \emph{randconfig} is not visual
-        \item Also the \emph{comment} options is purely visual, and irrelevant to
-                this project.
-    \end{items}
-
-    \end{columns}
-\end{frame}
-
-\begin{frame}[t,fragile]{randconfig - elvisconfig}
-
-    \begin{columns}[T]
-    \column{0\textwidth}
-
-    \begin{lstlisting}
-    
-    \end{lstlisting}
-
-    \column{1\textwidth}
-
-    \begin{items}
-        \item Change \emph{randconfig} 
-        \begin{items}
-            \item Count the number of objects in the subtree.
-            \item Change the randomness of the dice 
-        \end{items}
-        \item Create \emph{elvisconfig}
-        \begin{items}
-            \item Pick every feature value at random
-            \item Do not look at dependencies
-            \item Discard the invalid configurations
-            \item Uniformly distributed
-        \end{items}
-        \item \color{red}{... Any ideas?}
-    \end{items}
-
+    \textbf{depends on A}
+    \end{Verbatim}
     \end{columns}
 \end{frame}
 
@@ -550,49 +496,26 @@ config NUMBERS
     \begin{columns}[T]
     \column{0\textwidth}
 
-    \begin{lstlisting}
+    \begin{Verbatim}
     
-    \end{lstlisting}
+    \end{Verbatim}
 
     \column{1\textwidth}
 
     \begin{items}
-        \item \emph{randconfig} being biased
-        \item Not getting enough data
+        \item Sample not being representative
+        \item Not getting enough bugs
+        \pause
+        \item \color{red}{Can you think of more?}
     \end{items}
 
     \end{columns}
 \end{frame}
 
-
-\begin{frame}[t,fragile]{Kconfig}
-
-    \begin{columns}[T]
-    \column{.4\textwidth}
-
-    \begin{lstlisting}
-    
-    \end{lstlisting}
-
-    \column{.6\textwidth}
-
-    \begin{items}
-        \item
-    \end{items}
-
-    \end{columns}
+\begin{frame}[t]{Bye}
+    \begin{center}
+        Thank you for your time.
+    \end{center}
 \end{frame}
-
-extra if-example
-config A
-    bool " hej " if !B
-(jeg tror nok, det er saadan det er)
-
-randconfig vs. one-disabled
-
-Threats to validity
-
-The collected data.
-
 
 \end{document}
