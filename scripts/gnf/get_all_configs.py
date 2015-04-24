@@ -1,4 +1,61 @@
 import sys, re, os, random
+import subprocess
+import kconfiglib
+
+
+dirname = "linux-3.19/"
+kconfig_name = "Kconfig_concat"
+feature_model = kconfiglib.Config(dirname+kconfig_name, dirname)
+
+types = ["unknown", "bool", "tristate", "string", "hex", "int"]
+output = {}
+
+for feature in feature_model:
+    type = types[feature.type]
+    
+    if type == "bool":
+        value = random.randrange(2)
+        if value == 1:
+            output[feature.name] = 'y'
+        else:
+            output[feature.name] = 'n'
+
+    elif type == "tristate":
+        value = random.randrange(3)
+        if value == 1:
+            output[feature.name] = 'y'
+        elif value == 2:
+            output[feature.name] = 'm'
+        else:
+            output[feature.name] = 'n'
+
+    if type == "string":
+        strings = []
+        value = ""
+        exprs = feature.def_exprs
+        for v, e in exprs:
+            strings.append(v)
+
+        if len(strings) > 0:
+            rnd = random.randrange(len(strings))
+            value = strings[rnd]
+        output[feature.name] = value
+
+
+for feature in feature_model:
+    if feature.type == 3:
+        print feature.name
+        exprs = feature.def_exprs
+        for v, e in exprs:
+            print "   " + v
+
+sys.exit(1)
+
+for feature in output:
+    print feature + "=" + output[feature]
+
+
+
 
 
 class Config():
@@ -31,23 +88,8 @@ class Config():
     def get_value(self):
         type = self.type
 
-        if type == "bool":
-            value = random.randrange(2)
-            if value == 1:
-                return "y"
-            else:
-                return "n"
 
-        elif type == "tristate":
-            value = random.randrange(3)
-            if value == 1:
-                return "y"
-            elif value == 2:
-                return "m"
-            else:
-                return "n"
-
-        elif type == "string":
+        if type == "string":
             count = len(self.strings)
             if count == 0:
                 return ""
@@ -72,15 +114,12 @@ class Config():
 
 
 def concat_kconfigs():
-    return os.system("python ../permute_kconfig.py ../../linux-3.19")
+    return os.popen("python ../permute_kconfig.py ../../" + dirname).readlines()
 
 
+#lines = concat_kconfigs()
+#print(lines[0].rstrip())
 
-configs = {}
-
-configA = Config("A", "int")
-configA.put_intrange("5", "15")
-print(configA.get_value())
 
 #print(concat_kconfigs())
 
