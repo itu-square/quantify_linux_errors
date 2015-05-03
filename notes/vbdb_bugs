@@ -1,0 +1,42 @@
+| In VBDB.itu.dk                   | In gcc library                      |
+|----------------------------------+-------------------------------------|
+| ### memory errors:               |                                     |
+|----------------------------------+-------------------------------------|
+| null pointer dereference         | -Wnonnull                           |
+| buffer overflow                  |                                     |
+| read out of bounds               | -Warray-bounds                      |
+| insufficient memory              |                                     |
+| memory leak                      |                                     |
+| use after free                   |                                     |
+| write on read only               |                                     |
+|----------------------------------+-------------------------------------|
+| ### compiler warnings:           |                                     |
+|----------------------------------+-------------------------------------|
+| uninitialized variable           | -Winit-self                         |
+|                                  | -Wuninitialized                     |
+|                                  | -Wmaybe-uninitialized               |
+| incompatible types               | -Wincompatible-pointer-types        |
+| unused function (dead code)      | -Wunused-parameter                  |
+| unused variable                  | -Wunused-variable                   |
+| void pointer dereference         |                                     |
+|----------------------------------+-------------------------------------|
+| ### type errors:                 |                                     |
+|----------------------------------+-------------------------------------|
+| undefined symbol                 | -Wundef (?)                         |
+| undeclared identifier            | -Wimplicit-function-declaration (?) |
+| wrong number of args to function | -Wunused-parameter (?)              |
+|----------------------------------+-------------------------------------|
+| ### assertion violations:        |                                     |
+|----------------------------------+-------------------------------------|
+| fatal assertion violation        |
+| non-fatal assertion violation    |
+|----------------------------------|
+| ### API violations:              |
+|----------------------------------|
+| Linux sysfs API violation        |
+| double lock                      |
+|----------------------------------|
+| ### arithmetic errors:           |
+|----------------------------------|
+| numeric truncation               |
+|----------------------------------|
