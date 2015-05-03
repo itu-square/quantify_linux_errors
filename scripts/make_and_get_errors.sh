@@ -134,7 +134,7 @@ echo "$analyzer_version" > "$logdir"/"$analyzer"/version
     #make -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> /dev/null \
     #/
 
-/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -k -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> "$logdir"/"$analyzer"/"$stdoutfile"
+/usr/bin/time -o "$logdir"/"$timefile" -f"$time_format" make -S -j"$no_jobs" 2> "$logdir"/"$analyzer"/"$buginfofile" 1> "$logdir"/"$analyzer"/"$stdoutfile"
 exitstatus="$?"
 
 echo "$tardir" > "$logdir"/"$versionfile"
