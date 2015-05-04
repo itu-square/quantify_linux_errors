@@ -8,15 +8,16 @@ if len(sys.argv) < 3:
     sys.exit(0)
 
 # Setting system environment variables
+arch = sys.argv[2]
 dirname = sys.argv[1]
-os.environ["SRCARCH"] = sys.argv[2]
-os.environ["ARCH"] = sys.argv[2]
+os.environ["SRCARCH"] = arch
+os.environ["ARCH"] = arch
 os.environ["KERNELVERSION"] = dirname[6:]
 
 # Auto configuration
 kconfig_name = "Kconfig"
 allno = kconfiglib.Config(dirname+"/"+kconfig_name, dirname)
-allno.load_config("scripts/gnf/allnoconfig")
+allno.load_config("scripts/gnf/allnoconfigs/" + arch + "_allnoconfig")
 
 
 def in_allno(name):

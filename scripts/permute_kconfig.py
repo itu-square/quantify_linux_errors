@@ -6,7 +6,7 @@ dir = sys.argv[1]
 lines = []
 files = []
 configs = []
-arch = "x86" # NOTE: This should not be hardcoded.
+arch = sys.argv[2] # NOTE: This should not be hardcoded.
 
 
         
