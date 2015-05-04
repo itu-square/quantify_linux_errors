@@ -11,6 +11,8 @@ Table of contents
 ### Menu clauses
 ### DEPENDENCY TREE
 ### Interesting files and functions
+### KconfigLib
+### Optimization and making it go quicker
 ### References
 
 
@@ -227,6 +229,30 @@ in the files `confdata.c.functions` and `conf.c.functions`.
 
 <src>/scripts/kconfig/conf.c
   -
+### KconfigLib
+
+## Example: Count the number of features
+
+It is important to use python2, or else it no work.
+
+>>> import kconfiglib
+>>> featuremodel = kconfiglib.Conf("../linux-3.19/Kconfig_concat", "../linux-3.19")
+>>> count = 0 
+>>> for features in featuremodel:
+...     count += 1
+...
+>>> print count 
+10334
+
+
+### Optimization and making it go quicker
+
+I found out today, that running `make randconfig` is much slower than running
+`./script/kconfig/conf --randconfig Kconfig`.
+100conf/113sec   `make randconfig`
+100conf/  6sec   `./script/kconfig/conf --randconfig Kconfig`
+
+so approximately 18 times faster.
 
 ### References
 
@@ -251,6 +277,7 @@ in the files `confdata.c.functions` and `conf.c.functions`.
 
 [7] https://dl.dropboxusercontent.com/u/10406197/kconfiglib.html
     Python documentation for Kconfiglib python parser
+    Really nice documentation
 
 [8] https://en.wikipedia.org/wiki/Feature_model
     There's a little image depicting a small feature model with dependencies
@@ -263,3 +290,4 @@ in the files `confdata.c.functions` and `conf.c.functions`.
 
 [B] http://www.linuxjournal.com/content/kbuild-linux-kernel-build-system
     2012 article about Kbuild
+

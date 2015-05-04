@@ -4,6 +4,18 @@ To compile the Linux Kernel, a compiler is needed. The GNU Compiler Collection
 (see [3]) is the standard compiler to use. Others can be used, but this report
 will not go in depth with those. 
 
+## Version of gcc
+
+Jesper said, that lots had happened lately at the gcc. It had gotten better at 
+finding certain bugs, or something.
+I was running 4.9.2 until recently, but there is a 5.1 out from april 2015, so 
+I will try to upgrade, and see.
+
+on archlinux, I had to enable the testing, and testing-multilib repos in the
+/etc/pacman.conf file. Then just `pacman -Syu`, and gcc upgraded to the newest
+version 5.1 instead of 4.9.2.
+
+
 ## Configuration 
 
 When compiling the Linux Kernel, the first step is to make the configuration.
@@ -34,12 +46,30 @@ succesfully compiled. If the host machine has an x86_64 architecture, for
 example, only Linux kernels with an architecture of x86_64 and i386 can be 
 created. Unless a cross-compiler is used, but that is more tricky.
 
+## Overriding the flags for  gcc
+
+If `make -e` is run, then it will take the environment variables over the
+variables that are put in the Makefiles. So for example this Makefile line:
+    `HOSTCFLAGS  = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 ...`
+will turn on all kinds of erros, but if I am only interested in let's say:
+    `-Wuninitialized -Wmaybe-uninitialized ...` 
+then I can create an environment
+variable:
+    `export HOSTCFLAGS="-Wuninitialized"` 
+and I will only get those errors. This 
+can help scale the output files down, so I only get the output that I want.
+
+(But I can also just do that afterwards)
+
 
 # Cross-compilers
 
 To find out what architecture a machine is running, type in:
 
 `$ gcc -dumpmachine`
+
+Also really check out [5] and afterwards check out [4]. It is some list of 
+what arguments to give when corsscompiling for the different archs.
 
 
 
@@ -53,3 +83,12 @@ To find out what architecture a machine is running, type in:
     Tutorial on how to create a crosscompiler.
 
 [3] https://gcc.gnu.org/
+
+[4] https://www.kernel.org/pub/tools/crosstool/
+    What the kernel has to say about crosscompilers
+
+[5] http://www.linux.org/threads/the-linux-kernel-compiling-and-installing.5208/
+    Tutorial guy giving some guidance on crosscompiling
+
+[6] https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Warning-Options.html#Warning-Options
+    Good description of all the different warning/error flags.

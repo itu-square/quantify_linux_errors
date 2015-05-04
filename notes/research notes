@@ -357,7 +357,7 @@ to not break any dependencies. (Because `select` does not consider deps)
 -Wunused-variable  
 -Wvolatile-register-var 
 
-And there are often extra flags to the gcc command. Here are some examples.
+And there are often extra flags to the gcc command. 
 
 
 ### REFERENCES
