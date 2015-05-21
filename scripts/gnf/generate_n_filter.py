@@ -5,7 +5,7 @@ import kconfiglib
 #################
 # Configuration #
 #################
-nu_configs = 10
+nu_configs = 1
 output_dir = "/temp/gnf/" # Remember trailing slash (/)
 allnoconfigs_dir = "scripts/gnf/allnoconfigs/"
 
@@ -13,18 +13,22 @@ allnoconfigs_dir = "scripts/gnf/allnoconfigs/"
 # Auto configuration
 string_debug = False
 kconfig_name = "Kconfig"
+doscramble = True
 
 
 # Usage
 if len(sys.argv) < 3:
     print ""
-    print "Usage: python2 generate_n_filter.py <kernel dir> <arch> [-s]"
+    print "Usage: python2 generate_n_filter.py <kernel dir> <arch> [-[s|n]]"
     print "  -s    Will output all the string symbols and their possible values"
+    print "  -n    Will only take the allnoconfig. Used for debugging this script."
     print ""
     sys.exit(1)
 elif len(sys.argv) > 3:
     if sys.argv[3] == "-s":
         string_debug = True
+    if sys.argv[3] == "-n":
+        doscramble = False
 
 # Auto configuration 2
 dirname = sys.argv[1]
@@ -55,7 +59,6 @@ except OSError as exc:
 feature_model = kconfiglib.Config(dirname+"/"+kconfig_name, dirname)
 
 # Loading the allnoconfig for this architecture #
-#os.popen("python2 scripts/gnf/get_minimum_k.py " + dirname + " " + arch + ">" + min_k_file)
 min_k = open(min_k_file)
 min_k = [i.split("=")[0] for i in min_k]
 feature_model.load_config(min_k_file)
@@ -176,8 +179,12 @@ if ( string_debug ):
 for i in range(0, nu_configs):
     print str(i)
     thefile = open(output_dir + str(i), 'w')
-    #randconf = scramble(feature_model)
-    randconf = donotscramble(feature_model)
+
+    if ( doscramble ):
+        randconf = scramble(feature_model)
+    else:
+        randconf = donotscramble(feature_model)
+    
     for line in randconf:
         if randconf[line] in ['y', 'm']:
             thefile.write("CONFIG_%s=" % line )

@@ -16,6 +16,19 @@ TABLE OF CONTENTS
 
 ### TODO tmp
 
+the architecture `um` does not have a file called Kconfig. They are called
+`Kconfig.common` etc... Is this a bug, or will Kconfig in fact take all files
+that just start with Kconfig?
+
+Test from an allnoconfig.
+  * 1 enabled (that is not in the allnoconf)
+  * 2 enabled
+  * 3 ..
+  * ..
+  * ..
+  * n
+And see when does it start getting too low in valid/invalid ratio?
+
 ## Kconfig
 
   * Find out why some HAVE_FOOs have dependencies.

@@ -1,6 +1,8 @@
-import sys, re, os, random
+import sys, re, os
 import kconfiglib
 
+# Configuration
+output_dir = "scripts/gnf/allnoconfigs/"
 
 # Usage:
 if len(sys.argv) < 3:
@@ -17,7 +19,7 @@ os.environ["KERNELVERSION"] = dirname[6:]
 # Auto configuration
 kconfig_name = "Kconfig"
 allno = kconfiglib.Config(dirname+"/"+kconfig_name, dirname)
-allno.load_config("scripts/gnf/allnoconfigs/" + arch + "_allnoconfig")
+allno.load_config(output_dir + arch + "_allnoconfig")
 
 
 def in_allno(name):
