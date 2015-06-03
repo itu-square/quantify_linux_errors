@@ -1,0 +1,20 @@
+config A
+    bool "A"
+config B
+    bool "B"
+config C
+    bool "B"
+config D
+    bool "B"
+config E
+    bool "B"
+config F
+    string "string"
+    default "ifA" if A
+    default "def"
+config G
+    int "int"
+    range 1 5
+config H
+    hex "hex"
+    default "0xD000"

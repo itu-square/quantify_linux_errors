@@ -3,25 +3,48 @@
 # `make olddefconfig`, and see if the .config file has not changed.
 
 # Not a very clean and nice way of validating, and it does not _really_
-# work. In the sense, that if the file is permuted (lines are randomized) or
-# even alphabetized, it will not output the same .config.
-# So they should be in some order, that Kconfig tells us, I guess.
+# Work so well.
 
-srcdir="linux-3.19"
-configdir="/temp/gnf/"
-export ARCH=x86
-export SRCARCH=x86
-export KERNELVERSION=3.19.0
+# The order of the lines in the .config does not matter
+# If there are duplicates, `make olddefconfig` will fix
+# the `# CONF... is not set` or `CONF_FOO=BAR` MUST be there
+
+# TODO: must not hardcode stuff in the source code
+
+srcdir="linux-4.0.4" # TODO
+configdir="/temp/gnf/" 
+toyconfig_file="../scripts/gnf/ToyConfig"
+kconfig_file="Kconfig"
+if [ "$1" == "-d" ]
+then
+    toyexample=true
+else
+    toyexample=false
+fi
+
+export ARCH=x86 # TODO
+export SRCARCH=x86 # TODO
+export KERNELVERSION=4.0.4 # TODO
+
+rm /temp/1 /temp/2
 
 cd "$srcdir"
-#for i in `ls "$configdir"`
-for i in `seq 0 9`
+rm thesame.txt
+if [ $toyexample == true ]
+then
+    echo "replacing Kconfig with ToyConfig"
+    cp "$kconfig_file" Kconfig.orig
+    cp "$toyconfig_file" "$kconfig_file"
+fi
+#for i in `seq 0 9`
+for i in `ls "$configdir"`
 do
     echo -n "$i "
     cp "$configdir""$i" ./.config
     #make olddefconfig  2>/dev/null 1>/dev/null
-    ./scripts/kconfig/conf --olddefconfig Kconfig  1>/dev/null 2>/dev/null
-    lkdiff .config "$configdir""$i"  2>/dev/null 1>/dev/null
+    ./scripts/kconfig/conf --olddefconfig Kconfig  1>> /temp/1 2>> /temp/2
+    #lkdiff .config "$configdir""$i"  2>/dev/null 1>/dev/null
+    ./scripts/diffconfig .config "$configdir""$i"
     if [ "$?" == "0" ]
     then
         echo ""
@@ -31,3 +54,9 @@ do
         echo "$i" >> thesame.txt
     fi
 done
+
+if [ $toyexample == true ]
+then
+    echo "restoring original Kconfig"
+    cp Kconfig.orig "$kconfig_file"
+fi
