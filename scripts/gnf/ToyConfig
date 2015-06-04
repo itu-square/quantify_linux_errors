@@ -18,3 +18,4 @@ config G
 config H
     hex "hex"
     default "0xD000"
+    default "0xA" if A

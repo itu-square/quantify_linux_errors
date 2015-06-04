@@ -45,7 +45,7 @@ def scrap(list):
         if not len(words):
             continue
         if words[0] in conf_words:
-            output_list.append("CONFIG_" + words[1])
+            output_list.append(words[1])
     return output_list
 
 

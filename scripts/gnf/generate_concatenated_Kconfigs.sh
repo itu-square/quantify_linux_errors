@@ -12,6 +12,11 @@ fi
 
 for i in `ls "$1""/arch"`
 do
+    if [ "$i" == "um" ]
+    then
+        continue
+    fi
+
     if [ -d "$1""/arch/$i" ]
     then
         python scripts/gnf/generate_concatenated_Kconfigs.py "$dir" "$i" > "$output_dir""$i"
