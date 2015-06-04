@@ -15,6 +15,10 @@ on archlinux, I had to enable the testing, and testing-multilib repos in the
 /etc/pacman.conf file. Then just `pacman -Syu`, and gcc upgraded to the newest
 version 5.1 instead of 4.9.2.
 
+install version from core with command:
+`sudo pacman -S core/gcc`
+This will install version 4.9.2 and replace version 5.0.1 from the multilib
+
 
 ## Configuration 
 
@@ -71,6 +75,8 @@ To find out what architecture a machine is running, type in:
 Also really check out [5] and afterwards check out [4]. It is some list of 
 what arguments to give when corsscompiling for the different archs.
 
+Check out [7](github:linux-build-test) to see if I can use that script to auto-
+compile for all architectures somehow.
 
 
 ## References
@@ -92,3 +98,6 @@ what arguments to give when corsscompiling for the different archs.
 
 [6] https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Warning-Options.html#Warning-Options
     Good description of all the different warning/error flags.
+
+[7] https://github.com/groeck/linux-build-test
+    Someone created a script that crosscompiles for all archs. 
