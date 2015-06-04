@@ -41,10 +41,15 @@ for i in `ls "$configdir"`
 do
     echo -n "$i "
     cp "$configdir""$i" ./.config
-    #make olddefconfig  2>/dev/null 1>/dev/null
-    ./scripts/kconfig/conf --olddefconfig Kconfig  1>> /temp/1 2>> /temp/2
+    # Too slow
+        #make olddefconfig  2>/dev/null 1>/dev/null 
+    # Maybe inaccurate ?
+        #./scripts/kconfig/conf --olddefconfig Kconfig  1>> /temp/1 2>> /temp/2
+    #make KCONFIG_NOSILENTUPDATE=1 silentoldconfig
+    KCONFIG_NOSILENTUPDATE=1 ./scripts/kconfig/conf --silentoldconfig Kconfig
+
     #lkdiff .config "$configdir""$i"  2>/dev/null 1>/dev/null
-    ./scripts/diffconfig .config "$configdir""$i"
+    #./scripts/diffconfig .config "$configdir""$i"
     if [ "$?" == "0" ]
     then
         echo ""

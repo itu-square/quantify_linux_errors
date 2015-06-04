@@ -9,7 +9,7 @@ import kconfiglib
 #################
 # Configuration #
 #################
-nu_configs = 1000
+nu_configs = 10000
 output_dir = "/temp/gnf/" # Remember trailing slash (/)
 allnoconfigs_dir = "scripts/gnf/allnoconfigs/"
 
@@ -103,10 +103,13 @@ def scramble(fm):
     counter_min_k = 0
 
     for feature in fm:
+            
+
         if feature.name in skips:
             continue
 
         inallno = False
+        value = ""
 
         if feature.get_name() in output:
             continue
@@ -186,25 +189,37 @@ def scramble(fm):
 
         if type == "int":
 
+
             # coin toss. 50% =n / 50% =<random default>
             rnd = random.randrange(1)
             if rnd == 1: 
                 output[feature.name] = "n"
                 continue
 
-            if feature.has_ranges():
-                for r in feature.ranges:
-                    a = str(r[0].name)
-                    b = str(r[1].name)
-                    if a.isdigit() and b.isdigit():
-                        value = random.randrange(int(a), int(b)+1)
+            #if feature.name in ["INITRAMFS_ROOT_GID", 'MSNDCLAS_IRQ','MSNDPIN_IRQ','INITRAMFS_ROOT_UID']:
+                #print(feature)
+
+            defaults = str(feature).split("\n")
+            default = ""
+            for count, line in enumerate(defaults):
+                if line.strip() == "Default values:":
+                    default = defaults[count+1].strip().split()
+                    value = default[0].strip("\"")
                     break
 
             output[feature.name] = str(value)
             continue
 
         if type == "hex":
-            output[feature.name] = "n"
+            #print(feature)
+            defaults = str(feature).split("\n")
+            default = ""
+            for count, line in enumerate(defaults):
+                if line.strip() == "Default values:":
+                    default = defaults[count+1].strip().split()
+                    default = default[0].strip("\"")
+                    break
+            output[feature.name] = default
             continue
             
 
