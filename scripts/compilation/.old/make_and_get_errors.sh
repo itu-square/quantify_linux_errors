@@ -10,7 +10,7 @@ no_hz=`grep "model\ name" -m 1 /proc/cpuinfo|awk '{print $NF}'`
 no_ram=`grep MemTotal /proc/meminfo|awk '{print $2}'`
 rootdir=`pwd`
 
-# Semi configuration
+# Semi auto configuration
 logrootdir="$rootdir/results/$tardir"
 buginfofile="stderr_raw"
 stdoutfile="stdout_raw"

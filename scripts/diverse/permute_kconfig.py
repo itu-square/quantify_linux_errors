@@ -178,7 +178,8 @@ def create_tree(lines):
 
 
 
-concatenate(dir + "/Kconfig")
+#concatenate(dir + "/Kconfig")
+concatenate(dir + "/Config.in")
 lines = remove_help_text(lines)
 lines = remove_comments(lines)
 

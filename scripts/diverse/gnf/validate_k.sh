@@ -12,8 +12,10 @@
 # TODO: must not hardcode stuff in the source code
 
 srcdir="linux-4.0.4" # TODO
+#srcdir="busybox-1.23.1"
 configdir="/temp/gnf/" 
 toyconfig_file="../scripts/gnf/ToyConfig"
+#kconfig_file="Config.in"
 kconfig_file="Kconfig"
 if [ "$1" == "-d" ]
 then
@@ -33,6 +35,7 @@ rm thesame.txt
 if [ $toyexample == true ]
 then
     echo "replacing Kconfig with ToyConfig"
+    #cp "$kconfig_file" Config.in
     cp "$kconfig_file" Kconfig.orig
     cp "$toyconfig_file" "$kconfig_file"
 fi
@@ -47,8 +50,9 @@ do
         #./scripts/kconfig/conf --olddefconfig Kconfig  1>> /temp/1 2>> /temp/2
     #make KCONFIG_NOSILENTUPDATE=1 silentoldconfig
     KCONFIG_NOSILENTUPDATE=1 ./scripts/kconfig/conf --silentoldconfig Kconfig
+    #./scripts/kconfig/conf -s Config.in &> /dev/null
 
-    #lkdiff .config "$configdir""$i"  2>/dev/null 1>/dev/null
+    #lkdiff .config "$configdir""$i" 
     #./scripts/diffconfig .config "$configdir""$i"
     if [ "$?" == "0" ]
     then
@@ -64,4 +68,5 @@ if [ $toyexample == true ]
 then
     echo "restoring original Kconfig"
     cp Kconfig.orig "$kconfig_file"
+    #cp Config.in.orig "$kconfig_file"
 fi

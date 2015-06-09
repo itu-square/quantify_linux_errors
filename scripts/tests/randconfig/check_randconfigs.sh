@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This will check the percentages of the features which are
+# in the bottom of this file.
+# Good for testing how random a set of configurations are.
+
 dir="./results/randconfig_results"
 
 if [ ! -d "$dir" ]

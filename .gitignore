@@ -5,3 +5,4 @@ busybox*
 linux*
 randconfig_results/*
 litt
+linux-next

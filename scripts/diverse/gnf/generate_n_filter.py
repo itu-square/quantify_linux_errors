@@ -9,7 +9,7 @@ import kconfiglib
 #################
 # Configuration #
 #################
-nu_configs = 10000
+nu_configs = 100000
 output_dir = "/temp/gnf/" # Remember trailing slash (/)
 allnoconfigs_dir = "scripts/gnf/allnoconfigs/"
 
@@ -50,6 +50,7 @@ arch = sys.argv[2]
 
 kconfig_dir = dirname
 kconfig_name = dirname + "/Kconfig"
+#kconfig_name = dirname + "/Config.in"
 toyconfig_dir = os.getcwd() + "/scripts/gnf/"
 toyconfig = os.getcwd() + "/scripts/gnf/ToyConfig"
 

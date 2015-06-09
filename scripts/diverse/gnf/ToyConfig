@@ -1,21 +1,22 @@
-config A
+config 1
     bool "A"
-config B
+config 2
     bool "B"
-config C
+config 3
     bool "B"
-config D
+config 4
     bool "B"
-config E
+config 5
     bool "B"
-config F
+config 6
     string "string"
-    default "ifA" if A
+    default "ifA" if 1
     default "def"
-config G
+config 7
     int "int"
     range 1 5
-config H
+    default 2
+config 8
     hex "hex"
     default "0xD000"
-    default "0xA" if A
+    default "0xA" if 1

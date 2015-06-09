@@ -1,22 +1,27 @@
 import sys, re, os, codecs
 
 
-result_dir = "results/"
-bug_filename = "buginfo_raw"
+# Configuration
+stderr_file = "stderr"
+prog_ver = sys.argv[1]
+results_dir = "results/" + prog_ver
+
+dirlist = []
+acc_enc = ["UTF", "empty"]
 
 
-def is_utf8_file(program, md5sum, analyzer):
-    dir = result_dir + program + "/" + md5sum + '/' + analyzer
-    bugfile = dir + "/" + bug_filename
+def is_utf8_file(hash):
+    dir = results_dir + "/" + hash + '/gcc/'
+    bugfile = dir + stderr_file
     encoding = os.popen("file " + bugfile + "|grep -o ':\ *[a-zA-Z0-9\-_]*'|awk '{print $2}'").readlines()
     return encoding[0].strip()
 
 
 
-def get_bugs_from(program, md5sum, analyzer):
-    logdir = result_dir + program + "/" + md5sum + '/' + analyzer
+def get_gcc_warns(hash):
+    logdir = results_dir + "/" + hash + '/gcc/'
     lines = []
-    for line in open(logdir + '/' + bug_filename):
+    for line in open(logdir + '/' + stderr_file):
         line = str(line.strip())
         codecs.encode(line, 'ascii', 'ignore')
         lines.append(line)
@@ -59,20 +64,20 @@ def get_bugs_from(program, md5sum, analyzer):
     return bugs
         
 
-program = sys.argv[1]
-dirlist = []
-acc_enc = ["UTF", "empty"]
+def save_warns(hash, bugs):
+    fopen = open(results_dir + "/" + hash + "/categorized", "a")
+    fopen.write(str(bugs))
 
-for _, dirs, _ in os.walk(result_dir + program):
+
+# Finds all the dirs (sha256 hashes)
+for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
-        if not dir == "":
-            if not is_utf8_file(program, dir, "gcc") in acc_enc:
-                continue
+        if not dir in ['gcc', 'archive']:
             dirlist.append(dir)
 
+
+# Gets all the bugs from every compilation dir
 for dir in dirlist:
-    print("########  " + dir)
-    bugs = get_bugs_from(program, dir, "gcc")
-    for bug in bugs:
-        pass
-        print(bug)
+    print("  * " + dir)
+    bugs = get_gcc_warns(dir)
+    save_warns(dir, bugs)
