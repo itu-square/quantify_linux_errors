@@ -54,10 +54,12 @@ conf_cmd.communicate()
 
 
 # Outputting number of errors
+fout = open('/tmp/count_warns', 'w')
 count_p = subprocess.Popen("grep '\ *^' " + output_dir + "gcc/stderr | wc -l",
-    stdout=subprocess.PIPE,
+    stdout=fout,
     stderr=None,
     shell=True)
 count_p.communicate()
-err_count = count_p.stdout.read()
+fout.close()
+err_count = open('/tmp/count_warns', 'r').read()
 print("      - Had " + str(err_count) + " warnings")
