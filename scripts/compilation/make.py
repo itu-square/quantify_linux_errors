@@ -61,5 +61,5 @@ count_p = subprocess.Popen("grep '\ *^' " + output_dir + "gcc/stderr | wc -l",
     shell=True)
 count_p.communicate()
 fout.close()
-err_count = open('/tmp/count_warns', 'r').read()
+err_count = open('/tmp/count_warns', 'r').read().strip()
 print("      - Had " + str(err_count) + " warnings")
