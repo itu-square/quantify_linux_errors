@@ -25,8 +25,7 @@ if not os.path.isdir("results/" + linuxdir):
 # Creating the config file and getting the error messages
 print("  * Running `make randconfig`")
 conf_cmd = subprocess.Popen(
-    "./scripts/kconfig/conf --randconfig Kconfig " + 
-    "1> /dev/null",
+    "./scripts/kconfig/conf --randconfig Kconfig",
     cwd=linuxdir,
     shell=True, 
     stderr=subprocess.PIPE, 

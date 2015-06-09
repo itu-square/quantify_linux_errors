@@ -53,3 +53,11 @@ conf_cmd = subprocess.Popen(
 conf_cmd.communicate()
 
 
+# Outputting number of errors
+count_p = subprocess.Popen("grep '\ *^' " + output_dir + "gcc/stderr | wc -l",
+    stdout=subprocess.PIPE,
+    stderr=None,
+    shell=True)
+count_p.communicate()
+err_count = count_p.stdout.read()
+print("      - Had " + str(err_count) + " warnings")
