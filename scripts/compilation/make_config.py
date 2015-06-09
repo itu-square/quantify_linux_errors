@@ -9,19 +9,28 @@ output_dir = "results/" + linuxdir + "/"
 os.environ['SRCARCH'] = 'x86'
 os.environ['ARCH'] = 'x86'
 os.environ['KERNELVERSION'] = linuxdir
+FNULL = open(os.devnull, 'w')
 
 # Check if `make mrproper` has been run ?? Should I do this?
 
 
+# Creating `results` dir if not exist
+if not os.path.isdir("results"):
+    print("  * Creating `results` directory")
+    os.makedirs("results")
+
+if not os.path.isdir("results/" + linuxdir):
+    print("  * Creating `" + linuxdir + "` directory")
+
 # Creating the config file and getting the error messages
 print("  * Running `make randconfig`")
 conf_cmd = subprocess.Popen(
-    "cd " + linuxdir + 
-    " && ./scripts/kconfig/conf --randconfig Kconfig " + 
+    "./scripts/kconfig/conf --randconfig Kconfig " + 
     "1> /dev/null",
+    cwd=linuxdir,
     shell=True, 
     stderr=subprocess.PIPE, 
-    stdout=None,
+    stdout=FNULL,
     universal_newlines=True)
 conf_errs = conf_cmd.stderr.read()
 
@@ -34,7 +43,9 @@ output_dir += hash + "/"
 os.makedirs(output_dir)
 
 # Copying config and config errors
-subprocess.Popen("cp " + linuxdir + "/.config " + output_dir + "/config", shell=True)
+subprocess.Popen("cp .config ../" + output_dir + "config",
+    cwd=linuxdir,
+    shell=True)
 with open(output_dir + "conf_errs", 'w') as file:
     file.write(conf_errs)
 print("      - Length of config warnings is: " + str(len(conf_errs)))

@@ -1,14 +1,17 @@
 import sys, os
-from subprocess import call
+import subprocess
 
 
 linuxdir = sys.argv[1]
+FNULL = open(os.devnull, 'w')
 
 # Check if `make mrproper` has been run ?? Should I do this?
 
 
 # Creating the config
 print("  * Running `make mrproper`")
-call("cd " + linuxdir + " && make mrproper &> /dev/null", shell=True)
+mrp_p = subprocess.Popen("make mrproper", shell=True, cwd=linuxdir, stdout=FNULL)
+mrp_p.communicate()
 print("  * Running `make randconfig`")
-call("cd " + linuxdir + " && make randconfig &> /dev/null", shell=True)
+rand_p = subprocess.Popen("make randconfig", shell=True, cwd=linuxdir, stdout=FNULL)
+rand_p.communicate()
