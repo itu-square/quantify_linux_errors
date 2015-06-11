@@ -44,7 +44,7 @@ if not noconfig:
                 config = re.escape(config)
                 
                 # Inserting configuration into database
-                print("  * Insert conf " + dir)
+                print("  * Insert conf " + dir[:8])
                 query_config = (
                     "insert ignore into configurations (hash, original)"
                     "values (\"%s\", \"%s\");"
@@ -56,7 +56,7 @@ if not noconfig:
 for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
         if not dir in nogo_dirs:
-            print("  * Reading stderr " + dir)
+            print("  * Reading stderr " + dir[:8])
             stderr_file = open(results_dir + dir + "/categorized", 'r')
             json_file = json.load(stderr_file)
             for line in json_file:
@@ -73,7 +73,7 @@ for _, dirs, _ in os.walk(results_dir):
                 print("  * Created bug_id = " + bug_id[:8])
                 
                 # Submitting the bug
-                print("      - Inserting bug " + bug_id)
+                print("      - Inserting bug " + bug_id[:8])
                 query_bug = (
                     "insert ignore into bugs (id, type, version, config, "
                     "original) values"
@@ -85,7 +85,7 @@ for _, dirs, _ in os.walk(results_dir):
                 for file in files:
                     path = file[0]
                     line = file[1]
-                    print("      - Inserting file " + path)
+                    #print("      - Inserting file " + path)
                     query_file = (
                         "insert ignore into files (path, line, bug_id) values " +
                         "(\"%s\", \"%s\", \"%s\");"
