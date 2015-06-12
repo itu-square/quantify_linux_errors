@@ -3,11 +3,14 @@
 if [ "$1" == "" ]
 then
     echo "Missing argument"
+    echo "Usage: ./run.sh <linux src dir> [# of runs]"
     exit
 fi
 
 if [ "$2" == "" ]
 then
+    echo "No second argument (which sets the number of runs.)"
+    echo "Just running it oncce, then..."
     runs=1
 else
     runs="$2"
@@ -20,6 +23,6 @@ do
     python scripts/compilation/make_config.py "$1"
     python scripts/compilation/make.py "$1"
     python scripts/categorization/categorize_errors.py "$1"
-    python scripts/submission/upload_results.py "$1"
+    #python scripts/submission/upload_results.py "$1"
     python scripts/submission/backup_results.py "$1"
 done
