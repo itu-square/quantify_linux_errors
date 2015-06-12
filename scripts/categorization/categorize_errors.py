@@ -1,5 +1,12 @@
 import sys, re, os, codecs
+import json
 
+
+# Error catching and usage
+if len(sys.argv) <= 1:
+    print("Error: No directory given")
+    print("Usage: " + sys.argv[0] + " <linux src dir>")
+    sys.exit(2)
 
 # Configuration
 stderr_file = "stderr"
@@ -25,10 +32,10 @@ def get_gcc_warns(hash):
         line = str(line.strip())
         codecs.encode(line, 'ascii', 'ignore')
         lines.append(line)
-    print(lines)
 
     bugs = []
     files = []
+    org_msg = []
     bugtype = ""
 
     for line in lines:
@@ -38,15 +45,25 @@ def get_gcc_warns(hash):
 
         #if not re.search(r"\^", line) == None:
         if line.strip() == "^":
-            bugs.append([bugtype, files])
+            if bugtype == '':
+                bugtype = 'unknown'
+            else:
+                bugtype = bugtype.strip('[-]')
+            bugs.append([bugtype, files, org_msg])
             bugtype = ""
             files = []
+            org_msg = []
             continue
 
+        # Saving the original line
+        org_msg.append(line) # The original message
+
+        # Looking for the bugtype
         bugtype_re = re.search(r"\[\-W.*\]", line)
         if not bugtype_re == None:
             bugtype = bugtype_re.group(0)
 
+        # Looking for the files and line numbers
         filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*\w+(\.c|\.h|\.o)", line) # `.o` or not?
         if not filename_re == None:
             filename = filename_re.group(0)
@@ -64,9 +81,11 @@ def get_gcc_warns(hash):
     return bugs
         
 
+# Saves the `bugs` list to the `/results/<prg_ver>/hash/categorized` file
 def save_warns(hash, bugs):
     fopen = open(results_dir + "/" + hash + "/categorized", "a")
-    fopen.write(str(bugs))
+    fopen.write(json.dumps(bugs))
+    fopen.close()
 
 
 # Finds all the dirs (sha256 hashes)
