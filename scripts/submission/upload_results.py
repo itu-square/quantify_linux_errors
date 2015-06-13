@@ -1,6 +1,5 @@
 import sys, os
 import json
-import base64
 import re
 import hashlib
 sys.path.append(os.path.relpath('pymysql'))

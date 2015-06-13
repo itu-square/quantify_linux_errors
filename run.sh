@@ -20,6 +20,7 @@ python scripts/compilation/make_mrproper.py "$1"
 
 for i in `seq 1 "$runs"`
 do
+    echo "$i/$runs"
     python scripts/compilation/make_config.py "$1"
     python scripts/compilation/make.py "$1"
     python scripts/categorization/categorize_errors.py "$1"
