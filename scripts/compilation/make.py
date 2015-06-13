@@ -43,15 +43,23 @@ gcc_version = subprocess.Popen(
 # Running make on the kernel
 job_count = cpu_count * 2
 print("  * Compiling with " + str(job_count) + " jobs")
-conf_cmd = subprocess.Popen(
-    'make -S -j' + str(job_count),
-    shell=True,
-    stdout=open(output_dir + "gcc/stdout", 'a'),
-    stderr=open(output_dir + "gcc/stderr", 'a'),
-    universal_newlines=True,
-    cwd=linuxdir)
-conf_cmd.communicate()
+#conf_cmd = subprocess.Popen(
+exit_status = -1
+try:
+    conf_cmd = subprocess.check_call(
+        'make -S -j' + str(job_count),
+        shell=True,
+        stdout=open(output_dir + "gcc/stdout", 'a'),
+        stderr=open(output_dir + "gcc/stderr", 'a'),
+        universal_newlines=True,
+        cwd=linuxdir)
+    exit_status = 0
+    #conf_cmd.communicate()
+except subprocess.CalledProcessError:
+    exit_status = 1
 
+
+print(exit_status)
 
 # Outputting number of errors
 fout = open('/tmp/count_warns', 'w')

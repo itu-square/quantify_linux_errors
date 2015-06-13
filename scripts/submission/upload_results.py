@@ -1,7 +1,7 @@
 import sys, os
 import json
 import pymysql
-import base64
+#import base64
 import re
 import hashlib
 
