@@ -64,7 +64,7 @@ print("  * Exit status is " + str(exit_status))
 
 # Outputting the exit code
 fout = open(output_dir + "gcc/exit_status", 'w')
-fout.write(exit_status)
+fout.write(str(exit_status))
 fout.close()
 
 # Outputting number of errors
