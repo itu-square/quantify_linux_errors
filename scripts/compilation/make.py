@@ -43,7 +43,9 @@ gcc_version = subprocess.Popen(
 # Running make on the kernel
 job_count = cpu_count * 2
 print("  * Compiling with " + str(job_count) + " jobs")
-#conf_cmd = subprocess.Popen(
+####conf_cmd = subprocess.Popen(
+
+# Running `make` and finding the exit status
 exit_status = -1
 try:
     conf_cmd = subprocess.check_call(
@@ -58,8 +60,7 @@ try:
 except subprocess.CalledProcessError:
     exit_status = 1
 
-
-print(exit_status)
+print("  * Exit status is " + str(exit_status))
 
 # Outputting number of errors
 fout = open('/tmp/count_warns', 'w')
