@@ -62,6 +62,11 @@ except subprocess.CalledProcessError:
 
 print("  * Exit status is " + str(exit_status))
 
+# Outputting the exit code
+fout = open(output_dir + "gcc/exit_status", 'w')
+fout.write(exit_status)
+fout.close()
+
 # Outputting number of errors
 fout = open('/tmp/count_warns', 'w')
 count_p = subprocess.Popen("grep '\[-W' " + output_dir + "gcc/stderr | wc -l",

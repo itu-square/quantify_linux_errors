@@ -10,6 +10,7 @@ TABLE OF CONTENTS
 ### DONE
 ### NEWEST MEETING AGENDA
 ### -Wall
+### Database
 ### REFERENCES
 
 
@@ -375,6 +376,21 @@ to not break any dependencies. (Because `select` does not consider deps)
 
 And there are often extra flags to the gcc command. 
 
+
+### Database
+
+When finding errors, I make sure, that there are no duplicates regarding these 
+things:
+  * error message
+  * line
+  * file
+  * program version
+Further more, when uploading to the database, I call:
+    insert ignore into bugs ()...
+instead of 
+    insert into bugs ()...
+
+this makes the uploading query idempotent.
 
 ### REFERENCES
 

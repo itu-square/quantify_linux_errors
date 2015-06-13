@@ -10,7 +10,7 @@ fi
 if [ "$2" == "" ]
 then
     echo "No second argument (which sets the number of runs.)"
-    echo "Just running it oncce, then..."
+    echo "Just running it once, then..."
     runs=1
 else
     runs="$2"
