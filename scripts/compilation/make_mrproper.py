@@ -1,11 +1,28 @@
 import sys, os
 import subprocess
 
+# Checking for number of arguments
+if len(sys.argv) == 1:
+    print("Error: At least one argument needed.")
+    print("Usage: python make_mrproper.py <linux src dir> [gcc-alias]")
+elif len(sys.argv) == 3:
+    gcc_change = True
+
 
 linuxdir = sys.argv[1]
 FNULL = open(os.devnull, 'w')
 
-# Check if `make mrproper` has been run ?? Should I do this?
+if gcc_change:
+    gcc_ver = sys.argv[2]
+    print("  * Setting gcc alias to " + gcc_ver + " and changing the Makefile")
+
+    filein = open(linuxdir + "/Makefile", 'r')
+    filedata = filein.read()
+    filein.close()
+    newdata = filedata.replace("gcc", gcc_ver)
+    fileout = open(linuxdir + "/Makefile", 'w')
+    fileout.write(newdata)
+    fileout.close()
 
 
 # Creating the config
