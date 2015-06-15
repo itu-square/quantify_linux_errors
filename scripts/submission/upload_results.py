@@ -2,9 +2,7 @@ import sys, os
 import json
 import re
 import hashlib
-sys.path.append('/home/elvis/quantify_linux_errors/scripts/submission/pymysql')
-print(sys.path)
-import pymysql
+#import pymysql
 
 
 # Error catching and usage
