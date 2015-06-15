@@ -33,6 +33,19 @@ conf_cmd = subprocess.Popen(
     universal_newlines=True)
 conf_errs = conf_cmd.stderr.read()
 
+# For gcc version < 4.9 only
+# But I am adding it to the code anyways.
+# I have to change a line in every config file, otherwise
+# half of the configs are invalide, which is a damn waste of time.
+#sed_cmd = subprocess.Popen(
+    #"sed s/STRONG\=y/STRONG\=n/ .config",
+    #shell=True,
+    #stderr=FNULL,
+    #stdout=FNULL,
+    #cwd=linuxdir)
+# ELVIS TODO
+
+
 # Finding hash of config
 hash = hashlib.sha256(open(config_file, 'rb').read()).hexdigest()
 print("      - Hash of `.config` is " + hash)

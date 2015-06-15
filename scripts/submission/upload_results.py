@@ -2,7 +2,8 @@ import sys, os
 import json
 import re
 import hashlib
-sys.path.append(os.path.relpath('pymysql'))
+sys.path.append('/home/elvis/quantify_linux_errors/scripts/submission/pymysql')
+print(sys.path)
 import pymysql
 
 
@@ -26,16 +27,18 @@ nogo_dirs = ['gcc', 'archive'] # Dirs not to follow when looking for bugs
 
 
 # Configuring database
+print("  * Connecting to the database")
 db = pymysql.connect(host='mysql.itu.dk',
     user='elvis_thesis',
     passwd='linux',
-    db='elvis_thesis',
-    charset='utf8')
+    db='elvis_thesis')
 
+print("      - Setting the cursor")
 cursor = db.cursor()
 
 
 # Inserting the config and config hash
+print("      - Inserting the config")
 if not noconfig:
     for _, dirs, _ in os.walk(results_dir):
         for dir in dirs:
@@ -53,6 +56,7 @@ if not noconfig:
 
 
 # Inserting the categorized warnings
+print("      - Inserting the warnings/errors")
 for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
         if not dir in nogo_dirs:
