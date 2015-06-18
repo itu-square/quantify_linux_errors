@@ -325,6 +325,32 @@ to not break any dependencies. (Because `select` does not consider deps)
 
 ### NEWEST MEETING AGENDA
 
+
+  * Back on the envelope:
+      - # of configs per day
+      - # of invalid configs
+      - # of kernels with errors
+      - Top 10 types of warnings
+      - Top 10 types of subsystems
+      - Top 10 types of ... I forgot
+  * Write something in the Table of Contents. Fill in what I have.
+    And maybe fill in a couple of lines about every chapter, what it
+    is going to be about.
+
+!!!!
+  * Get the local version of pymysql to work... Does it work?
+
+So maybe when running `make` and then running `make` again, the kernel is not 
+compiled at all, because it already has been. So when I run 2 randconfigs in a
+row, and they have 20% of the codebase in common, will that not be compiled
+again. And is that fine? Do I still get the errors?
+so to test: 
+    run 10 randconfigs with mrproper in between
+    run 10 randconfigs without mrpoper in between
+
+================
+
+
 - KConfig: Syntactic Specification
     Read the kconfig-language.txt file
 - Find a Parser for Kconfig and figure out how to get an AST (Abstract Syntax Tree)

@@ -2,7 +2,7 @@ import sys, os
 import json
 import re
 import hashlib
-#import pymysql
+import pymysql
 
 
 # Error catching and usage
@@ -26,7 +26,7 @@ nogo_dirs = ['gcc', 'archive'] # Dirs not to follow when looking for bugs
 
 # Configuring database
 print("  * Connecting to the database")
-db = pymysql.connect(host='mysql.itu.dk',
+db = pymysql.connect(host='mydb.itu.dk',
     user='elvis_thesis',
     passwd='linux',
     db='elvis_thesis')
@@ -59,8 +59,10 @@ for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
         if not dir in nogo_dirs:
             print("  * Reading stderr " + dir[:8])
-            stderr_file = open(results_dir + dir + "/categorized", 'r')
-            json_file = json.load(stderr_file)
+            stderr_file_path = results_dir + dir + "/categorized"
+            print(stderr_file_path)
+            stderr_file = open(stderr_file_path, 'r').read()
+            json_file = json.loads(str(stderr_file))
             for line in json_file:
                 bugtype = line[0]
                 files = line[1]
@@ -75,7 +77,6 @@ for _, dirs, _ in os.walk(results_dir):
                 print("  * Created bug_id = " + bug_id[:8])
                 
                 # Submitting the bug
-                print("      - Inserting bug " + bug_id[:8])
                 query_bug = (
                     "insert ignore into bugs (id, type, version, config, "
                     "original) values"
