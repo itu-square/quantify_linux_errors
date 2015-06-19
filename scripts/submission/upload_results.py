@@ -2,7 +2,8 @@ import sys, os
 import json
 import re
 import hashlib
-import pymysql
+#import pymysql
+import mysql.connector
 
 
 # Error catching and usage
@@ -26,10 +27,10 @@ nogo_dirs = ['gcc', 'archive'] # Dirs not to follow when looking for bugs
 
 # Configuring database
 print("  * Connecting to the database")
-db = pymysql.connect(host='mydb.itu.dk',
+db = mysql.connector.connect(host='mydb.itu.dk',
     user='elvis_thesis',
-    passwd='linux',
-    db='elvis_thesis')
+    password='linux',
+    database='elvis_thesis')
 
 print("      - Setting the cursor")
 cursor = db.cursor()
