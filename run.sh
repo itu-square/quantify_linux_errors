@@ -26,5 +26,5 @@ do
     python scripts/compilation/make.py "$1"
     python scripts/categorization/categorize_errors.py "$1"
     python scripts/submission/upload_results.py "$1"
-    #python scripts/submission/backup_results.py "$1"
+    python scripts/submission/backup_results.py "$1"
 done

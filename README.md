@@ -1,6 +1,14 @@
 # Quantifying Errors in Linux Kernel
 Elvis' master thesis
 
+get linux src
+untar linux src
+make mrproper
+make randconfig
+./run.sh linuxdir
+
+
+
 ## Programs and versions
 `$ wget https://www.kernel.org/pub/linux/kernel/v3.x/linux-3.19.tar.xz`  
 `$ wget https://www.kernel.org/pub/linux/kernel/v4.x/testing/linux-4.0-rc1.tar.xz`  
