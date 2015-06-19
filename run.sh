@@ -16,8 +16,8 @@ else
     runs="$2"
 fi 
 
-alias gcc=gcc-4.9
-python scripts/compilation/make_mrproper.py "$1"
+#alias gcc=gcc-4.9
+#python scripts/compilation/make_mrproper.py "$1"
 
 for i in `seq 1 "$runs"`
 do
@@ -25,6 +25,6 @@ do
     python scripts/compilation/make_config.py "$1"
     python scripts/compilation/make.py "$1"
     python scripts/categorization/categorize_errors.py "$1"
-    #python scripts/submission/upload_results.py "$1"
+    python scripts/submission/upload_results.py "$1"
     #python scripts/submission/backup_results.py "$1"
 done
