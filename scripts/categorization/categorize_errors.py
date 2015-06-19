@@ -83,7 +83,7 @@ def get_gcc_warns(hash):
 
 # Saves the `bugs` list to the `/results/<prg_ver>/hash/categorized` file
 def save_warns(hash, bugs):
-    fopen = open(results_dir + "/" + hash + "/categorized", "a")
+    fopen = open(results_dir + "/" + hash + "/categorized", "w")
     fopen.write(json.dumps(bugs))
     fopen.close()
 
