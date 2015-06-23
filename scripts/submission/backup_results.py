@@ -19,12 +19,15 @@ nogo_dirs = ['gcc', 'archive']
 if not os.path.isdir(archive_dir):
     os.makedirs(archive_dir)
 
+if not os.path.isdir(archive_dir + prog_ver):
+    os.makedirs(archive_dir + prog_ver)
+
 # Moves all the dirs to archive
 for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
         if not dir in nogo_dirs:
             print("  * Archiving " + dir[:8])
-            shutil.move(results_dir + dir,archive_dir)
+            shutil.move(results_dir + dir,archive_dir + prog_ver)
 
             # The plan here is to upload it to ssh.itu.dk, but their servers are 
             # down at the moment.. And I am not sure, that this key-thing works yet.
