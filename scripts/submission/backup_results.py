@@ -1,4 +1,5 @@
 import os, sys
+import subprocess
 import shutil
 
 
@@ -24,4 +25,9 @@ for _, dirs, _ in os.walk(results_dir):
         if not dir in nogo_dirs:
             print("  * Archiving " + dir[:8])
             shutil.move(results_dir + dir,archive_dir)
+
+            # The plan here is to upload it to ssh.itu.dk, but their servers are 
+            # down at the moment.. And I am not sure, that this key-thing works yet.
+            #subprocess.Popen("scp -i scripts/submission/thesis_key -r " + archive_dir + dir + " efle@ssh.itu.dk:/import/home/efle/thesis/archive",
+                #shell=True)
 
