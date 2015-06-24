@@ -44,14 +44,17 @@ if not noconfig:
             if not dir in nogo_dirs:
                 config = open(results_dir + dir + "/config", 'r').read()
                 config = re.escape(config)
+
+                # Reading the exit status
+                exit_status = open(results_dir + dir + "/gcc/exit_status", 'r').read()
                 
                 # Inserting configuration into database
                 print("  * Insert conf " + dir[:8])
                 query_config = (
-                    "insert ignore into configurations (hash, original)"
-                    "values (\"%s\", \"%s\");"
+                    "insert ignore into configurations (hash, original, exit_status)"
+                    "values (\"%s\", \"%s\", \"%s\");"
                 )
-                cursor.execute(query_config % (dir, config))
+                cursor.execute(query_config % (dir, config, exit_status))
 
 
 # Inserting the categorized warnings

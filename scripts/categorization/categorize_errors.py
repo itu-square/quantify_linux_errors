@@ -41,6 +41,13 @@ def get_gcc_warns(hash):
     for line in lines:
 
         if line[:4] == "make":
+            bugtype = 'makeMsg'
+            org_msg.append(line)
+            files = get_filenames(line)
+            bugs.append([bugtype, files, org_msg])
+            bugtype = ''
+            files = []
+            org_msg = []
             continue
 
         #if not re.search(r"\^", line) == None:
@@ -64,21 +71,32 @@ def get_gcc_warns(hash):
             bugtype = bugtype_re.group(0)
 
         # Looking for the files and line numbers
-        filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*\w+(\.c|\.h|\.o)", line) # `.o` or not?
-        if not filename_re == None:
-            filename = filename_re.group(0)
-        
-            lines_cols = ""
-            lines_cols_re = re.search(r":[0-9]*:[0-9]*(:|,)", line)
-            lines_re = re.search(r":[0-9].*(:|,)", line)
-            if not lines_cols_re == None:
-                lines_cols = lines_cols_re.group(0)
-            elif not lines_re == None:
-                lines_cols = lines_re.group(0)
-
-            files.append([filename, lines_cols])
+        files.append(get_filenames(line))
 
     return bugs
+
+
+def get_filenames(line):
+    files = []
+    #filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*", line) # `.o` or not?
+    #filename_re = re.search(r"^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", line)
+    #search = r"[a-zA-Z0-9\/\._]*[\/\.]+[a-zA-Z0-9\/_]+"
+    search = r"[a-zA-Z/_\.0-9]*[\/\.]+[a-zA-Z_0-9]+[a-zA-Z_0-9]*"
+    filenames = re.findall(search, line)
+    if filenames:
+        #print(filenames)
+    
+        lines_cols = ""
+        lines_cols_re = re.search(r":[0-9]*:[0-9]*(:|,)", line)
+        lines_re = re.search(r":[0-9].*(:|,)", line)
+        if not lines_cols_re == None:
+            lines_cols = lines_cols_re.group(0)
+        elif not lines_re == None:
+            lines_cols = lines_re.group(0)
+
+        files.append([filenames, lines_cols])
+    return files
+    
         
 
 # Saves the `bugs` list to the `/results/<prg_ver>/hash/categorized` file
@@ -97,6 +115,6 @@ for _, dirs, _ in os.walk(results_dir):
 
 # Gets all the bugs from every compilation dir
 for dir in dirlist:
-    print("  * " + dir)
+    #print("  * " + dir)
     bugs = get_gcc_warns(dir)
     save_warns(dir, bugs)
