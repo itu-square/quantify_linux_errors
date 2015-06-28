@@ -37,7 +37,7 @@ cursor = db.cursor()
 
 
 # Inserting the config and config hash
-print("      - Inserting the config")
+print("  * Inserting configs")
 if not noconfig:
     for _, dirs, _ in os.walk(results_dir):
         for dir in dirs:
@@ -46,10 +46,16 @@ if not noconfig:
                 config = re.escape(config)
 
                 # Reading the exit status
-                exit_status = open(results_dir + dir + "/gcc/exit_status", 'r').read()
+                es_file = results_dir + dir + "/gcc/exit_status"
+                if os.path.isfile(es_file):
+                    exit_status = open(results_dir + dir + "/gcc/exit_status",
+                        'r').read()
+                else:
+                    exit_status = 3
                 
+
                 # Inserting configuration into database
-                print("  * Insert conf " + dir[:8])
+                print("      - Inserting config " + dir[:8])
                 query_config = (
                     "insert ignore into configurations (hash, original, exit_status)"
                     "values (\"%s\", \"%s\", \"%s\");"
@@ -58,46 +64,54 @@ if not noconfig:
 
 
 # Inserting the categorized warnings
-print("      - Inserting the warnings/errors")
+print("  * Inserting the warnings/errors")
 for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
         if not dir in nogo_dirs:
-            print("  * Reading stderr " + dir[:8])
+            print("     - Reading stderr " + dir[:8])
             stderr_file_path = results_dir + dir + "/categorized"
-            print(stderr_file_path)
             stderr_file = open(stderr_file_path, 'r').read()
             json_file = json.loads(str(stderr_file))
             for line in json_file:
                 bugtype = line[0]
                 files = line[1]
+                subsystem = line[3]
                 original = ""
                 for orig_line in line[2]:
                     original += re.escape(orig_line) + "\n"
 
                 # Creating the bug_id
-                bulk = "%s%s%s%s" % (dir, bugtype, str(files), original)
+                bulk = "%s%s%s%s%s" % (prog_ver, dir, bugtype, str(files), 
+                    original)
                 bulk = bulk.encode('ascii')
                 bug_id = hashlib.sha256(bulk).hexdigest()
-                print("  * Created bug_id = " + bug_id[:8])
+                print("         o Created bug_id = " + bug_id[:8])
                 
                 # Submitting the bug
                 query_bug = (
                     "insert ignore into bugs (id, type, version, config, "
-                    "original) values"
-                    " (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");"
+                    "original, subsystem) values"
+                    " (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");"
                 )
-                cursor.execute(query_bug % (bug_id, bugtype, prog_ver, dir, original))
+                cursor.execute(query_bug % (bug_id, bugtype, prog_ver, dir, original, subsystem))
 
                 # Submitting files
-                for file in files:
-                    path = file[0]
-                    line = file[1]
-                    #print("      - Inserting file " + path)
-                    query_file = (
-                        "insert ignore into files (path, line, bug_id) values " +
-                        "(\"%s\", \"%s\", \"%s\");"
-                    )
-                    cursor.execute(query_file % (path, line, bug_id))
+                if files:
+                    for file in files:
+                        line = None
+                        path = None
+                        if len(file) > 1:
+                            line = file[1]
+                            path = str(file[0])
+                        else:
+                            path = file
+                            
+                        #print("      - Inserting file " + path)
+                        query_file = (
+                            "insert ignore into files (path, line, bug_id) values " +
+                            "(\"%s\", \"%s\", \"%s\");"
+                        )
+                        cursor.execute(query_file % (path, line, bug_id))
 
 
 #cursor.execute('insert into types (name, severity) values ("-Wwhat", 2)')
