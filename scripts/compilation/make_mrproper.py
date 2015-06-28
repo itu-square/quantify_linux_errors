@@ -1,6 +1,7 @@
 import sys, os
 import subprocess
 
+gcc_change = False
 # Checking for number of arguments
 if len(sys.argv) == 1:
     print("Error: At least one argument needed.")
@@ -29,6 +30,6 @@ if gcc_change:
 print("  * Running `make mrproper`")
 mrp_p = subprocess.Popen("make mrproper", shell=True, cwd=linuxdir, stdout=FNULL)
 mrp_p.communicate()
-print("  * Running `make randconfig` for the first time.")
-rand_p = subprocess.Popen("make randconfig", shell=True, cwd=linuxdir, stdout=FNULL)
-rand_p.communicate()
+#print("  * Running `make randconfig` for the first time.")
+#rand_p = subprocess.Popen("make randconfig", shell=True, cwd=linuxdir, stdout=FNULL)
+#rand_p.communicate()
