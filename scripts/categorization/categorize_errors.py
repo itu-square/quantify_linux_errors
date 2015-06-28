@@ -28,7 +28,7 @@ def is_utf8_file(hash):
 def get_gcc_warns(hash):
     logdir = results_dir + "/" + hash + '/gcc/'
     lines = []
-    for line in open(logdir + '/' + stderr_file):
+    for line in open(logdir + stderr_file):
         line = str(line.strip())
         codecs.encode(line, 'ascii', 'ignore')
         lines.append(line)
