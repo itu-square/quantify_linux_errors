@@ -37,6 +37,7 @@ def get_gcc_warns(hash):
     files = []
     org_msg = []
     bugtype = ""
+    subsystem = None
 
     for line in lines:
 
@@ -44,10 +45,12 @@ def get_gcc_warns(hash):
             bugtype = 'makeMsg'
             org_msg.append(line)
             files = get_filenames(line)
-            bugs.append([bugtype, files, org_msg])
+            subsystem = get_subsystem(line)
+            bugs.append([bugtype, files, org_msg, subsystem])
             bugtype = ''
             files = []
             org_msg = []
+            subsystem = None
             continue
 
         #if not re.search(r"\^", line) == None:
@@ -56,10 +59,11 @@ def get_gcc_warns(hash):
                 bugtype = 'unknown'
             else:
                 bugtype = bugtype.strip('[-]')
-            bugs.append([bugtype, files, org_msg])
+            bugs.append([bugtype, files, org_msg, subsystem])
             bugtype = ""
             files = []
             org_msg = []
+            subsystem = None
             continue
 
         # Saving the original line
@@ -71,31 +75,45 @@ def get_gcc_warns(hash):
             bugtype = bugtype_re.group(0)
 
         # Looking for the files and line numbers
-        files.append(get_filenames(line))
+        if get_filenames(line):
+            files.append(get_filenames(line))
+
+        # Getting the subsystem
+        subsystem = get_subsystem(line)
 
     return bugs
 
 
+def get_subsystem(line):
+    subsystem = None
+    ss_search = r"[a-zA-Z0-9_]*\/"
+    ss = re.search(ss_search, line)
+    if ss:
+        subsystem = ss.group(0)
+    return subsystem
+    
 def get_filenames(line):
     files = []
+    lines = []
+    lines_cols = ''
     #filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*", line) # `.o` or not?
     #filename_re = re.search(r"^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", line)
     #search = r"[a-zA-Z0-9\/\._]*[\/\.]+[a-zA-Z0-9\/_]+"
     search = r"[a-zA-Z/_\.0-9]*[\/\.]+[a-zA-Z_0-9]+[a-zA-Z_0-9]*"
     filenames = re.findall(search, line)
     if filenames:
-        #print(filenames)
-    
+        
         lines_cols = ""
         lines_cols_re = re.search(r":[0-9]*:[0-9]*(:|,)", line)
-        lines_re = re.search(r":[0-9].*(:|,)", line)
-        if not lines_cols_re == None:
+        lines_re = re.search(r":[0-9]*(:|,)", line)
+        if lines_cols_re:
             lines_cols = lines_cols_re.group(0)
         elif not lines_re == None:
             lines_cols = lines_re.group(0)
+    else:
+        return None
 
-        files.append([filenames, lines_cols])
-    return files
+    return [filenames, lines_cols]
     
         
 
@@ -115,6 +133,6 @@ for _, dirs, _ in os.walk(results_dir):
 
 # Gets all the bugs from every compilation dir
 for dir in dirlist:
-    #print("  * " + dir)
+    print("  * " + dir)
     bugs = get_gcc_warns(dir)
     save_warns(dir, bugs)
