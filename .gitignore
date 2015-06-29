@@ -6,3 +6,8 @@ linux*
 randconfig_results/*
 litt
 linux-next
+notes/report/*.log
+notes/report/*.pdf
+notes/report/*.toc
+notes/report/*.aux
+notes/report/*.out
