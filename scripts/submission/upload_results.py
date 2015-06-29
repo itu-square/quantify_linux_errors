@@ -100,7 +100,7 @@ for _, dirs, _ in os.walk(results_dir):
                 
                 # Submitting the bug
                 query_bug = (
-                    "insert ignore into bugs (id, type, version, config, "
+                    "insert ignore into bugs (hash, type, linux_version, config, "
                     "original, subsystem) values"
                     " (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");"
                 )
