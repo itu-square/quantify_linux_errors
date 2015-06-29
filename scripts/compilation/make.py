@@ -15,7 +15,6 @@ os.environ['KERNELVERSION'] = linuxdir
 
 if os.path.isfile(config_file):
     hash = hashlib.sha256(open(config_file, 'rb').read()).hexdigest()
-    print("  * ELVIS: " + hash)
 else:
     print("ERROR: No `.config` file was found in /tmp/config_modified" +
         ". You should first create a `.config` file.")
