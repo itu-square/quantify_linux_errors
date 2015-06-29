@@ -6,15 +6,18 @@ import multiprocessing # For getting number of CPUs
 
 # Auto configuration
 linuxdir = sys.argv[1]
-config_file = linuxdir + "/.config"
+gcc = 'gcc-4.9'
+#config_file = linuxdir + "/.config"
+config_file = "/tmp/config_modified"
 os.environ['SRCARCH'] = 'x86'
 os.environ['ARCH'] = 'x86'
 os.environ['KERNELVERSION'] = linuxdir
 
 if os.path.isfile(config_file):
     hash = hashlib.sha256(open(config_file, 'rb').read()).hexdigest()
+    print("  * ELVIS: " + hash)
 else:
-    print("ERROR: No `.config` file was found in the dir " + linuxdir +
+    print("ERROR: No `.config` file was found in /tmp/config_modified" +
         ". You should first create a `.config` file.")
     sys.exit(2)
 
@@ -35,7 +38,7 @@ cpu_count = multiprocessing.cpu_count()
 # Getting version of gcc
 os.makedirs(output_dir + "gcc")
 gcc_version = subprocess.Popen(
-    "gcc -dumpversion > " + output_dir + "gcc/version",
+    gcc + " -dumpversion > " + output_dir + "gcc/version",
     shell=True, 
     universal_newlines=True)
 

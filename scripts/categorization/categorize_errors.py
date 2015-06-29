@@ -127,7 +127,7 @@ def save_warns(hash, bugs):
 # Finds all the dirs (sha256 hashes)
 for _, dirs, _ in os.walk(results_dir):
     for dir in dirs:
-        if not dir in ['gcc', 'archive']:
+        if not dir in ['gcc']:
             dirlist.append(dir)
 
 
