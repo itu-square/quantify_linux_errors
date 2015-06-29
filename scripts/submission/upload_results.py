@@ -36,6 +36,7 @@ print("      - Setting the cursor")
 cursor = db.cursor()
 
 
+### configurations
 # Inserting the config and config hash
 print("  * Inserting configs")
 if not noconfig:
@@ -53,16 +54,26 @@ if not noconfig:
                 else:
                     exit_status = 3
                 
+                # Reading the configuration warnings/errors
+                ce_file = results_dir + dir + "conf_errs"
+                if os.path.isfile(ce_file):
+                    conf_errs = open(results_dir + dir + "conf_errs", 'r').read()
+                else:
+                    conf_errs = None
+                    
 
                 # Inserting configuration into database
                 print("      - Inserting config " + dir[:8])
                 query_config = (
-                    "insert ignore into configurations (hash, original, exit_status)"
-                    "values (\"%s\", \"%s\", \"%s\");"
+                    "insert ignore into configurations (hash, original, "
+                    "exit_status, conf_errs, linux_version)"
+                    "values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");"
                 )
-                cursor.execute(query_config % (dir, config, exit_status))
+                cursor.execute(query_config % (dir, config, exit_status, 
+                    conf_errs, prog_ver))
 
 
+### bugs
 # Inserting the categorized warnings
 print("  * Inserting the warnings/errors")
 for _, dirs, _ in os.walk(results_dir):
@@ -95,6 +106,7 @@ for _, dirs, _ in os.walk(results_dir):
                 )
                 cursor.execute(query_bug % (bug_id, bugtype, prog_ver, dir, original, subsystem))
 
+                ### files
                 # Submitting files
                 if files:
                     for file in files:

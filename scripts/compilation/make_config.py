@@ -41,20 +41,28 @@ conf_errs = conf_cmd.stderr.read()
 # driver, that is not in the kernel source, I will get an Error.
 # I don't want to count those, so I just have CONFIG_STANDALONE 
 # always =y.
-subprocess.Popen("sed -i 's/# CONFIG_STANDALONE is not set/CONFIG_STANDALONE=y/' .config",
+config_file = open("/tmp/config_modified", 'w')
+p = subprocess.Popen("sed 's/# CONFIG_STANDALONE is not set/CONFIG_STANDALONE=y/' .config",
     shell=True,
+    stdout=config_file,
     cwd=linuxdir)
 
+
+p.wait()
+config_file.close()
+
+
 # Finding hash of config
-hash = hashlib.sha256(open(config_file, 'rb').read()).hexdigest()
-print("      - Hash of `.config` is " + hash)
+conf_hex = open('/tmp/config_modified', 'rb').read()
+hash = hashlib.sha256(conf_hex).hexdigest()
+print("      - Hash of `.config` is " + hash[:8])
 
 # Creating output dir
 output_dir += hash + "/"
 os.makedirs(output_dir)
 
 # Copying config and config errors
-subprocess.Popen("cp .config ../" + output_dir + "config",
+subprocess.Popen("cp /tmp/config_modified ../" + output_dir + "config",
     cwd=linuxdir,
     shell=True)
 with open(output_dir + "conf_errs", 'w') as file:
