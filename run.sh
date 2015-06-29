@@ -25,8 +25,9 @@ fi
 #python scripts/compilation/make_mrproper.py "$1"
 
 # Logging to timer file.
+oldtime=`date +%s`
 echo "### Running $runs times on $1" >> run.log
-echo "0/$runs `date +%s`" >> run.log
+echo "0/$runs $time" >> run.log
 
 # Running mrproper, and maybe changing the name of gcc. This is probably only
 # necessary on this server, since the native gcc is version 4.6 or some old
@@ -42,5 +43,8 @@ do
     #python scripts/categorization/categorize_errors.py "$1"
     #python scripts/submission/upload_results.py "$1"
     #python scripts/submission/backup_results.py "$1"
-    echo "$i/$runs `date +%s`" >> run.log
+    newtime=`date +%s`
+    diftime=`echo "$newtime - $oldtime" | bc -q`
+    oldtime="$newtime"
+    echo "$i/$runs $diftime" >> run.log
 done
