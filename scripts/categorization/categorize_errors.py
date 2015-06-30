@@ -25,6 +25,150 @@ def is_utf8_file(hash):
 
 
 
+def get_warns(hash):
+    logdir = results_dir + "/" + hash + '/gcc/'
+
+    # Getting the entire file
+    lines = []
+    for line in open(logdir + stderr_file):
+        line = str(line.strip())
+        codecs.encode(line, 'ascii', 'ignore')
+        lines.append(line)
+    
+    found_err = False
+    output = []
+    makemsgs = []
+    bug = []
+    orig = []
+    files = []
+    subsystems = []
+
+    # Going through line for line to categorize
+    for line in lines:
+        
+        orig.append(line)
+        
+        # Files
+        wfiles = get_filenames(line)
+        if wfiles:
+            for wfile in wfiles:
+                files.append(wfile)
+
+        # Check if WARNING
+        line_re = re.search(r'\[\-W', line)
+        if line_re:
+            type_re = re.search(r"\[\-W.*\]", line)
+            if not type_re == None:
+                type = type_re.group(0)
+            
+
+            # Grabbing files
+            #files = get_filenames(line)
+
+            # Grabbing subsystems
+            subsystems = get_subsystem(line)
+
+            # Appending to output
+            bug = [type, files, subsystems, orig]
+            output.append(bug)
+
+            # resetting
+            bug = []
+            type = ''
+            files = []
+            subsystems = []
+            orig = []
+
+            continue
+
+
+        # Check if ERROR
+        if line[:4] == 'make':
+            found_err = True
+            makemsgs.append(line)
+
+            continue
+
+    
+    if found_err:
+        err_files = []
+        err_subsystems = []
+
+        # Grabbing filenames
+        for makemsg in makemsgs:
+            mfiles = get_filenames(makemsg)
+            if mfiles:
+                for mfile in mfiles:
+                    err_files.append(mfile)
+
+        # Grabbing subsystem
+        for makemsg in makemsgs:
+            msubs = get_subsystem(makemsg)
+            if msubs:
+                for msub in msubs:
+                    err_subsystems.append(msub)
+
+        bug = ['makeMsg', err_files, err_subsystems, makemsgs]
+        output.append(bug)
+
+    return output
+
+
+def get_subsystem(line):
+    subsystems = []
+    ss_search = r"[a-zA-Z0-9_]*\/"
+    ss = re.search(ss_search, line)
+    if ss:
+        subsystems.append(ss.group(0))
+    return subsystems
+    
+def get_filenames(line):
+    files = []
+    lines = []
+    lines_cols = ''
+    #filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*", line) # `.o` or not?
+    #filename_re = re.search(r"^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", line)
+    #search = r"[a-zA-Z0-9\/\._]*[\/\.]+[a-zA-Z0-9\/_]+"
+    search = r"[a-zA-Z/_\.0-9]*[\/\.]+[a-zA-Z_0-9]+[a-zA-Z_0-9]*"
+    filenames = re.findall(search, line)
+    if filenames:
+        
+        lines_cols = ""
+        lines_cols_re = re.search(r":[0-9]*:[0-9]*(:|,)", line)
+        lines_re = re.search(r":[0-9]*(:|,)", line)
+        if lines_cols_re:
+            lines_cols = lines_cols_re.group(0)
+        elif not lines_re == None:
+            lines_cols = lines_re.group(0)
+    else:
+        return None
+
+    #return [filenames, lines_cols]
+    return filenames
+    
+        
+
+# Saves the `bugs` list to the `/results/<prg_ver>/hash/categorized` file
+def save_warns(hash, bugs):
+    fopen = open(results_dir + "/" + hash + "/categorized", "w")
+    fopen.write(json.dumps(bugs))
+    fopen.close()
+
+
+# Finds all the dirs (sha256 hashes)
+for _, dirs, _ in os.walk(results_dir):
+    for dir in dirs:
+        if not dir in ['gcc']:
+            dirlist.append(dir)
+
+
+# Gets all the bugs from every compilation dir
+for dir in dirlist:
+    print("  * " + dir)
+    bugs = get_warns(dir)
+    save_warns(dir, bugs)
+
+
 def get_gcc_warns(hash):
     logdir = results_dir + "/" + hash + '/gcc/'
     lines = []
@@ -84,55 +228,3 @@ def get_gcc_warns(hash):
     return bugs
 
 
-def get_subsystem(line):
-    subsystem = None
-    ss_search = r"[a-zA-Z0-9_]*\/"
-    ss = re.search(ss_search, line)
-    if ss:
-        subsystem = ss.group(0)
-    return subsystem
-    
-def get_filenames(line):
-    files = []
-    lines = []
-    lines_cols = ''
-    #filename_re = re.search(r"([a-zA-Z0-9_\-+,]*\/).*", line) # `.o` or not?
-    #filename_re = re.search(r"^(.*/)?(?:$|(.+?)(?:(\.[^.]*$)|$))", line)
-    #search = r"[a-zA-Z0-9\/\._]*[\/\.]+[a-zA-Z0-9\/_]+"
-    search = r"[a-zA-Z/_\.0-9]*[\/\.]+[a-zA-Z_0-9]+[a-zA-Z_0-9]*"
-    filenames = re.findall(search, line)
-    if filenames:
-        
-        lines_cols = ""
-        lines_cols_re = re.search(r":[0-9]*:[0-9]*(:|,)", line)
-        lines_re = re.search(r":[0-9]*(:|,)", line)
-        if lines_cols_re:
-            lines_cols = lines_cols_re.group(0)
-        elif not lines_re == None:
-            lines_cols = lines_re.group(0)
-    else:
-        return None
-
-    return [filenames, lines_cols]
-    
-        
-
-# Saves the `bugs` list to the `/results/<prg_ver>/hash/categorized` file
-def save_warns(hash, bugs):
-    fopen = open(results_dir + "/" + hash + "/categorized", "w")
-    fopen.write(json.dumps(bugs))
-    fopen.close()
-
-
-# Finds all the dirs (sha256 hashes)
-for _, dirs, _ in os.walk(results_dir):
-    for dir in dirs:
-        if not dir in ['gcc']:
-            dirlist.append(dir)
-
-
-# Gets all the bugs from every compilation dir
-for dir in dirlist:
-    print("  * " + dir)
-    bugs = get_gcc_warns(dir)
-    save_warns(dir, bugs)
