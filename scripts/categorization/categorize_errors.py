@@ -94,21 +94,25 @@ def get_warns(hash):
         err_files = []
         err_subsystems = []
 
-        # Grabbing filenames
+        # Puttin the makemsgs into the orig-list
         for makemsg in makemsgs:
+            orig.append(makemsg)
+
+        # Grabbing filenames
+        for makemsg in orig:
             mfiles = get_filenames(makemsg)
             if mfiles:
                 for mfile in mfiles:
                     err_files.append(mfile)
 
         # Grabbing subsystem
-        for makemsg in makemsgs:
+        for makemsg in orig:
             msubs = get_subsystem(makemsg)
             if msubs:
                 for msub in msubs:
                     err_subsystems.append(msub)
 
-        bug = ['makeMsg', err_files, err_subsystems, makemsgs]
+        bug = ['makeMsg', err_files, err_subsystems, orig]
         output.append(bug)
 
     return output

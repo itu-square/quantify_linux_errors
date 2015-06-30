@@ -63,7 +63,7 @@ if do_conf:
                     ce_file = results_dir + dir + "conf_errs"
                     if os.path.isfile(ce_file):
                         conf_errs = open(results_dir + dir + "conf_errs", 'r').read()
-                else:
+                    else:
                         conf_errs = None
                         
 
@@ -92,9 +92,12 @@ if do_bugs:
                 for line in json_file:
                     bugtype = line[0]
                     files = line[1]
-                    subsystem = line[3]
+                    if line[2]:
+                        subsystem = line[2][0]
+                    else:
+                        subsystem = None
                     original = ""
-                    for orig_line in line[2]:
+                    for orig_line in line[3]:
                         original += re.escape(orig_line) + "\n"
 
                     # Creating the bug_id
@@ -117,19 +120,13 @@ if do_bugs:
                     if files:
                         for file in files:
                             line = None
-                            path = None
-                            if len(file) > 1:
-                                line = file[1]
-                                path = str(file[0])
-                            else:
-                                path = file
                                 
                             #print("      - Inserting file " + path)
                             query_file = (
                                 "insert ignore into files (path, line, bug_id) values " +
                                 "(\"%s\", \"%s\", \"%s\");"
                             )
-                            cursor.execute(query_file % (path, line, bug_id))
+                            cursor.execute(query_file % (file, line, bug_id))
 
 
 #cursor.execute('insert into types (name, severity) values ("-Wwhat", 2)')
