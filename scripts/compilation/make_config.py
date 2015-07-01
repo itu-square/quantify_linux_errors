@@ -1,6 +1,7 @@
 import sys, os
 import hashlib
 import subprocess
+import re
 
 
 linuxdir = sys.argv[1]
@@ -41,19 +42,38 @@ conf_errs = conf_cmd.stderr.read()
 # driver, that is not in the kernel source, I will get an Error.
 # I don't want to count those, so I just have CONFIG_STANDALONE 
 # always =y.
-config_file = open("/tmp/config_modified", 'w')
-p = subprocess.Popen("sed 's/# CONFIG_STANDALONE is not set/CONFIG_STANDALONE=y/' .config",
-    shell=True,
-    stdout=config_file,
-    cwd=linuxdir)
 
+changes = [
+    ["# CONFIG_STANDALONE is not set", "CONFIG_STANDALONE=y"],
+    ["CONFIG_HAVE_KERNEL_LZ4=y", "# CONFIG_HAVE_KERNEL_LZ4 is not set"],
+    ["CONFIG_KERNEL_LZ4=y", "# CONFIG_KERNEL_LZ4 is not set"],
+    ["CONFIG_RD_LZ4=y", "# CONFIG_RD_LZ4 is not set"],
+    ["CONFIG_ZRAM_LZ4=y", "# CONFIG_ZRAM_LZ4 is not set"],
+    ["CONFIG_SQUASHFS_LZ4=y", "# CONFIG_SQUASHFS_LZ4 is not set"],
+    ["CONFIG_CRYPTO_LZ4=y", "# CONFIG_CRYPTO_LZ4 is not set"],
+    ["CONFIG_CRYPTO_LZ4HC=y", "# CONFIG_CRYPTO_LZ4HC is not set"],
+    ["CONFIG_LZ4_COMPRESS=y", "# CONFIG_LZ4_COMPRESS is not set"],
+    ["CONFIG_LZ4HC_COMPRESS=y", "# CONFIG_LZ4HC_COMPRESS is not set"],
+    ["CONFIG_LZ4_DECOMPRESS=y", "# CONFIG_LZ4_DECOMPRESS is not set"],
+    ["CONFIG_DECOMPRESS_LZ4=y", "# CONFIG_DECOMPRESS_LZ4 is not set"],
+    ["CONFIG_xx=y", "# CONFIG_xx is not set"],
+]
 
-p.wait()
-config_file.close()
+print(config_file)
+with open(config_file, 'r') as conf:
+    conf_lines = conf.readlines()
+with open(config_file, 'w') as conf:
+    for line in conf_lines:
+        for change in changes:
+            if re.match(change[0], line):
+                print(line)
+                line = re.sub(change[0], change[1], line)
+        conf.write(line)
+
 
 
 # Finding hash of config
-conf_hex = open('/tmp/config_modified', 'rb').read()
+conf_hex = open(config_file, 'rb').read()
 hash = hashlib.sha256(conf_hex).hexdigest()
 print("      - Hash of `.config` is " + hash[:8])
 
@@ -62,7 +82,7 @@ output_dir += hash + "/"
 os.makedirs(output_dir)
 
 # Copying config and config errors
-subprocess.Popen("cp /tmp/config_modified ../" + output_dir + "config",
+subprocess.Popen("cp .config" + " ../" + output_dir + "config",
     cwd=linuxdir,
     shell=True)
 with open(output_dir + "conf_errs", 'w') as file:
