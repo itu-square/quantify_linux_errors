@@ -66,7 +66,6 @@ with open(config_file, 'w') as conf:
     for line in conf_lines:
         for change in changes:
             if re.match(change[0], line):
-                print(line)
                 line = re.sub(change[0], change[1], line)
         conf.write(line)
 

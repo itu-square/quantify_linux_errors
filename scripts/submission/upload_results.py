@@ -25,7 +25,7 @@ cat_file = "categorized"
 nogo_dirs = ['gcc', 'archive'] # Dirs not to follow when looking for bugs
 
 # These can be turned on/off for debugging
-do_conf = False
+do_conf = True
 do_bugs = True
 
 
