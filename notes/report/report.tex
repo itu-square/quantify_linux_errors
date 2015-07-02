@@ -137,7 +137,21 @@
 
 \subsection{Linux}
 
-The Linux kernel has around 11,000 features in the feature model. This means that Linux is highly configurable, and therefore also has great scalability.
+The Linux kernel has around 11,000 features in the feature model. This means 
+that Linux is highly configurable, and therefore also has great scalability 
+and can be used in everything from small embedded devices to supercomputers 
+\footnote{find source}.
+
+This high variability rate makes maintaining the code somewhat harder to 
+grasp, and this makes the code base more error prone. So what you get in 
+scalability you pay for in hardness of maintaining the code. \footnote{Refer 
+to Jean's project or something}.
+
+The Linux Kernel is also the largest open source code base in the 
+world\footnote{source}, and also the one with the highest variability 
+\footnote{source}. This is why the Linux Kernel was chosen for this project.
+
+
 
 % TODO
 \begin{itemize}
@@ -257,6 +271,17 @@ configurations are invalid.
 
 
 \subsection{gcc bugtypes}
+
+When a configurations has been created, the Linux Kernel is compiled using 
+that configuration file. This is done mainly by \emph{GNU gcc}\footnote{url or 
+something}, which then outputs warning and error messages. If there is an 
+error, the compilation will also stop immediately.
+
+These output messages hold the information that will be used in this project. 
+In a warning, there is information about a possible coding mistake that might 
+break the code. There are about 30 different warning types \footnote{source}. 
+Some of these are not so interesting as others for this project.
+
 
 % TODO
 \begin{itemize}
