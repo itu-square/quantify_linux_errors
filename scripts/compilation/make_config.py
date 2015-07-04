@@ -2,6 +2,7 @@ import sys, os
 import hashlib
 import subprocess
 import re
+import shutil
 
 
 linuxdir = sys.argv[1]
@@ -12,7 +13,11 @@ os.environ['ARCH'] = 'x86'
 os.environ['KERNELVERSION'] = linuxdir
 FNULL = open(os.devnull, 'w')
 
-# Check if `make mrproper` has been run ?? Should I do this?
+
+# finding out what the linux_version should be
+version_file = open(linuxdir + '/linux_version', 'r')
+linux_version = version_file.read()
+
 
 
 # Creating `results` dir if not exist
@@ -35,6 +40,7 @@ conf_cmd = subprocess.Popen(
     universal_newlines=True)
 conf_errs = conf_cmd.stderr.read()
 
+
 ### FIXING SOME MANDATORY FEATURES. (Right now, just one)
 
 # Every other config has CONFIG_STANDALONE=n which means that 
@@ -56,10 +62,13 @@ changes = [
     ["CONFIG_LZ4HC_COMPRESS=y", "# CONFIG_LZ4HC_COMPRESS is not set"],
     ["CONFIG_LZ4_DECOMPRESS=y", "# CONFIG_LZ4_DECOMPRESS is not set"],
     ["CONFIG_DECOMPRESS_LZ4=y", "# CONFIG_DECOMPRESS_LZ4 is not set"],
+    ["# CONFIG_SECCOMP is not set", "CONFIG_SECCOMP=y"],
+    ["# CONFIG_PREVENT_FIRMWARE_BUILD is not set", "CONFIG_PREVENT_FIRMWARE_BUILD=y"],
+    ["CONFIG_FW_LOADER=y", "# CONFIG_FW_LOADER is not set"],
+    ["# CONFIG_xx is not set", "CONFIG_xx=y"],
     ["CONFIG_xx=y", "# CONFIG_xx is not set"],
 ]
 
-print(config_file)
 with open(config_file, 'r') as conf:
     conf_lines = conf.readlines()
 with open(config_file, 'w') as conf:
@@ -70,14 +79,23 @@ with open(config_file, 'w') as conf:
         conf.write(line)
 
 
+# Copying `.config` file to `config`, so make.py has something to hash
+shutil.copyfile(config_file, linuxdir + '/config')
+
 
 # Finding hash of config
+conf_hex = open(linuxdir + '/config', 'rb').read()
+hash = hashlib.sha256(conf_hex).hexdigest()
+print("      - Hash of `config` is " + hash[:8])
+
+# Finding hash of .config
 conf_hex = open(config_file, 'rb').read()
 hash = hashlib.sha256(conf_hex).hexdigest()
 print("      - Hash of `.config` is " + hash[:8])
 
 # Creating output dir
 output_dir += hash + "/"
+print("      - Creating dir " + output_dir)
 os.makedirs(output_dir)
 
 # Copying config and config errors
@@ -87,3 +105,9 @@ subprocess.Popen("cp .config" + " ../" + output_dir + "config",
 with open(output_dir + "conf_errs", 'w') as file:
     file.write(conf_errs)
 print("      - Length of config warnings is: " + str(len(conf_errs)))
+
+
+# Writing the linux_version
+with open(output_dir + "linux_version", "w") as linux_version_file:
+    linux_version_file.write(linux_version)
+print("      - Wrote linux_version file: " + linux_version)

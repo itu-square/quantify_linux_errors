@@ -19,8 +19,8 @@ if len(sys.argv) == 3:
         noconfig = True
 
 # Configuration
-prog_ver = sys.argv[1]
-results_dir = "results/" + prog_ver + "/"
+linuxdir = sys.argv[1]
+results_dir = "results/" + linuxdir + "/"
 cat_file = "categorized"
 nogo_dirs = ['gcc', 'archive'] # Dirs not to follow when looking for bugs
 
@@ -50,6 +50,10 @@ if do_conf:
                 if not dir in nogo_dirs:
                     config = open(results_dir + dir + "/config", 'r').read()
                     config = re.escape(config)
+
+                    # Reading the linux version
+                    version_file = open(results_dir + dir + "/linux_version", 'r')
+                    prog_ver = version_file.read()
 
                     # Reading the exit status
                     es_file = results_dir + dir + "/gcc/exit_status"
@@ -85,6 +89,12 @@ if do_bugs:
     for _, dirs, _ in os.walk(results_dir):
         for dir in dirs:
             if not dir in nogo_dirs:
+
+                # Reading the linux version
+                version_file = open(results_dir + dir + "/linux_version", 'r')
+                prog_ver = version_file.read()
+
+                # Reading the errors and warnings
                 print("     - Reading stderr " + dir[:8])
                 stderr_file_path = results_dir + dir + "/categorized"
                 stderr_file = open(stderr_file_path, 'r').read()

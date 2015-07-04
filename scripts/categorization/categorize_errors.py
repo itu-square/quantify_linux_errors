@@ -17,6 +17,7 @@ dirlist = []
 acc_enc = ["UTF", "empty"]
 
 
+
 def is_utf8_file(hash):
     dir = results_dir + "/" + hash + '/gcc/'
     bugfile = dir + stderr_file

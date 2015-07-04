@@ -7,8 +7,8 @@ import multiprocessing # For getting number of CPUs
 # Auto configuration
 linuxdir = sys.argv[1]
 gcc = 'gcc-4.9'
-#config_file = linuxdir + "/.config"
-config_file = "/tmp/config_modified"
+config_file = linuxdir + "/config"
+#config_file = "/tmp/config_modified"
 os.environ['SRCARCH'] = 'x86'
 os.environ['ARCH'] = 'x86'
 os.environ['KERNELVERSION'] = linuxdir
@@ -35,6 +35,7 @@ cpu_count = multiprocessing.cpu_count()
 
 
 # Getting version of gcc
+print("      - output_dir: " + output_dir)
 os.makedirs(output_dir + "gcc")
 gcc_version = subprocess.Popen(
     gcc + " -dumpversion > " + output_dir + "gcc/version",
