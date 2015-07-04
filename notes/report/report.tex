@@ -135,38 +135,90 @@
 \newpage
 \section{Background}
 
-\subsection{Linux}
+\subsection{The Linux Kernel}
 
-The Linux kernel has around 11,000 features in the feature model. This means 
-that Linux is highly configurable, and therefore also has great scalability 
-and can be used in everything from small embedded devices to supercomputers 
-\footnote{find source}.
+Many software products are configurable in some way. This creates the 
+possibility of tailoring the software to suit different needs. For example 
+different kinds of hardware, or different funtionalities.
+
+The Linux Kernel is probably the one open source software product, which has 
+the highest configurability\footnote{source}. It is also said that a software 
+product has a large amount of \emph{Variability}\footnote{Is it called that?} \\
+
+
+This represents that the software system has many options that can be turned 
+on or off, or can be given a specific value. These options will here be called 
+\emph{features}.
+
+The Linux kernel has around 11,000 features in the feature 
+model\footnote{\$grep bla bla}. This means that Linux is highly configurable, 
+and possibly the reason for Linux to have such great scalability (it can be 
+used in everything from small embedded devices to supercomputers) 
+\footnote{find source}. \\
+
 
 This high variability rate makes maintaining the code somewhat harder to 
 grasp, and this makes the code base more error prone. So what you get in 
 scalability you pay for in hardness of maintaining the code. \footnote{Refer 
 to Jean's project or something}.
 
-The Linux Kernel is also the largest open source code base in the 
-world\footnote{source}, and also the one with the highest variability 
-\footnote{source}. This is why the Linux Kernel was chosen for this project.
 
+\subsubsection{The linux-next tree}
+
+\begin{center}
+    \emph{
+        Comment from the linux-next page or something
+    }
+\end{center}
+
+The Linux Kernel development cycle has approximately 75 days from one stable 
+release to the next stable release\footnote{http://phb-crystal-ball.org/}. In 
+the meantime, \emph{RC} releases, also called \emph{prepatch} releases, are 
+released once in a while. Mainly for kernel developers to test for new features.
+\\
+
+
+Then there is the \emph{linux-next} tree. It is a \emph{git} tree, which 
+merges over 200 other \emph{git} trees\footnote{See <src>/Next/Trees}, which 
+all are based on the \emph{mainline} tree. The \emph{linux-next} tree is 
+merging these other trees every day and the merge conflicts are handled. 
+Therefore the \emph{linux-next} tree always contain the newest commits. 
+
+This tree will get some bugs fixed sooner than if everyone contributed to the 
+mainline and tested on that. Comparing to a stable version, one would suspect 
+the \emph{linux-next} tree to have more bugs, since it has not been tested, 
+and it is the newest code available, which means more bugs have been inserted. 
+\\
+
+
+For this thesis project, both the \emph{linux-next} tree and the latest stable 
+version is used. As time of writing, the latest stable version is \emph{4.1.1}.
+
+\footnote{http://neuling.org/linux-next-size.html}
+
+\footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
+mailing list archive}
+
+\footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of 
+build robot results page.}
+
+\footnote{
+http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
+?id=HEAD - here are all the git trees that are merged in linux-next}
 
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Find out how to find the exact number. It is in some article, I got by Andrzej. Plus maybe SharpSAT.
-    \item Explain how to find this number by grepping
-    \item talk about Open source
-    \item talk about Largest codebase
-    \item talk about linux-next
+    \item Find out how to find the exact number of possible configurations. It 
+        is in some article, I got by Andrzej. Plus maybe SharpSAT.
+    \item Explain how to find the number of features by grepping.
 \end{itemize}
 
 
 \subsection{Kconfig}
 
-The Kconfig language is the language of the feature model in Linux (also for 
+The Kconfig language is the language of the feature model in Linux (also used for 
 other projects like busybox, vim, etc...). In this chapter, I will shortly 
 explain the ups and downs of the Kconfig language. \\
 
@@ -205,6 +257,7 @@ Kernel is far too big.
     \item Show a dependency tree
     \item Examples of constraints in the language
     \item Reference to Thorsten's projects
+    \item Refer to the /Documentation/kbuild/kconfig-language.txt
 \end{itemize}
 
 \subsection{randconfig}
@@ -220,7 +273,9 @@ That last one \emph{randconfig} is interesting, as it will go through the
 Kconfig feature model files, and pick random values for all of the features. 
 This should be perfect for the goal for this project. Although time will tell 
 that it is indeed biased, and will not create configurations that are of 
-representative character. See figure for a toy example of this.
+representative character. 
+
+See figure for a toy example of this.
 
 
 \begin{center}
@@ -272,15 +327,56 @@ configurations are invalid.
 
 \subsection{gcc bugtypes}
 
-When a configurations has been created, the Linux Kernel is compiled using 
-that configuration file. This is done mainly by \emph{GNU gcc}\footnote{url or 
-something}, which then outputs warning and error messages. If there is an 
-error, the compilation will also stop immediately.
+When a configuration has been created, the Linux Kernel is compiled using 
+that configuration file. This is done mainly by \emph{GNU 
+gcc}\footnote{http://gcc.gnu.org/}, which then outputs warning and error 
+messages. If there is an error, the compilation will also stop immediately.
 
 These output messages hold the information that will be used in this project. 
 In a warning, there is information about a possible coding mistake that might 
 break the code. There are about 30 different warning types \footnote{source}. 
-Some of these are not so interesting as others for this project.
+Some of these are not so interesting as others for this project.\\
+
+
+Generally there will be distinguished between four different types of output. 
+These are \emph{relevant errors}, \emph{irrelevant errors}, \emph{relevant 
+warnings}, and \emph{irrelevant warnings}. 
+
+
+\paragraph{The relevant errors} are errors that will occur on all machines 
+when a certain configuration is being built. 
+
+
+\paragraph{The irrelevant errors} 
+are a result of the building system not having some specific dependencies 
+installed. 
+
+For instance, there is a feature in the feature model that is called 
+\textbf{CONFIG\_KERNEL\_LZO}, which dictates that the kernel should be 
+compressed by the \emph{lzop} library instead of the default \emph{gzip} 
+compression library.
+
+When a randomly configurated kernel has the \textbf{CONFIG\_KERNEL\_LZOP} 
+enabled - which would happen approximately every 6th random configuration - 
+then to build the kernel the \emph{lzop} library will have to be installed on 
+the build system. If it was not, then the compilation would crash with the 
+same error. \\ 
+
+
+There exist many other examples like this in the \emph{Linux Kernel} where an 
+uninstalled program will result in an unbuilt kernel. These \emph{irrelevant 
+errors} would have to be minimized, since they are not actual kernel errors, 
+but local errors. \footnote{Give list of all the features I have disabled}
+
+
+\paragraph{The relevant warnings}
+
+
+
+\paragraph{The irrelevant warnings}
+
+
+
 
 
 % TODO
@@ -353,6 +449,13 @@ Some of these are not so interesting as others for this project.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Threats to Validity}
+
+\begin{itemize}
+    \item Only run on x86 architecture
+    \item randconfig bias
+    \item firmware blobs
+    \item 
+\end{itemize}
 
 \subsection{Generate'n'Filter}
 
