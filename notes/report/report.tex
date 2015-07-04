@@ -122,6 +122,11 @@
 \emph{---Leave blank until the end---}
 
 
+% TODO
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+        \item Explain about representative samples
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,23 +137,70 @@
 
 \subsection{Linux}
 
-The Linux kernel has around 11,000 features in the feature model. And further,
-it is the largest open source codebase. This is great for testing purposes
-regarding variability.
+The Linux kernel has around 11,000 features in the feature model. This means 
+that Linux is highly configurable, and therefore also has great scalability 
+and can be used in everything from small embedded devices to supercomputers 
+\footnote{find source}.
 
+This high variability rate makes maintaining the code somewhat harder to 
+grasp, and this makes the code base more error prone. So what you get in 
+scalability you pay for in hardness of maintaining the code. \footnote{Refer 
+to Jean's project or something}.
+
+The Linux Kernel is also the largest open source code base in the 
+world\footnote{source}, and also the one with the highest variability 
+\footnote{source}. This is why the Linux Kernel was chosen for this project.
+
+
+
+% TODO
 \begin{itemize}
-    \item 11,000 features - how I found out.
-    \item Open source
-    \item Largest codebase
-    \item linux-next
+    \item \underline{\textbf{TODO}}
+    \item Find out how to find the exact number. It is in some article, I got by Andrzej. Plus maybe SharpSAT.
+    \item Explain how to find this number by grepping
+    \item talk about Open source
+    \item talk about Largest codebase
+    \item talk about linux-next
 \end{itemize}
+
 
 \subsection{Kconfig}
 
 The Kconfig language is the language of the feature model in Linux (also for 
-other projects like busybox, vim, etc...)
+other projects like busybox, vim, etc...). In this chapter, I will shortly 
+explain the ups and downs of the Kconfig language. \\
+
+
+The different data types are pretty much the same as with a normal programming 
+language. Although with the exception of \emph{tristate}, which can be $[y, n, 
+m]$. The list is \emph{boolean}, \emph{tristate}, \emph{string}, \emph{hex}, 
+and \emph{integer}.
+
+Every feature must have a data type, and a description. It can then have the 
+following other options:
 
 \begin{itemize}
+    \item Default values
+    \item Help text
+    \item Features that this feature depends on
+    \item Features that depends on this feature
+\end{itemize}
+
+Also there is the \emph{choice} option, where only one of multiple features 
+can be enabled. \\
+
+
+This can all be visualized in an \emph{Abstract Syntax Tree}, or a dependency 
+tree. I will show a tiny example because the whole feature model of Linux 
+Kernel is far too big.
+
+
+% TODO
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+    \item Explain how it is shattered over many files.
+    \item It creates a `.config` file.
+    \item How many are of each data type?
     \item Explain the Kconfig language a bit
     \item Show a dependency tree
     \item Examples of constraints in the language
@@ -157,13 +209,85 @@ other projects like busybox, vim, etc...)
 
 \subsection{randconfig}
 
+The Linux Kernel comes with different ways of creating your own configuration 
+file. There is a question based one (\emph{config}), and some menu based ones 
+(\emph{menuconfig}, \emph{xconfig}, \emph{nconfig}, \emph{gconfig}), but also 
+some that will never prompt the user for anything, but create some automated 
+config (\emph{allyesconfig}, \emph{allnoconfig}, \emph{defconfig}, and 
+\emph{randconfig}).
+
+That last one \emph{randconfig} is interesting, as it will go through the 
+Kconfig feature model files, and pick random values for all of the features. 
+This should be perfect for the goal for this project. Although time will tell 
+that it is indeed biased, and will not create configurations that are of 
+representative character. See figure for a toy example of this.
+
+
+\begin{center}
+    \emph{-- figure --}
+\end{center}
+
+
+This shows that it is highly likely that \emph{randconfig} will have a strong 
+bias towards features that are in the top of the dependency tree comparing to 
+the features that are deeper down in the dependency tree. 
+
+To actually create a representative sample of the configuration space was 
+proven to be harder than was initially thought. A couple of methods were 
+thought out to make the configuration creation more representative. \\
+
+
+One idea was to alter the code for \emph{randconfig}, to make it know how deep 
+the dependency tree was, and make it bias the coin flipping process correctly. 
+For example if landing a \emph{yes} would yield a total of 99 possible other 
+features, and landing a \emph{no} did not yield any other features, then the 
+coin should have a 1\% of landing a \emph{no} and a 99 \% chance of landing a 
+\emph{yes}. \\
+
+
+Another idea was to take all the spread out Kconfig files, and concatenate 
+them all into one big text file, which would then be modified. If the order of 
+the features were randomized, then the coins would not be flipped in the same 
+order every time, and this could have an effect on the dependent features. \\
+
+The third idea was to manually generate a configuration file, and then check - 
+somehow - if the config file was valid, and then use it if it was valid. By 
+not looking at dependencies, but only considering \emph{choice} options and 
+enabling \emph{mandatory features}, a configuration file was created by 
+randomly flipping a coin per each feature.
+
+This seemed doable until after generating 100,000 configurations, not one 
+valid configuration was found. It seems like many of the $2^{11,000}$ 
+configurations are invalid.
+
+
+% TODO
 \begin{itemize}
-    \item Show some code
+    \item \underline{\textbf{TODO}}
+    \item Show some code of randconfig not doing it representatively
     \item Show a graph with a toy example
+    \item show the 33-33 vs 25-25-50 example
 \end{itemize}
+
 
 \subsection{gcc bugtypes}
 
+When a configurations has been created, the Linux Kernel is compiled using 
+that configuration file. This is done mainly by \emph{GNU gcc}\footnote{url or 
+something}, which then outputs warning and error messages. If there is an 
+error, the compilation will also stop immediately.
+
+These output messages hold the information that will be used in this project. 
+In a warning, there is information about a possible coding mistake that might 
+break the code. There are about 30 different warning types \footnote{source}. 
+Some of these are not so interesting as others for this project.
+
+
+% TODO
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+    \item 
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
