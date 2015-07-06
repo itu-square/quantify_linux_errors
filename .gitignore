@@ -11,3 +11,5 @@ notes/report/*.pdf
 notes/report/*.toc
 notes/report/*.aux
 notes/report/*.out
+run.log
+a.out

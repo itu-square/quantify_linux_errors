@@ -2,11 +2,17 @@ import sys, os # For basic file loading/saving and other stuff
 import hashlib # For creating sha256 hashes
 import subprocess # For running shell commands
 import multiprocessing # For getting number of CPUs
+import socket
 
 
 # Auto configuration
 linuxdir = sys.argv[1]
-gcc = 'gcc-4.9'
+#gcc = 'gcc-4.9'
+hostname = socket.gethostname()
+if hostname == 'mtlab':
+    gcc = 'gcc-4.9'
+else:
+    gcc = 'gcc'
 config_file = linuxdir + "/config"
 #config_file = "/tmp/config_modified"
 os.environ['SRCARCH'] = 'x86'

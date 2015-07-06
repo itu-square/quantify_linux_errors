@@ -20,6 +20,11 @@
 }
 
 
+% Creating my own inline code font
+\newcommand{\textcode}[1]{
+    \texttt{\colorbox{gray!10}{{#1}}}
+}
+
 
 % Math
 \usepackage{mathtools}   % need for subequations
@@ -27,6 +32,7 @@
 % Graphics
 \usepackage{graphicx}   % need for figures
 \usepackage{color}      % use if color is used in text 
+\usepackage{xcolor}     % use for text background color
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usepackage{float}
@@ -141,9 +147,12 @@ Many software products are configurable in some way. This creates the
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different funtionalities.
 
-The Linux Kernel is probably the one open source software product, which has 
-the highest configurability\footnote{source}. It is also said that a software 
-product has a large amount of \emph{Variability}\footnote{Is it called that?} \\
+The Linux Kernel is probably the one open source software product with more 
+than 19M lines of code 
+\footnote{http://www.phoronix.com/misc/linuxstat-june-2015/files.html}, 
+which has the highest configurability\footnote{source}. It is also said that a 
+software product has a large amount of \emph{Variability}\footnote{Is it 
+called that?} \\
 
 
 This represents that the software system has many options that can be turned 
@@ -171,11 +180,11 @@ to Jean's project or something}.
     }
 \end{center}
 
-The Linux Kernel development cycle has approximately 75 days from one stable 
-release to the next stable release\footnote{http://phb-crystal-ball.org/}. In 
-the meantime, \emph{RC} releases, also called \emph{prepatch} releases, are 
-released once in a while. Mainly for kernel developers to test for new features.
-\\
+The Linux Kernel development cycle has approximately 2$\frac{3}{4}$ months 
+from one stable release to the next stable 
+release\footnote{http://phb-crystal-ball.org/}. In the meantime, \emph{RC} 
+releases, also called \emph{prepatch} releases, are released once in a while. 
+Mainly for kernel developers to test for new features.  \\
 
 
 Then there is the \emph{linux-next} tree. It is a \emph{git} tree, which 
@@ -213,13 +222,18 @@ http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
     \item Find out how to find the exact number of possible configurations. It 
         is in some article, I got by Andrzej. Plus maybe SharpSAT.
     \item Explain how to find the number of features by grepping.
+    \item Talk about subsystems
+    \item Maybe talk about the percentage of code in every subsystems. What is 
+        Linux Kernel made of?
+    \item talk about who contributes to the kernel. (intel, novell). Both in 
+        code and money?
 \end{itemize}
 
 
 \subsection{Kconfig}
 
-The Kconfig language is the language of the feature model in Linux (also used for 
-other projects like busybox, vim, etc...). In this chapter, I will shortly 
+The Kconfig language is the language of the feature model in Linux (also used 
+for other projects like busybox, vim, etc...). In this chapter, I will shortly 
 explain the ups and downs of the Kconfig language. \\
 
 
@@ -250,7 +264,7 @@ Kernel is far too big.
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Explain how it is shattered over many files.
+    \item Explain how kconfig is shattered over many files.
     \item It creates a `.config` file.
     \item How many are of each data type?
     \item Explain the Kconfig language a bit
@@ -325,7 +339,7 @@ configurations are invalid.
 \end{itemize}
 
 
-\subsection{gcc bugtypes}
+\subsection{gcc bug types}
 
 When a configuration has been created, the Linux Kernel is compiled using 
 that configuration file. This is done mainly by \emph{GNU 
@@ -338,6 +352,10 @@ break the code. There are about 30 different warning types \footnote{source}.
 Some of these are not so interesting as others for this project.\\
 
 
+In this project, all the toy examples are made up, and not taken from the 
+actual Linux Kernel. \\
+
+
 Generally there will be distinguished between four different types of output. 
 These are \emph{relevant errors}, \emph{irrelevant errors}, \emph{relevant 
 warnings}, and \emph{irrelevant warnings}. 
@@ -345,6 +363,9 @@ warnings}, and \emph{irrelevant warnings}.
 
 \paragraph{The relevant errors} are errors that will occur on all machines 
 when a certain configuration is being built. 
+
+A difficult task is to figure out what exactly caused the error. 
+\footnote{Give a list of possible errors... I found that site}
 
 
 \paragraph{The irrelevant errors} 
@@ -370,19 +391,40 @@ but local errors. \footnote{Give list of all the features I have disabled}
 
 
 \paragraph{The relevant warnings}
+are warnings that may cause an error at some point. The \emph{uninitialized 
+variable} warning is such a warning. If a variable is uninitialized, and ends 
+up being called, it may cause an error, and stop the compilation.
 
+\lstinputlisting[language=C]{code/uninitializedvar.c}
 
+This will return the warning \textcode{'a' is used uninitialized in this 
+function [-Wuninitialized]} and the output, when the program is run, will
+be \textcode{0Hello world}.
 
 \paragraph{The irrelevant warnings}
+These are mainly warnings that represent dead code. Warnings like \emph{unused 
+function}, \emph{unused variable}, \emph{unused label}, and \emph{unused 
+value}, will all end up as dead code, which is bad for fitting a kernel 
+on some hardware with limited space. Apart from that it is nothing else than 
+code pollution. \\
+
+\lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
+
+This will return the warning \textcode{unused variable 'a' [-Wunused-variable]}
 
 
+\lstinputlisting[language=C, firstline=3]{code/unusedfunc.c}
 
+This will return the warning \textcode{'func' defined but not used 
+[-Wunused-function]}. Notice, that the function will have to be static for the 
+warning to show.
 
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item 
+    \item Give real examples of unused function, and uninitialed... bla
+    \item Give unreal examples of ditto
 \end{itemize}
 
 
@@ -392,18 +434,53 @@ but local errors. \footnote{Give list of all the features I have disabled}
 \newpage
 \section{Methodology}
 
+The objective is to make a quantitative analysis of errors and warnings in the 
+Linux Kernel based on as many random configurations as are possible to generate 
+within the time span of this project.
+
+There will be generated random configurations, and these will be used to 
+compile two Linux Kernels. One stable Linux Kernel, and one from the 
+linux-next repository.  \\
+
+
 \subsection{Research Questions}
 
-\begin{itemize}
-    \item How many of the possible configurations are valid
-    \item Top Errors
-    \item Top Subsystems with errors
-    \item Top features with errors
-    \item Difference between same version, and constantly updated version of 
-        linux-next
-\end{itemize}
+RQ1: Will the unstable linux-next repository generate more errors than the 
+stable kernel. \\
+
+
+RQ2: Can it be seen what warnings are mostly generated. An ordered list of the 
+different warnings types.  \\
+
+
+RQ3: Can it be seen in what subsystems most errors occur. And in the 
+largest subsystems, in what subsubsystem? \\
+
+
+RQ4: What percentage of the possible configurations for the Kernel are valid. \\
+
+
+RQ5: Are there any specific features, that when enabled, will produce more 
+warnings than others. \\
+
+
+
 
 \subsection{Collecting data}
+
+Every time a randomly configured compilation is running, \emph{gcc} will 
+output warning and error messages in the \emph{standard error} output. This 
+output is then scraped through to categorize it.
+
+An output line will contain a \emph{bug type}, a \emph{filename}, \emph{line 
+number}, and a \emph{message} describing the warning in english.
+
+
+The collection of data has mainly been done on a computer at the IT University 
+of Copenhagen. It has 32 cores and 128 GB of RAM, and the mean time to compile 
+a kernel and upload the data was around 1 minute and 35 seconds. A fairly 
+regular laptop with 4 cores and 8 GB of RAM does that in just over 8 minutes 
+on average.
 
 \begin{itemize}
     \item Grepping the stderr
