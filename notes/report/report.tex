@@ -22,7 +22,18 @@
 
 % Creating my own inline code font
 \newcommand{\textcode}[1]{
-    \texttt{\colorbox{gray!10}{{#1}}}
+    \texttt{\colorbox{gray!20}{#1}}
+}
+
+% Recreating the figure thingy
+\newcommand{\figa}{
+    \begin{figure}[!htpb]
+    \centering
+}
+\newcommand{\figb}[2]{
+    \caption{#1}
+    \label{#2}
+    \end{figure}
 }
 
 
@@ -353,7 +364,7 @@ Some of these are not so interesting as others for this project.\\
 
 
 In this project, all the toy examples are made up, and not taken from the 
-actual Linux Kernel. \\
+actual Linux Kernel. They will however be related to variability. \\
 
 
 Generally there will be distinguished between four different types of output. 
@@ -373,11 +384,11 @@ are a result of the building system not having some specific dependencies
 installed. 
 
 For instance, there is a feature in the feature model that is called 
-\textbf{CONFIG\_KERNEL\_LZO}, which dictates that the kernel should be 
+\textcode{CONFIG\_KERNEL\_LZO}, which dictates that the kernel should be 
 compressed by the \emph{lzop} library instead of the default \emph{gzip} 
 compression library.
 
-When a randomly configurated kernel has the \textbf{CONFIG\_KERNEL\_LZOP} 
+When a randomly configurated kernel has the \textcode{CONFIG\_KERNEL\_LZOP} 
 enabled - which would happen approximately every 6th random configuration - 
 then to build the kernel the \emph{lzop} library will have to be installed on 
 the build system. If it was not, then the compilation would crash with the 
@@ -387,7 +398,27 @@ same error. \\
 There exist many other examples like this in the \emph{Linux Kernel} where an 
 uninstalled program will result in an unbuilt kernel. These \emph{irrelevant 
 errors} would have to be minimized, since they are not actual kernel errors, 
-but local errors. \footnote{Give list of all the features I have disabled}
+but local errors. \footnote{Give list of all the features I have disabled} \\
+
+
+The feature \textcode{CONFIG\_STANDALONE} for instance, has been enabled in all 
+the configurations in this project. If this feature is disabled, it allows for 
+firmware drivers to be compiled in the kernel. But these firmware drivers are 
+not open source, and must be placed in the kernel directories manually for the 
+compilation to work.
+
+Since it would be too cumbersome to find all the proprietary drivers, this 
+option of enabling the \textcode{CONFIG\_STANDALONE} feature has been chosen, 
+and will commit to a threat to validity in respect to representativeness. \\
+
+
+Also every feature that had some relation to the \emph{z4c} library has been 
+diabled. This would require the host \footnote{explain what a host and target 
+are at some point further up} to have this library installed. This library was 
+not in the Linux distribution's repository, and it would have been too time 
+consuming to have it installed. 
+
+Therefore this also marks as a threat to validity.
 
 
 \paragraph{The relevant warnings}
@@ -395,7 +426,7 @@ are warnings that may cause an error at some point. The \emph{uninitialized
 variable} warning is such a warning. If a variable is uninitialized, and ends 
 up being called, it may cause an error, and stop the compilation.
 
-\lstinputlisting[language=C]{code/uninitializedvar.c}
+\lstinputlisting[language=C, firstline=3]{code/uninitvar.c}
 
 This will return the warning \textcode{'a' is used uninitialized in this 
 function [-Wuninitialized]} and the output, when the program is run, will
@@ -445,22 +476,43 @@ linux-next repository.  \\
 
 \subsection{Research Questions}
 
+The point of the stable versions are that they have been tested more, and 
+generally are stable. duh! This should mean that fewer errors and warnings 
+would occur when compiling stable versions.
+
+When the unstable version is getting tested, many errors get fixed.
+An interesting question would be to see how many errors exist before all the 
+testing happen. So how many errors are there before stabilization vs after. 
+This leads to the first research question.
+
 RQ1: Will the unstable linux-next repository generate more errors than the 
-stable kernel. \\
+stable kernel, and how many more. \\
 
 
-RQ2: Can it be seen what warnings are mostly generated. An ordered list of the 
-different warnings types.  \\
+It is likely that some errors or warnings are more severe than others, and some 
+types of errors get fixed more than others. This leads to the next question.
+
+RQ2: What warnings are mostly generated.  \\
+
+And this can also be different between the stable and unstable versions. Hence 
+the next question.
+
+RQ3: What bugs seem to be fixed the most when going from unstable to stable. \\
 
 
-RQ3: Can it be seen in what subsystems most errors occur. And in the 
-largest subsystems, in what subsubsystem? \\
+As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
+it}, the subsystems of the kernel are of very different character. 
+\footnote{mention somewhere earlier, that drivers are different from security 
+or kernel} And therefore the bug types must differ from subsystem to subsystem.
+
+RQ4: In what subsystems do the most errors occur. And in the largest 
+subsystems, in what subsubsystem? \\
 
 
-RQ4: What percentage of the possible configurations for the Kernel are valid. \\
+RQ5: What percentage of the possible configurations for the Kernel are valid. \\
 
 
-RQ5: Are there any specific features, that when enabled, will produce more 
+RQ6: Are there any specific features, that when enabled, will produce more 
 warnings than others. \\
 
 
@@ -480,13 +532,71 @@ The collection of data has mainly been done on a computer at the IT University
 of Copenhagen. It has 32 cores and 128 GB of RAM, and the mean time to compile 
 a kernel and upload the data was around 1 minute and 35 seconds. A fairly 
 regular laptop with 4 cores and 8 GB of RAM does that in just over 8 minutes 
-on average.
+on average. \\
+
+
+When a compilation is done, the output is scraped and categorized, and then 
+uploaded to a database, for easy querying during and after the project. 
+
+See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and 
+~\ref{fig:filestable} for the database tables.
+
+
+\figa
+    \begin{tabular}{c|c|c}
+        \hline
+        \multicolumn{3}{c}{\textbf{Configurations}} \\
+        \hline
+        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
+        \hline
+        hash & char(64) & primary key \\
+        exit\_status & int(1) \\
+        conf\_errs & text \\
+        linux\_version & varchar(100) & primary key \\
+        original & longtext \\
+        \hline
+    \end{tabular}
+\figb{The Configurations table}{fig:conftable}
+
+\figa
+    \begin{tabular}{c|c|c}
+        \hline
+        \multicolumn{3}{c}{\textbf{Bugs}} \\
+        \hline
+        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
+        \hline
+        hash & char(64) & primary key \\
+        type & varchar(50) \\
+        linux\_version & varchar(100) \\
+        config\_hash & char(64) \\
+        subsystem & varchar(30) \\
+        original & longtext \\
+        \hline
+    \end{tabular}
+\figb{The Bugs table referring to the Configurations table}{fig:bugstable}
+
+\figa
+    \begin{tabular}{c|c|c}
+        \hline
+        \multicolumn{3}{c}{\textbf{Files}} \\
+        \hline
+        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
+        \hline
+        id & int(11) & primary key \\
+        path & varchar(50) \\
+        line & varchar(15) \\
+        bug\_id & char(64) \\
+        \hline
+    \end{tabular}
+\figb{The Files table referring to the Bugs table}{fig:filestable}
 
 \begin{itemize}
-    \item Grepping the stderr
+    %\item Grepping the stderr
+    \item Tell why we need to compile
+    \item Tell about coccinelle, and why we dont use that
     \item Categorizing the warnings/Errors
-    \item About the collection machine
-    \item About the database setup
+    %\item About the collection machine
+    %\item About the database setup
 \end{itemize}
 
 
@@ -498,10 +608,10 @@ on average.
 \newpage
 \section{Data}
 
-\begin{itemize}
-    \item Example of data structure
-    \item Graph of tables
-\end{itemize}
+%\begin{itemize}
+    %\item Example of data structure
+    %\item Graph of tables
+%\end{itemize}
 
 
 
@@ -527,14 +637,68 @@ on average.
 \newpage
 \section{Threats to Validity}
 
+
+
+\subsection{Generalization}
+
+One major threat to validity is in the representativeness of the random 
+configurations. Since the configurations are created using the \textcode{make 
+randconfig} method, some configurations are more likely to be generated than 
+others.
+
+This means, that when something is generally said about all of the Linux 
+Kernel, instead something is said about mostly a subset of Linuxes. See figure 
+~\ref{fig:repsubset} for a subset of configurations, where generalization is 
+representative, and figure ~\ref{fig:unrepsubset} for the opposite.
+
+\figa
+    \emph{Show an image of true representativeness}
+\figb{A representative subset}{fig:repsubset}
+
+\figa
+    \emph{Show an image of true representativeness}
+\figb{A representative subset}{fig:unrepsubset}
+
+\subsubsection{Architecture}
+
+To create a true representative sample space, all the different architectures 
+should be compiled for. There exist 31 different architectures, but the most 
+common one for laptop and server use is the \emph{x86} architecture.
+
+This architecture is the only one, that are compiled for in this project, as 
+getting the cross compilers for all the different architectures would be very 
+cumbersome. \\
+
+
+This potentially leaves out 97\% \footnote{is this number true. Should I 
+calculate?} of the possible configurations to check.
+
+\subsubsection{Firmware}
+
+Some places in the kernel, there are drivers, which rely on some external 
+proprietary binary blob, before they can be built. These binaries are not in 
+the kernel, but would have to be downloaded specifically and put in certain 
+folders in the kernel tree.
+
+These are throwing errors, which are local errors, and therefore invalid. The 
+task of getting all the drivers into the kernel tree was too great, so instead, 
+those configurations are simply skipped.
+
+This gives another bias in the sample, which now does not contain any 
+configurations with these features on.
+
+
 \begin{itemize}
-    \item Only run on x86 architecture
+    %\item Only run on x86 architecture
     \item randconfig bias
-    \item firmware blobs
-    \item 
+    %\item firmware blobs
+    \item Internal vs. External validity
+    \item The mandatory features?
 \end{itemize}
 
 \subsection{Generate'n'Filter}
+
+
 
 \begin{itemize}
     \item Uniform distribution

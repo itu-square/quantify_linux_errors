@@ -1,8 +1,9 @@
 #include<stdio.h>
 
 int main(void) {
-    int a;
-    int b = 100;
-    printf("%d", b);
+    int a = 50;
+    #ifdef A
+    printf("%d", a);
+    #endif
     return 0;
 }

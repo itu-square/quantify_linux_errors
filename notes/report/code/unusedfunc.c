@@ -1,12 +1,14 @@
 #include<stdio.h>
 
 static int func() {
-    int a = 100;
-    return a;
+    return 100;
 }
 
 int main(void) {
-    int b = 100;
+    int b = 50;
+    #ifdef A
+    b = func();
+    #endif
     printf("%d", b);
     return 0;
 }
