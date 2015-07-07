@@ -64,7 +64,7 @@ if do_conf:
                         exit_status = 3
                     
                     # Reading the configuration warnings/errors
-                    ce_file = results_dir + dir + "conf_errs"
+                    ce_file = results_dir + dir + "/conf_errs"
                     if os.path.isfile(ce_file):
                         conf_errs = open(results_dir + dir + "conf_errs", 'r').read()
                     else:
