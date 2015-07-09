@@ -227,6 +227,51 @@ http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
 ?id=HEAD - here are all the git trees that are merged in linux-next}
 
 
+\subsubsection{Subsystems}
+
+The Linux Kernel source code is spread amongst directories, which are called 
+\emph{subsystems}. The \emph{drivers} subsystem is by far the largest one both 
+regarding SLOC and size. A quick description of all the subsystems will follow. 
+For a visualization of the sizes of the subsystems see figure 
+~\ref{fig:subsystems}.
+
+
+\figa
+    \includegraphics{plots/subsystemstats.eps}
+\figb{Visualization of the sizes of the subsystems}{fig:subsystems}
+
+
+\textcode{Documentation} is as the name states, purely documentation about all 
+different kinds of aspects of the Linux Kernel.
+
+\begin{center}
+    \emph{Quote from Greg K. Hartman about they write tons of docs, but none 
+    are read}
+\end{center}
+
+
+\textcode{arch} contains architecture specific source code. In this project, 
+only the \textcode{arch/86} architecture is compiled for, so only this 
+subsubsystem will be in use. 
+
+Many of these architectures are very rearely used, but they are one of the 
+reasons that Linux can run on so many devices. There are 30 architectures in 
+the \textcode{arch} folder, and the sizes can be seen in ~\ref{fig:archsizes}.
+
+\figa
+    \includegraphics{plots/archsizes.eps}
+\figb{The sizes of the different architecture diretories}{fig:archsizes}
+
+
+\textcode{block}
+\textcode{init}
+\textcode{init}
+\textcode{ipc}
+\textcode{mm}
+\textcode{net}
+\textcode{block}
+\textcode{block}
+
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
@@ -238,6 +283,7 @@ http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
         Linux Kernel made of?
     \item talk about who contributes to the kernel. (intel, novell). Both in 
         code and money?
+    \item talk about subsystems
 \end{itemize}
 
 
@@ -483,37 +529,44 @@ would occur when compiling stable versions.
 When the unstable version is getting tested, many errors get fixed.
 An interesting question would be to see how many errors exist before all the 
 testing happen. So how many errors are there before stabilization vs after. 
-This leads to the first research question.
+This leads to the first research question.\\
 
-RQ1: Will the unstable linux-next repository generate more errors than the 
+\textbf{RQ1:} Will the unstable linux-next repository generate more errors than the 
 stable kernel, and how many more. \\
 
 
 It is likely that some errors or warnings are more severe than others, and some 
-types of errors get fixed more than others. This leads to the next question.
+types of errors get fixed more than others. This leads to the next question.\\
 
-RQ2: What warnings are mostly generated.  \\
+
+\textbf{RQ2:} What warnings are mostly generated.  \\
+
 
 And this can also be different between the stable and unstable versions. Hence 
-the next question.
+the next question. \\
 
-RQ3: What bugs seem to be fixed the most when going from unstable to stable. \\
+
+\textbf{RQ3:} What bugs seem to be fixed the most when going from unstable to 
+stable. \\
 
 
 As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
 it}, the subsystems of the kernel are of very different character. 
 \footnote{mention somewhere earlier, that drivers are different from security 
-or kernel} And therefore the bug types must differ from subsystem to subsystem.
+or kernel} And therefore the bug types must differ from subsystem to subsystem. 
+\\
 
-RQ4: In what subsystems do the most errors occur. And in the largest 
+
+\textbf{RQ4:} In what subsystems do the most errors occur. And in the largest 
 subsystems, in what subsubsystem? \\
 
 
-RQ5: What percentage of the possible configurations for the Kernel are valid. \\
+\textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
+valid. \\
 
 
-RQ6: Are there any specific features, that when enabled, will produce more 
-warnings than others. \\
+\textbf{RQ6:} Are there any specific features, that when enabled, will produce 
+more warnings than others. \\
 
 
 
@@ -544,6 +597,7 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 
 \figa
     \begin{tabular}{c|c|c}
+        \hline 
         \hline
         \multicolumn{3}{c}{\textbf{Configurations}} \\
         \hline
@@ -555,11 +609,13 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
         linux\_version & varchar(100) & primary key \\
         original & longtext \\
         \hline
+        \hline
     \end{tabular}
 \figb{The Configurations table}{fig:conftable}
 
 \figa
     \begin{tabular}{c|c|c}
+        \hline
         \hline
         \multicolumn{3}{c}{\textbf{Bugs}} \\
         \hline
@@ -572,11 +628,13 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
         subsystem & varchar(30) \\
         original & longtext \\
         \hline
+        \hline
     \end{tabular}
 \figb{The Bugs table referring to the Configurations table}{fig:bugstable}
 
 \figa
     \begin{tabular}{c|c|c}
+        \hline
         \hline
         \multicolumn{3}{c}{\textbf{Files}} \\
         \hline
@@ -586,6 +644,7 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
         path & varchar(50) \\
         line & varchar(15) \\
         bug\_id & char(64) \\
+        \hline
         \hline
     \end{tabular}
 \figb{The Files table referring to the Bugs table}{fig:filestable}
