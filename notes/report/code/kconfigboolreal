@@ -1,0 +1,23 @@
+choice
+    prompt "Kernel compression mode"
+    default KERNEL_GZIP
+    depends on HAVE_KERNEL_GZIP || HAVE_KERNEL_BZIP2 || HAVE_KERNEL_LZMA || HAVE_KERNEL_XZ || HAVE_KERNEL_LZO || HAVE_KERNEL_LZ4
+config KERNEL_GZIP
+    bool "Gzip"
+    depends on HAVE_KERNEL_GZIP
+config KERNEL_BZIP2
+    bool "Bzip2"
+    depends on HAVE_KERNEL_BZIP2
+config KERNEL_LZMA
+    bool "LZMA"
+    depends on HAVE_KERNEL_LZMA
+config KERNEL_XZ
+    bool "XZ"
+    depends on HAVE_KERNEL_XZ
+config KERNEL_LZO
+    bool "LZO"
+    depends on HAVE_KERNEL_LZO
+config KERNEL_LZ4
+    bool "LZ4"
+    depends on HAVE_KERNEL_LZ4
+endchoice

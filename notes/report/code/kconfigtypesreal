@@ -1,0 +1,25 @@
+config IKCONFIG
+    tristate "Kernel .config support"
+    select BUILD_BIN2C
+config IKCONFIG_PROC
+    bool "Enable access to .config through /proc/config.gz"
+    depends on IKCONFIG && PROC_FS
+config LOG_BUF_SHIFT
+    int "Kernel log buffer size (16 => 64KB, 17 => 128KB)"
+    range 12 21
+    default 17
+    depends on PRINTK
+config INITRAMFS_SOURCE
+    string "Initramfs source file(s)"
+    default ""
+config PAGE_OFFSET
+    hex
+    default 0xB0000000 if VMSPLIT_3G_OPT
+    default 0x80000000 if VMSPLIT_2G
+    default 0x78000000 if VMSPLIT_2G_OPT
+    default 0x40000000 if VMSPLIT_1G
+    default 0xC0000000
+    depends on X86_32
+config HIGHMEM
+    def_bool y
+    depends on X86_32 && (HIGHMEM64G || HIGHMEM4G)
