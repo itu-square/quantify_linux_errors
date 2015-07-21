@@ -250,8 +250,9 @@ version is used. As time of writing, the latest stable version is \emph{4.1.1}.
     \footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of 
         build robot results page.}
     \footnote{
-        http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
-        ?id=HEAD - here are all the git trees that are merged in linux-next}
+        http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
+        tree/Next/Trees ?id=HEAD - here are all the git trees that are merged 
+        in linux-next}
 
 
         \subsection{Inner Workings of Linux Kernel}
@@ -327,7 +328,8 @@ For a given configuration $\kappa$, it must satisfy the feature model $\psi_{FM}
 \paragraph{The Kconfig language} is the language of the feature model in Linux 
 (also used for other projects like busybox, buildroot, and others).
 The configuration files have the prefix \textcode{Kconfig}, and are 
-scattered all over the Linux kernel tree, where they include each other.
+scattered all over the Linux kernel source code tree, where they include each 
+other.
 \\
 
 The different data types are \textcode{boolean}, \textcode{tristate}, 
@@ -346,27 +348,99 @@ can be enabled.
 \figa
     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
         depends, on, bool, endchoice, choice,{||}}]{code/kconfigboolreal}
-\figb{A real Kconfig example showing a choice clause with 5 choices}{kconfigtypes}
+\figb{A real Kconfig example showing a choice clause with 5 
+    choices}{kconfigtypes}
+
+\figa
+    \includegraphics{plots/datatypestats.eps}
+\figb{The distribution of different datatypes in the feature 
+    model}{datatypesdistribution}
 
 This can be visualized in feature diagram. The example will be tiny compared to 
 that of the Linux kernel. The feature model of the Linux kernel is too big 
 to fit in a normal sizes report.
 
-\figa
-    --- Feature diagram of tiny example ---
-\figb{}{}
+See figure ~\ref{featurediagramcar} for the toy example of a feature 
+diagram. It depicts a feature model of a car configuration, where there are 
+some mandatory features and some optional, and also a choice option for the 
+transmission. A cross-tree dependency is also present.
 
-% TODO
+% 65 lines down to \figb
+\figa
+    \begin{tikzpicture}
+        % The top box
+        \draw (2,3) rectangle (4,3.6);
+        \draw (3,3.3) node {Car};
+
+        % The other boxes
+        \draw (-0.5,2) rectangle (2.2,1.5);
+        \draw (2.45,2) rectangle (4.35,1.5);
+        \draw (5,2) rectangle (7.7,1.5);
+
+        \draw (-3,0) rectangle (0,-0.5);
+        \draw (0.5,0) rectangle (2.5,-0.5);
+        \draw (3,0) rectangle (5,-0.5);
+        \draw (5.5,0) rectangle (8,-0.5);
+
+        % The words in the boxes
+        \draw (0.85,1.75) node {Transmission};
+        \draw (3.35,1.75) node {Wheels};
+        \draw (6.35,1.75) node {Hydraulics};
+
+        \draw (-1.5,-0.25) node {Automatic};
+        \draw (1.5,-0.25) node {Manual};
+        \draw (4,-0.25) node {Aluminum};
+        \draw (6.75,-0.25) node {Puncturefree};
+
+        % The edges
+        \draw (0.85,2.1) edge (3,3);
+        \draw (3.35,2.1) edge (3,3);
+        \draw (6.35,2.1) edge (3,3);
+
+        \draw (-1.5,0) edge  (0.85,1.5);
+        \draw (1.5,0) edge  (0.85,1.5);
+        \draw (4,0.1) edge  (3.35,1.5);
+        \draw (6.75,0.1) edge  (3.35,1.5);
+
+        % The 'or'
+        \draw (-0.325,0.75) edge [bend right] (1.175,0.75);
+
+        % The dots
+        \draw[fill=black] (0.85,2.1) circle (0.1);
+        \draw[fill=black] (3.35,2.1) circle (0.1);
+        \draw[fill=white] (6.35,2.1) circle (0.1);
+
+        \draw[fill=white] (4,0.1) circle (0.1);
+        \draw[fill=white] (6.75,0.1) circle (0.1);
+
+        % The legend
+        \draw[fill=black] (3,-1.5) circle (0.1);
+        \draw[fill=white] (3,-2) circle (0.1);
+        \draw[right] (3.2,-1.5) node {Mandatory feature};
+        \draw[right] (3.2,-2) node {Optional feature};
+
+        \draw (3.0,-2.3) edge (3.2,-2.7);
+        \draw (3.0,-2.3) edge (2.8,-2.7);
+        \draw (3.1,-2.55) edge [bend left] (2.9,-2.55);
+        \draw[right] (3.2,-2.5) node {Choice};
+
+        % The cross-tree dependency
+        \draw[right] (-3, -2) node {\textbf{Aluminum} selects 
+            \textbf{Hydraulics}};
+
+    \end{tikzpicture}
+\figb{An example of a feature diagram of a car}{featurediagramcar}
+% 65 lines up to \figa
+
 \begin{itemize}
     \item \underline{\textbf{TODO}}
     \item Explain what the Linux kernel tree is.
     \item It creates a `.config` file.
-    \item How many are of each data type?
     \item Explain the Kconfig language a bit
-    \item Show a dependency tree
     \item Examples of constraints in the language
     \item Reference to Thorsten's projects
     \item Refer to the /Documentation/kbuild/kconfig-language.txt
+    \item explain that CONFIG\_MMU and MMU is the same
 \end{itemize}
 
 \subsection{randconfig}
@@ -377,6 +451,7 @@ file. There is a question based one (\emph{config}), and some menu based ones
 some that will never prompt the user for anything, but create some automated 
 config (\emph{allyesconfig}, \emph{allnoconfig}, \emph{defconfig}, and 
 \emph{randconfig}).
+\\
 
 That last one \emph{randconfig} is interesting, as it will go through the 
 Kconfig feature model files, and pick random values for all of the features. 
@@ -384,12 +459,12 @@ This should be perfect for the goal for this project. Although time will tell
 that it is indeed biased, and will not create configurations that are of 
 representative character. 
 
-See figure for a toy example of this.
+See figure ~\ref{randconfigtoy} for a toy example of this.
 
-
-\begin{center}
-    \emph{-- figure --}
-\end{center}
+\figa
+    --- figure ---
+\figb{A small toy example showing the bias for upper level 
+    features}{randconfigtoy}
 
 
 This shows that it is highly likely that \emph{randconfig} will have a strong 
