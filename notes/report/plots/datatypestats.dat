@@ -1,0 +1,10 @@
+# type     count NA NA
+tristate   6496   33036  288895
+bool   3826   16709  131899
+int    477    2985   22839
+def\_bool    317     770    5877
+def\_tristate     45     124    1191
+string     45     206    1657
+hex     34     247    1699
+#endchoice     64      64     640
+#endif    419     972    6482

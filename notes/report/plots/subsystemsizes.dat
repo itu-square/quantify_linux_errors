@@ -1,0 +1,17 @@
+# dir           MB          kLOC
+crypto/          2.9         83.9
+security/        2.3         75.5
+mm/              3.0         108
+scripts/         3.1         90.6
+lib/             4.4         100
+firmware/        6.1         129
+kernel/          6.8         244
+tools/           9.0         213
+arch//x86        12          343
+net/             26          890
+sound/           29          876
+Documentation/   31          554
+include/         32          692
+fs/              37          1170
+arch/            130         3360
+drivers/         330         10800

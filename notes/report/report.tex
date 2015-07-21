@@ -22,6 +22,7 @@
 
 % Creating my own inline code font
 \newcommand{\textcode}[1]{
+    \fboxsep=1pt
     \texttt{\colorbox{gray!20}{#1}}
 }
 
@@ -39,6 +40,7 @@
 
 % Math
 \usepackage{mathtools}   % need for subequations
+\usepackage{xfrac}       % Fractions  like 1/4 via \sfrac
 
 % Graphics
 \usepackage{graphicx}   % need for figures
@@ -49,7 +51,6 @@
 \usepackage{float}
 
 % Other
-\usepackage{url}
 \usepackage{todonotes}
 \usepackage{pdfpages}
 \usepackage{subcaption}
@@ -59,7 +60,6 @@
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage[titletoc,title]{appendix}
 \usepackage{epstopdf}
-\bibliographystyle{plain}
 
 % Code listing
 \usepackage{listings} % For inserting code from file (I think)
@@ -77,27 +77,29 @@
 \captionsetup[algorithm]{style=algori}
 
 % URLs ? maybe
+%\usepackage{hyperref}
+\usepackage{url}
 \usepackage[hypcap=false]{caption}
-\usepackage{hyperref}
 
 
-% I wonder what this is
+% for the \lstlisting for code blocks
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{1.0,1.0,1.0}
 \lstdefinestyle{mystyle}{
-  backgroundcolor=\color{backcolour},   commentstyle=\color{codegreen},
+  backgroundcolor=\color{backcolour},   
+  commentstyle=\color{codegreen},
   keywordstyle=\color{magenta},
   numberstyle=\tiny\color{codegray},
   stringstyle=\color{codepurple},
-  basicstyle=\footnotesize,
+  basicstyle=\ttfamily\footnotesize,
   breakatwhitespace=false,         
   breaklines=true,                 
   captionpos=b,                    
   keepspaces=true,                 
   numbers=left,                    
-  numbersep=5pt,                  
+  numbersep=1pt,                  
   showspaces=false,                
   showstringspaces=false,
   showtabs=false,                  
@@ -113,7 +115,7 @@
 
 % Front Page
 \date{September 1st 2015\\ IT University of Copenhagen}
-\title{A Quantitative Analysis of Bugs in Linux}
+\title{A Quantitative Analysis of Variability Bugs in Linux}
 \author{Elvis Flesborg\\
 \texttt{efle@itu.dk}}
 \clearpage\maketitle
@@ -150,40 +152,54 @@
 %                           BACKGROUND
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Background}
+        \section{Background}
 
-\subsection{The Linux Kernel}
+A \emph{Linux} operating system is often referring to a a \emph{GNU/Linux} 
+operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
+and the \emph{GNU} part is a software bundle with utilities (eg. a shell, a 
+compiler, etc...) \cite{gnu_pack}. Both is 
+needed, to have a working operating system. 
+\\
+
+This report will only focus on the \emph{Linux kernel}, and not the \emph{GNU} 
+bundle.
+
+
+        \subsection{The Linux Kernel and Variability}
+
 
 Many software products are configurable in some way. This creates the 
 possibility of tailoring the software to suit different needs. For example 
-different kinds of hardware, or different funtionalities.
+different kinds of hardware, or different functionalities. This is called 
+\emph{variability} in software, when different programs can be made from the 
+same source code base.
 
-The Linux Kernel is probably the one open source software product with more 
-than 19M lines of code 
-\footnote{http://www.phoronix.com/misc/linuxstat-june-2015/files.html}, 
-which has the highest configurability\footnote{source}. It is also said that a 
-software product has a large amount of \emph{Variability}\footnote{Is it 
-called that?} \\
+The options that can be changed, are called \emph{features}.
+\\
 
-
-This represents that the software system has many options that can be turned 
-on or off, or can be given a specific value. These options will here be called 
-\emph{features}.
-
-The Linux kernel has around 11,000 features in the feature 
-model\footnote{\$grep bla bla}. This means that Linux is highly configurable, 
-and possibly the reason for Linux to have such great scalability (it can be 
-used in everything from small embedded devices to supercomputers) 
-\footnote{find source}. \\
-
+The Linux kernel is very configurable. In the configuration files (the Kconfig 
+files), there is a total of 14,387 different features, that can be configured.
+    \footnote {14,387 across all architectures, with an average of 9,984 per 
+        architecture}
+It is one of the highest degree of variability in the available open source 
+software.
+This high degree of variability has also had an impact on the use cases for the 
+Linux kernel. Linux is used for anything from small embedded devices (like car 
+GPSs, and cell phones) to supercomputers.
+In fact 98\% of the top 500 supercomputers in the world run a Linux distibution.
+    \cite{top500}
+\\
 
 This high variability rate makes maintaining the code somewhat harder to 
 grasp, and this makes the code base more error prone. So what you get in 
-scalability you pay for in hardness of maintaining the code. \footnote{Refer 
-to Jean's project or something}.
+scalability you pay for in hardness of maintaining the code. 
+    \footnote{Refer to Jean's project or something}
+    \footnote{Also refer to a paper that andrjew made about industrial 
+        something. It said something about how much more efficient the code was,
+        when variability was there.}
 
 
-\subsubsection{The linux-next tree}
+        \subsection{Linux Kernel Development}
 
 \begin{center}
     \emph{
@@ -191,15 +207,23 @@ to Jean's project or something}.
     }
 \end{center}
 
-The Linux Kernel development cycle has approximately 2$\frac{3}{4}$ months 
-from one stable release to the next stable 
-release\footnote{http://phb-crystal-ball.org/}. In the meantime, \emph{RC} 
-releases, also called \emph{prepatch} releases, are released once in a while. 
-Mainly for kernel developers to test for new features.  \\
 
+        \subsubsection{Mainline tree}
+
+The Linux kernel development cycle has approximately 2$\sfrac{3}{4}$ months 
+from one stable release to the next stable release.
+    \cite{crystalball}
+In the meantime, \emph{RC} 
+releases, also called \emph{prepatch} releases, are released once in a while. 
+Mainly for kernel developers to test for new features. 
+
+
+        \subsubsection{linux-next tree}
 
 Then there is the \emph{linux-next} tree. It is a \emph{git} tree, which 
-merges over 200 other \emph{git} trees\footnote{See <src>/Next/Trees}, which 
+merges over 200 other \emph{git} trees
+    \footnote{See <src>/Next/Trees}
+, which 
 all are based on the \emph{mainline} tree. The \emph{linux-next} tree is 
 merging these other trees every day and the merge conflicts are handled. 
 Therefore the \emph{linux-next} tree always contain the newest commits. 
@@ -208,41 +232,49 @@ This tree will get some bugs fixed sooner than if everyone contributed to the
 mainline and tested on that. Comparing to a stable version, one would suspect 
 the \emph{linux-next} tree to have more bugs, since it has not been tested, 
 and it is the newest code available, which means more bugs have been inserted. 
-\\
 
+
+        \subsubsection{Stable trees}
+
+Then, when the top maintainers of the mainline tree think that the kernel is 
+stable enough, a new stable version is created, and the whole process is 
+repeated.
+\\
 
 For this thesis project, both the \emph{linux-next} tree and the latest stable 
 version is used. As time of writing, the latest stable version is \emph{4.1.1}.
 
-\footnote{http://neuling.org/linux-next-size.html}
-
-\footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
-mailing list archive}
-
-\footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of 
-build robot results page.}
-
-\footnote{
-http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
-?id=HEAD - here are all the git trees that are merged in linux-next}
+    \footnote{http://neuling.org/linux-next-size.html}
+    \footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
+        mailing list archive}
+    \footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of 
+        build robot results page.}
+    \footnote{
+        http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Next/Trees
+        ?id=HEAD - here are all the git trees that are merged in linux-next}
 
 
-\subsubsection{Subsystems}
+        \subsection{Inner Workings of Linux Kernel}
 
-The Linux Kernel source code is spread amongst directories, which are called 
+This section will explain in coarse detail, the structure of the Linux kernel.
+
+
+        \subsubsection{Subsystems}
+
+The directories in the root folder of the Linux kernel source code are called 
 \emph{subsystems}. The \emph{drivers} subsystem is by far the largest one both 
-regarding SLOC and size. A quick description of all the subsystems will follow. 
+regarding lines of code (LOC) and size. A quick description of some of the subsystems will follow. 
 For a visualization of the sizes of the subsystems see figure 
 ~\ref{fig:subsystems}.
 
 
 \figa
-    \includegraphics{plots/subsystemstats.eps}
+    \includegraphics{plots/subsystemsizes.eps}
 \figb{Visualization of the sizes of the subsystems}{fig:subsystems}
 
 
 \textcode{Documentation} is as the name states, purely documentation about all 
-different kinds of aspects of the Linux Kernel.
+different kinds of aspects of the Linux kernel.
 
 \begin{center}
     \emph{Quote from Greg K. Hartman about they write tons of docs, but none 
@@ -251,26 +283,18 @@ different kinds of aspects of the Linux Kernel.
 
 
 \textcode{arch} contains architecture specific source code. In this project, 
-only the \textcode{arch/86} architecture is compiled for, so only this 
+only the \textcode{arch/x86} architecture is compiled for, so only this 
 subsubsystem will be in use. 
 
-Many of these architectures are very rearely used, but they are one of the 
+Many of these architectures are very rarely used, but they are one of the 
 reasons that Linux can run on so many devices. There are 30 architectures in 
-the \textcode{arch} folder, and the sizes can be seen in ~\ref{fig:archsizes}.
+the \textcode{arch} folder, and the sizes can be seen in figure ~\ref{fig:archsizes}.
 
 \figa
     \includegraphics{plots/archsizes.eps}
 \figb{The sizes of the different architecture diretories}{fig:archsizes}
 
 
-\textcode{block}
-\textcode{init}
-\textcode{init}
-\textcode{ipc}
-\textcode{mm}
-\textcode{net}
-\textcode{block}
-\textcode{block}
 
 % TODO
 \begin{itemize}
@@ -280,48 +304,62 @@ the \textcode{arch} folder, and the sizes can be seen in ~\ref{fig:archsizes}.
     \item Explain how to find the number of features by grepping.
     \item Talk about subsystems
     \item Maybe talk about the percentage of code in every subsystems. What is 
-        Linux Kernel made of?
+        Linux kernel made of?
     \item talk about who contributes to the kernel. (intel, novell). Both in 
         code and money?
     \item talk about subsystems
 \end{itemize}
 
 
-\subsection{Kconfig}
+\subsection{Kconfig - The Feature Model Language}
 
-The Kconfig language is the language of the feature model in Linux (also used 
-for other projects like busybox, vim, etc...). In this chapter, I will shortly 
-explain the ups and downs of the Kconfig language. \\
+\paragraph{The feature model} is a way of representing all the possible 
+configurations. It contains dependencies and constraints for the features, and 
+if a chosen configuration fulfills the constraints, then the configuration is 
+valid.
 
+For a given configuration $\kappa$, it must satisfy the feature model $\psi_{FM}$.
 
-The different data types are pretty much the same as with a normal programming 
-language. Although with the exception of \emph{tristate}, which can be $[y, n, 
-m]$. The list is \emph{boolean}, \emph{tristate}, \emph{string}, \emph{hex}, 
-and \emph{integer}.
+\begin{equation}
+    \kappa \in \psi_{FM}
+\end{equation}
 
-Every feature must have a data type, and a description. It can then have the 
-following other options:
+\paragraph{The Kconfig language} is the language of the feature model in Linux 
+(also used for other projects like busybox, buildroot, and others).
+The configuration files have the prefix \textcode{Kconfig}, and are 
+scattered all over the Linux kernel tree, where they include each other.
+\\
 
-\begin{itemize}
-    \item Default values
-    \item Help text
-    \item Features that this feature depends on
-    \item Features that depends on this feature
-\end{itemize}
+The different data types are \textcode{boolean}, \textcode{tristate}, 
+\textcode{string}, \textcode{hex}, and \textcode{integer}.
 
-Also there is the \emph{choice} option, where only one of multiple features 
-can be enabled. \\
+See figure ~\ref{kconfigchoice} and figure ~\ref{kconfigtypes} for some real 
+example of the Kconfig syntax. Figure ~\ref{kconfigchoice} shows an example of 
+a \textcode{choice} option, where only one of multiple features 
+can be enabled. 
 
+\figa
+    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+        depends, on, bool, endchoice, choice,{||}}]{code/kconfigtypesreal}
+\figb{A real Kconfig example showing the basic data types}{kconfigchoice}
 
-This can all be visualized in an \emph{Abstract Syntax Tree}, or a dependency 
-tree. I will show a tiny example because the whole feature model of Linux 
-Kernel is far too big.
+\figa
+    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+        depends, on, bool, endchoice, choice,{||}}]{code/kconfigboolreal}
+\figb{A real Kconfig example showing a choice clause with 5 choices}{kconfigtypes}
 
+This can be visualized in feature diagram. The example will be tiny compared to 
+that of the Linux kernel. The feature model of the Linux kernel is too big 
+to fit in a normal sizes report.
+
+\figa
+    --- Feature diagram of tiny example ---
+\figb{}{}
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Explain how kconfig is shattered over many files.
+    \item Explain what the Linux kernel tree is.
     \item It creates a `.config` file.
     \item How many are of each data type?
     \item Explain the Kconfig language a bit
@@ -333,7 +371,7 @@ Kernel is far too big.
 
 \subsection{randconfig}
 
-The Linux Kernel comes with different ways of creating your own configuration 
+The Linux kernel comes with different ways of creating your own configuration 
 file. There is a question based one (\emph{config}), and some menu based ones 
 (\emph{menuconfig}, \emph{xconfig}, \emph{nconfig}, \emph{gconfig}), but also 
 some that will never prompt the user for anything, but create some automated 
@@ -398,19 +436,19 @@ configurations are invalid.
 
 \subsection{gcc bug types}
 
-When a configuration has been created, the Linux Kernel is compiled using 
-that configuration file. This is done mainly by \emph{GNU 
-gcc}\footnote{http://gcc.gnu.org/}, which then outputs warning and error 
+When a configuration has been created, the Linux kernel is compiled using 
+that configuration file. This is done mainly by \emph{gcc - The GNU Compiler 
+Collection}, which then outputs warning and error 
 messages. If there is an error, the compilation will also stop immediately.
 
 These output messages hold the information that will be used in this project. 
 In a warning, there is information about a possible coding mistake that might 
-break the code. There are about 30 different warning types \footnote{source}. 
+break the code. There are about 30 different warning types \cite{gccwarnings}
 Some of these are not so interesting as others for this project.\\
 
 
 In this project, all the toy examples are made up, and not taken from the 
-actual Linux Kernel. They will however be related to variability. \\
+actual Linux kernel. They will however be related to variability. \\
 
 
 Generally there will be distinguished between four different types of output. 
@@ -441,11 +479,11 @@ the build system. If it was not, then the compilation would crash with the
 same error. \\ 
 
 
-There exist many other examples like this in the \emph{Linux Kernel} where an 
+There exist many other examples like this in the \emph{Linux kernel} where an 
 uninstalled program will result in an unbuilt kernel. These \emph{irrelevant 
 errors} would have to be minimized, since they are not actual kernel errors, 
-but local errors. \footnote{Give list of all the features I have disabled} \\
-
+but local errors. \footnote{Give list of all the features I have disabled} 
+\\
 
 The feature \textcode{CONFIG\_STANDALONE} for instance, has been enabled in all 
 the configurations in this project. If this feature is disabled, it allows for 
@@ -455,8 +493,8 @@ compilation to work.
 
 Since it would be too cumbersome to find all the proprietary drivers, this 
 option of enabling the \textcode{CONFIG\_STANDALONE} feature has been chosen, 
-and will commit to a threat to validity in respect to representativeness. \\
-
+and will commit to a threat to validity in respect to representativeness.
+\\
 
 Also every feature that had some relation to the \emph{z4c} library has been 
 diabled. This would require the host \footnote{explain what a host and target 
@@ -483,7 +521,8 @@ These are mainly warnings that represent dead code. Warnings like \emph{unused
 function}, \emph{unused variable}, \emph{unused label}, and \emph{unused 
 value}, will all end up as dead code, which is bad for fitting a kernel 
 on some hardware with limited space. Apart from that it is nothing else than 
-code pollution. \\
+code pollution. 
+\\
 
 \lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
 
@@ -512,12 +551,13 @@ warning to show.
 \section{Methodology}
 
 The objective is to make a quantitative analysis of errors and warnings in the 
-Linux Kernel based on as many random configurations as are possible to generate 
+Linux kernel based on as many random configurations as are possible to generate 
 within the time span of this project.
 
 There will be generated random configurations, and these will be used to 
-compile two Linux Kernels. One stable Linux Kernel, and one from the 
-linux-next repository.  \\
+compile two Linux kernels. One stable Linux kernel, and one from the 
+linux-next repository.  
+\\
 
 
 \subsection{Research Questions}
@@ -529,25 +569,31 @@ would occur when compiling stable versions.
 When the unstable version is getting tested, many errors get fixed.
 An interesting question would be to see how many errors exist before all the 
 testing happen. So how many errors are there before stabilization vs after. 
-This leads to the first research question.\\
+This leads to the first research question.
+\\
 
 \textbf{RQ1:} Will the unstable linux-next repository generate more errors than the 
-stable kernel, and how many more. \\
+stable kernel, and how many more. 
+\\
 
 
 It is likely that some errors or warnings are more severe than others, and some 
-types of errors get fixed more than others. This leads to the next question.\\
+types of errors get fixed more than others. This leads to the next question.
+\\
 
 
-\textbf{RQ2:} What warnings are mostly generated.  \\
+\textbf{RQ2:} What warnings are mostly generated.  
+\\
 
 
 And this can also be different between the stable and unstable versions. Hence 
-the next question. \\
+the next question. 
+\\
 
 
 \textbf{RQ3:} What bugs seem to be fixed the most when going from unstable to 
-stable. \\
+stable. 
+\\
 
 
 As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
@@ -558,15 +604,18 @@ or kernel} And therefore the bug types must differ from subsystem to subsystem.
 
 
 \textbf{RQ4:} In what subsystems do the most errors occur. And in the largest 
-subsystems, in what subsubsystem? \\
+subsystems, in what subsubsystem? 
+\\
 
 
 \textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
-valid. \\
+valid. 
+\\
 
 
 \textbf{RQ6:} Are there any specific features, that when enabled, will produce 
-more warnings than others. \\
+more warnings than others. 
+\\
 
 
 
@@ -585,7 +634,8 @@ The collection of data has mainly been done on a computer at the IT University
 of Copenhagen. It has 32 cores and 128 GB of RAM, and the mean time to compile 
 a kernel and upload the data was around 1 minute and 35 seconds. A fairly 
 regular laptop with 4 cores and 8 GB of RAM does that in just over 8 minutes 
-on average. \\
+on average. 
+\\
 
 
 When a compilation is done, the output is scraped and categorized, and then 
@@ -726,7 +776,8 @@ common one for laptop and server use is the \emph{x86} architecture.
 
 This architecture is the only one, that are compiled for in this project, as 
 getting the cross compilers for all the different architectures would be very 
-cumbersome. \\
+cumbersome. 
+\\
 
 
 This potentially leaves out 97\% \footnote{is this number true. Should I 
@@ -802,7 +853,8 @@ configurations with these features on.
 
 
 \newpage
-\bibliography{bibliography}
+\bibliographystyle{alpha}
+\bibliography{bib}
 
 \end{document}
 

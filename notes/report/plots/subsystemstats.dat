@@ -1,22 +1,16 @@
-1   Documentation   31          554
-2   arch            130         3360
-3   arch/x86        12          343
-#4   block           1.2         38.1
-5   crypto          2.9         83.9
-6   drivers         330         10800
-7   firmware        6.1         129
-8   fs              37          1170
-9   include         32          692
-#10  init            0.2         5.73
-#11  ipc             0.2         8.87
-12  kernel          6.8         244
-13  lib             4.4         100
-14  mm              3.0         108
-15  net             26          890
-#16  samples         0.4         7.50
-17  scripts         3.1         90.6
-18  security        2.3         75.5
-19  sound           29          876
-20  tools           9.0         213
-#21  usr             0.0         0.845
-#22  virt            0.3         10.5
+Documentation   31          554
+arch            130         3360
+arch/x86        12          343
+crypto          2.9         83.9
+drivers         330         10800
+firmware        6.1         129
+fs              37          1170
+include         32          692
+kernel          6.8         244
+lib             4.4         100
+mm              3.0         108
+net             26          890
+scripts         3.1         90.6
+security        2.3         75.5
+sound           29          876
+tools           9.0         213
