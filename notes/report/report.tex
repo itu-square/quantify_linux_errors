@@ -436,12 +436,15 @@ transmission. A cross-tree dependency is also present.
 \begin{itemize}
     \item \underline{\textbf{TODO}}
     \item Explain what the Linux kernel tree is.
+    \item Find another example than a car
+    \item Find a more simple Kconfig code example
     \item It creates a `.config` file.
     \item Explain the Kconfig language a bit
     \item Examples of constraints in the language
     \item Reference to Thorsten's projects
     \item Refer to the /Documentation/kbuild/kconfig-language.txt
     \item explain that CONFIG\_MMU and MMU is the same
+    \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
 \subsection{randconfig}
@@ -460,31 +463,111 @@ This should be perfect for the goal for this project. Although time will tell
 that it is indeed biased, and will not create configurations that are of 
 representative character. 
 
-See figure ~\ref{randconfigtoy} for a toy example of this.
+See figure ~\ref{randconfigtoy} for a toy example of a Kconfig feature model. 
+It is a very small example with only two features, but it will easily explain 
+some limitations of \emph{randconfig}.
 
 \figa
-    --- figure ---
-\figb{A small toy example showing the bias for upper level 
-    features}{randconfigtoy}
+    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+        depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
+\figb{A toy Kconfig feature model}{randconfigtoy}
 
 
-This shows that it is highly likely that \emph{randconfig} will have a strong 
-bias towards features that are in the top of the dependency tree comparing to 
-the features that are deeper down in the dependency tree. 
+\figa
+    \begin{tikzpicture}
+        % Names of configs
+        \draw (2,4) node {\textcode{CONFIG\_A}};
+        \draw (4,2) node {\textcode{CONFIG\_B}};
 
-To actually create a representative sample of the configuration space was 
-proven to be harder than was initially thought. A couple of methods were 
-thought out to make the configuration creation more representative. \\
+        % yeses and nos
+        \draw (1,3) node {\textcode{=n}};
+        \draw (3,3) node {\textcode{=y}};
+        \draw (3,1) node {\textcode{=n}};
+        \draw (5,1) node {\textcode{=y}};
+
+        % lines not necessarily from above and down
+        \draw[-] (1.9,3.8) edge (1,3.2);
+        \draw[-] (2.1,3.8) edge (3,3.2);
+        \draw[-] (3,2.8) edge (4,2.2);
+        \draw[-] (3,1.2) edge (4,1.8);
+        \draw[-] (5,1.2) edge (4,1.8);
+
+        % Draw percentages
+        \draw (1,3.5) node {\tiny{50\%}};
+        \draw (3,3.5) node {\tiny{50\%}};
+        \draw (3,1.5) node {\tiny{50\%}};
+        \draw (5,1.5) node {\tiny{50\%}};
+
+        \draw (1,2.5) node {\textbf{\underline{50\%}}};
+        \draw (3,0.5) node {\textbf{\underline{25\%}}};
+        \draw (5,0.5) node {\textbf{\underline{25\%}}};
+
+    \end{tikzpicture}
+\figb{A toy example showing the way randconfig selection of 
+    features}{randconfigtoy50}
+
+In the example in figure ~\ref{randconfigtoy50} shows that the three possible 
+configurations (\textcode{\{\}}, \textcode{\{A\}}, and \textcode{\{A,B\}}) do 
+not have the same chance of getting created by \emph{randconfig}.
+
+For the creation to be representative, all the three possible configurations 
+should have equal chance of being created (33\%). See figure 
+~\ref{randconfigtoy33} for a visualization of how the selection should be to be 
+representative.
+
+\figa
+    \begin{tikzpicture}
+        % Names of configs
+        \draw (2,4) node {\textcode{CONFIG\_A}};
+        \draw (4,2) node {\textcode{CONFIG\_B}};
+
+        % yeses and nos
+        \draw (1,3) node {\textcode{=n}};
+        \draw (3,3) node {\textcode{=y}};
+        \draw (3,1) node {\textcode{=n}};
+        \draw (5,1) node {\textcode{=y}};
+
+        % lines not necessarily from above and down
+        \draw[-] (1.9,3.8) edge (1,3.2);
+        \draw[-] (2.1,3.8) edge (3,3.2);
+        \draw[-] (3,2.8) edge (4,2.2);
+        \draw[-] (3,1.2) edge (4,1.8);
+        \draw[-] (5,1.2) edge (4,1.8);
+
+        % Draw percentages
+        \draw (1,3.5) node {\tiny{33\%}};
+        \draw (3,3.5) node {\tiny{66\%}};
+        \draw (3,1.5) node {\tiny{50\%}};
+        \draw (5,1.5) node {\tiny{50\%}};
+
+        \draw (1,2.5) node {\textbf{\underline{33\%}}};
+        \draw (3,0.5) node {\textbf{\underline{33\%}}};
+        \draw (5,0.5) node {\textbf{\underline{33\%}}};
+
+    \end{tikzpicture}
+\figb{A toy example showing a correct selection of features}{randconfigtoy33}
+
+This has apparently not been implemented in the Linux kernel tools, because 
+representativeness does not matter for what it is used for. It is merely used 
+as a simple testing tool.
+
+To make this representative, one would have to make \emph{randconfig} aware of 
+the whole dependency tree or the whole configuration space before randomly 
+selecting, to skew the possibilities. This seems infeasible since the 
+configuration space is so large.
+\\
+
+Some different ways of generating a representative sample was considered. In 
+the end, \emph{randconfig} was chosen because it showed to be too cumbersome to 
+create a method that actually was representative. 
+
+The methods that was considered will be explained later in this report. 
+    \footnote{refer to it when you have written it} 
+They included the aforementioned \emph{randconfig} tool being rewritten, a 
+script that scrambled the Kconfig files, and a generate and filter method.
 
 
-One idea was to alter the code for \emph{randconfig}, to make it know how deep 
-the dependency tree was, and make it bias the coin flipping process correctly. 
-For example if landing a \emph{yes} would yield a total of 99 possible other 
-features, and landing a \emph{no} did not yield any other features, then the 
-coin should have a 1\% of landing a \emph{no} and a 99 \% chance of landing a 
-\emph{yes}. \\
-
-
+% ---- Next 15 lines should be moved down somewhere
 Another idea was to take all the spread out Kconfig files, and concatenate 
 them all into one big text file, which would then be modified. If the order of 
 the features were randomized, then the coins would not be flipped in the same 
@@ -499,6 +582,7 @@ randomly flipping a coin per each feature.
 This seemed doable until after generating 100,000 configurations, not one 
 valid configuration was found. It seems like many of the $2^{11,000}$ 
 configurations are invalid.
+% ----
 
 
 % TODO
@@ -506,7 +590,7 @@ configurations are invalid.
     \item \underline{\textbf{TODO}}
     \item Show some code of randconfig not doing it representatively
     \item Show a graph with a toy example
-    \item show the 33-33 vs 25-25-50 example
+    \item show some scrots of menuconfig/allnoconfig/gconfig
 \end{itemize}
 
 
@@ -548,7 +632,7 @@ For instance, there is a feature in the feature model that is called
 compressed by the \emph{lzop} library instead of the default \emph{gzip} 
 compression library.
 
-When a randomly configurated kernel has the \textcode{CONFIG\_KERNEL\_LZOP} 
+When a randomly configurated kernel has the \textcode{CONFIG\_KERNEL\_LZO} 
 enabled - which would happen approximately every 6th random configuration - 
 then to build the kernel the \emph{lzop} library will have to be installed on 
 the build system. If it was not, then the compilation would crash with the 
