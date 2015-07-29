@@ -327,18 +327,14 @@ architectures in the \textcode{arch} folder.
 \end{itemize}
 
 
-\subsection{Kconfig - The Feature Model Language}
+\subsection{Kconfig - The Language of the Feature Model}
 
 \paragraph{A feature model} is a way of representing all the possible 
-configurations - \emph{the configuration space}. 
+configurations - \emph{the configuration space}. It contains all the features, 
+with all the constraints and dependencies.
 
-that describes the feature model of the Linux kernel.
-It contains dependencies and 
-constraints for the features, and if a chosen configuration fulfills the 
-constraints, then the configuration is valid.
-
-For a given configuration $\kappa$, it must satisfy the feature model 
-$\psi_{FM}$.
+For a given configuration $\kappa$, that configuration must satisfy the feature 
+model $\psi_{FM}$.
 
 \begin{equation}
     \kappa \in \psi_{FM}
@@ -355,35 +351,44 @@ other.
 The different data types are \textcode{boolean}, \textcode{tristate}, 
 \textcode{string}, \textcode{hex}, and \textcode{integer}.
 
-See figure ~\ref{kconfigchoice} and figure ~\ref{kconfigtypes} for some real 
-example of the Kconfig syntax. Figure ~\ref{kconfigchoice} shows an example of 
-a \textcode{choice} option, where only one of multiple features 
-can be enabled. 
+See figure \ref{kconfiglanguageex} for a toy Kconfig example showing some of the 
+syntax.
 
 \figa
     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-        depends, on, bool, endchoice, choice,{||}}]{code/kconfigtypesreal}
-\figb{A real Kconfig example showing the basic data types}{kconfigchoice}
+        depends, on, bool, selects, endchoice, tristate, choice,
+        help,{||}}] 
+        {code/kconfiglanguageex}
+\figb{A toy example of the Kconfig language.}{kconfiglanguageex}
 
-\figa
-    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-        depends, on, bool, endchoice, choice,{||}}]{code/kconfigboolreal}
-\figb{A real Kconfig example showing a choice clause with 5 
-    choices}{kconfigtypes}
+
+% --- This is not used ---
+% \figa
+%     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+%         depends, on, bool, endchoice, choice,{||}}]{code/kconfigtypesreal}
+% \figb{A real Kconfig example showing the basic data types}{kconfigchoice}
+
+% --- This is not used ---
+% \figa
+%     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+%         depends, on, bool, endchoice, choice,{||}}]{code/kconfigboolreal}
+% \figb{A real Kconfig example showing a choice clause with 5 
+%     choices}{kconfigtypes}
 
 \figa
     \includegraphics{plots/datatypestats.eps}
 \figb{The distribution of different datatypes in the feature 
-    model}{datatypesdistribution}
+    model of the x86 architecture}{datatypesdistribution}
 
-This can be visualized in feature diagram. The example will be tiny compared to 
-that of the Linux kernel. The feature model of the Linux kernel is too big 
-to fit in a normal sizes report.
+A feature model can be visualized in a feature diagram. The example given here 
+will be tiny compared to that of the Linux kernel. The feature model of the 
+Linux kernel is too big to fit in a normal sized report.
 
-See figure ~\ref{featurediagramcar} for the toy example of a feature 
-diagram. It depicts a feature model of a car configuration, where there are 
-some mandatory features and some optional, and also a choice option for the 
-transmission. A cross-tree dependency is also present.
+See figure \ref{featurediagramlaptop} for the toy example of a feature 
+diagram. See figure \ref{kconfiglaptop} for the corresponding Kconfig file. It 
+depicts a feature model of a laptop configuration, where there are some 
+mandatory features and some optional, and also a choice option for the screen 
+size. A cross-tree dependency is also present.
 
 % 65 lines down to \figb
 \figa
@@ -457,26 +462,33 @@ transmission. A cross-tree dependency is also present.
     \item Explain what the Linux kernel tree is.
     \item Find another example than a car
     \item Find a more simple Kconfig code example
-    \item It creates a `.config` file.
     \item Explain the Kconfig language a bit
-    \item Examples of constraints in the language
     \item Reference to Thorsten's projects
     \item Refer to the /Documentation/kbuild/kconfig-language.txt
     \item explain that CONFIG\_MMU and MMU is the same
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
-\subsection{randconfig}
+\subsection{Configuring of Linux}
 
 The Linux kernel comes with different ways of creating your own configuration 
-file. There is a question based one (\emph{config}), and some menu based ones 
-(\emph{menuconfig}, \emph{xconfig}, \emph{nconfig}, \emph{gconfig}), but also 
-some that will never prompt the user for anything, but create some automated 
-config (\emph{allyesconfig}, \emph{allnoconfig}, \emph{defconfig}, and 
-\emph{randconfig}).
+file. There is a question based one (\texttt{config}), and some menu based ones 
+(\texttt{menuconfig}, \texttt{xconfig}, \texttt{nconfig}, \texttt{gconfig}), 
+but also some that will never prompt the user for anything, but create some 
+automated config (\texttt{allyesconfig}, \texttt{allnoconfig}, 
+\texttt{defconfig}, and \texttt{randconfig}).
 \\
 
-That last one \emph{randconfig} is interesting, as it will go through the 
+See figure \ref{fig:lineofconfigs} for a few examples of how the graphical 
+configuration tools look.
+\\
+
+
+\figa
+    \includegraphics[scale=0.25]{pngs/configs50percent.png}
+\figb{gconfig, menuconfig, nconfig, and xconfig}{fig:lineofconfigs}
+
+That last one \texttt{randconfig} is interesting, as it will go through the 
 Kconfig feature model files, and pick random values for all of the features. 
 This should be perfect for the goal for this project. Although time will tell 
 that it is indeed biased, and will not create configurations that are of 
@@ -484,14 +496,14 @@ representative character.
 
 See figure ~\ref{randconfigtoy} for a toy example of a Kconfig feature model. 
 It is a very small example with only two features, but it will easily explain 
-some limitations of \emph{randconfig}.
+some limitations of using \texttt{randconfig}.
 
 \figa
     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
         depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
 \figb{A toy Kconfig feature model}{randconfigtoy}
 
-
+% --- 33 lines down ---
 \figa
     \begin{tikzpicture}
         % Names of configs
@@ -524,16 +536,18 @@ some limitations of \emph{randconfig}.
     \end{tikzpicture}
 \figb{A toy example showing the way randconfig selection of 
     features}{randconfigtoy50}
+% --- 33 lines up ---
 
-In the example in figure ~\ref{randconfigtoy50} shows that the three possible 
+The example in figure ~\ref{randconfigtoy50} shows that the three possible 
 configurations (\textcode{\{\}}, \textcode{\{A\}}, and \textcode{\{A,B\}}) do 
-not have the same chance of getting created by \emph{randconfig}.
+not have the same chance of getting created by \texttt{randconfig}.
 
 For the creation to be representative, all the three possible configurations 
 should have equal chance of being created (33\%). See figure 
 ~\ref{randconfigtoy33} for a visualization of how the selection should be to be 
 representative.
 
+% --- 32 lines up ---
 \figa
     \begin{tikzpicture}
         % Names of configs
@@ -565,24 +579,26 @@ representative.
 
     \end{tikzpicture}
 \figb{A toy example showing a correct selection of features}{randconfigtoy33}
+% --- 32 lines up ---
 
-This has apparently not been implemented in the Linux kernel tools, because 
-representativeness does not matter for what it is used for. It is merely used 
-as a simple testing tool.
+This has apparently not been implemented in the Linux kernel tools, possibly 
+because representativeness does not matter for what it is used for. It is 
+merely used as a simple fuzz testing tool with the help of entropy.
+    \footnote{source}
 
-To make this representative, one would have to make \emph{randconfig} aware of 
+To make this representative, one would have to make \texttt{randconfig} aware of
 the whole dependency tree or the whole configuration space before randomly 
 selecting, to skew the possibilities. This seems infeasible since the 
 configuration space is so large.
 \\
 
 Some different ways of generating a representative sample was considered. In 
-the end, \emph{randconfig} was chosen because it showed to be too cumbersome to 
-create a method that actually was representative. 
+the end, \texttt{randconfig} was chosen because it showed to be too cumbersome 
+to create a method that actually was representative. 
 
 The methods that was considered will be explained later in this report. 
     \footnote{refer to it when you have written it} 
-They included the aforementioned \emph{randconfig} tool being rewritten, a 
+They included the aforementioned \texttt{randconfig} tool being rewritten, a 
 script that scrambled the Kconfig files, and a generate and filter method.
 \\
 
@@ -591,50 +607,60 @@ script that scrambled the Kconfig files, and a generate and filter method.
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Show some code of randconfig not doing it representatively
+    \item .config file
     \item show results from running randconfig a 1000 times.
     \item Talk about how there is 7 layers of dependencies. And how I found out.
     \item \^ Hmm . Are there only 7 layers when counting ifs? what about 
         'depends on's
-    \item show some scrots of menuconfig/allnoconfig/gconfig
     \item mention that it is also called a preprocessor.
 \end{itemize}
 
 
-\subsection{Compilation}
+\subsection{Compiling and Catching errors}
 
 When a configuration has been created, the Linux kernel is compiled using 
-that configuration file. This is done mainly by \emph{gcc - The GNU Compiler 
-Collection}, which then outputs warning and error 
-messages. If there is an error, the compilation will also stop immediately 
-(sometimes it will try to keep on going, but in this project, it is told to 
-stop after one error).
+that configuration file by running the command \textcode{make all}. This looks 
+in a \texttt{Makefile}, which specifies what files to compile. The compilation 
+of the files is done mainly by \emph{gcc - The GNU Compiler Collection}.
+\\
+
+During compilation, \texttt{gcc} will output warnings if there are any. These 
+warnings warn about bad code, which might result in a compilation error, or 
+which might result in dead code, or they might just warn about bad code 
+practice.
 
 These output messages hold the information that will be used in this project. 
 In a warning, there is information about a possible coding mistake that might 
 break the code. There are about 30 different warning types \cite{gccwarnings}
-Some of these are not so interesting as others for this project.\\
+Some of these are not so interesting as others for this project.
+\\
 
+If there is an error, the compilation will stop immediately 
+(sometimes it will try to keep on going, but in this project, it is told to 
+stop after one error).
+\\
 
 Generally there will be distinguished between four different types of output. 
-These are \emph{relevant errors}, \emph{irrelevant errors}, \emph{relevant 
-warnings}, and \emph{irrelevant warnings}. 
+These are \textbf{Linux errors}, \textbf{host errors}, 
+\textbf{relevant warnings}, and \textbf{irrelevant warnings}. 
+
+The different types of output will be described here.
 
 
-\paragraph{The relevant errors} 
+    \paragraph{The Linux errors} 
 are reproducible errors that will occur on all 
 machines when a certain configuration is being built. 
     \footnote{Refer to the list of errors - some link somewhere}
 
-\paragraph{The irrelevant errors} 
-are a result of the building system not having some specific dependencies 
-installed.
+    \paragraph{The host errors} 
+are a result of the building system (a host system) not having some specific 
+dependencies installed.
 \\
 
 For instance, there is a feature in the feature model that is called 
 \textcode{CONFIG\_KERNEL\_LZO}, which dictates that the kernel should be 
-compressed by the \emph{lzop} library instead of the default \emph{gzip} 
-compression library.
+compressed by the \emph{lzop} compression library instead of the default 
+\emph{gzip} compression library.
 
 If a configuration has the \textcode{CONFIG\_KERNEL\_LZO} enabled, then to 
 build the kernel, the \emph{lzop} library will have to be installed on the 
@@ -642,25 +668,30 @@ build system. If it is not, then the compilation will stop with an error.
 
 There are six different ways to compress the Linux kernel (\emph{gzip}, 
 \emph{bzip2}, \emph{lzma}, \emph{xz}, \emph{lzo}, and \emph{lz4}),
-    \footnote{refer to the picture of gconfig and friends}
 which leads to that every sixth compilation will stop with the same error.
+
+See figure \ref{fig:lineofconfigs} for an overview of how this specific choice
+looks in the different graphical configurators..
 \\
 
-There exist many other examples like this in the \emph{Linux kernel} where an 
-uninstalled program will result in an unbuilt kernel. These \emph{irrelevant 
+There exist many other examples like this in the Linux kernel where an 
+uninstalled program will result in an unbuilt kernel. These \textbf{host 
 errors} would have to be minimized, since they are not actual kernel errors, 
 but local errors. 
-    \footnote{Give list of all the features I have disabled} 
 
 On the build system for this project, the \emph{lzo} package was in the Linux 
 distribution's repository, and therefore easy to install. The \emph{lz4} 
 packager however was not.
 \\
 
-The following list is a \emph{build system mandatory features}
-    \footnote{maybe find another word for this?}
-list, which decreases the configuration space of this project, but otherwise 
+The following is a list of mandatory features, which are added to decrease the 
+amount of host errors. In an early period of the project, it was found out that 
+these specific features with specific values would stop the compilation every 
+time.
+
+It decreases the configuration space of this project, but otherwise 
 would just give a lot of false positives.
+\\
 
 All these lines are added to the configurations, which are generated in
 this project.
@@ -679,11 +710,11 @@ See chapter~\ref{sec:ttv} about Threats to Validity on page \pageref{sec:ttv}
 for a more thorough description of the specific features.
 
 
-\paragraph{The relevant warnings}
+    \paragraph{The relevant warnings}
 are warnings that may cause an error at some point. The \emph{uninitialized 
 variable} warning is such a warning. If a variable is uninitialized, and ends 
 up being called, it may cause an error, and stop the compilation. See figure 
-~\ref{lst:uninitvar} for a code example.
+\ref{lst:uninitvar} for a code example.
 
 The relevant warnings are:
 
@@ -699,17 +730,19 @@ The relevant warnings are:
     \lstinputlisting[language=C, firstline=3]{code/uninitvar.c}
 \figb{A toy program showing an uninitialized variable.}{lst:uninitvar}
 
-The program in figure ~\ref{lst:uninitvar} will return the warning 
-'\texttt{'a' is used uninitialized in this function [-Wuninitialized]}' and the 
-output, when the program is run, will be '\texttt{0Hello world}'.
+If \textcode{CONFIG\_A} is not enabled in the program in figure 
+~\ref{lst:uninitvar} it will return the warning 
+'\texttt{'n' is used uninitialized in this function [-Wuninitialized]}' and the 
+output, when the program is run, will be '\texttt{0Hello world}',
+which is wrong, as the program was meant to output '\texttt{Hello World}'.
 
-\paragraph{The irrelevant warnings}
-These are mainly warnings that represent dead code. Warnings like \emph{unused 
-function}, \emph{unused variable}, \emph{unused label}, and \emph{unused 
-value}, will all end up as dead code, which is bad for fitting a kernel 
-on some hardware with limited space. Apart from that it is nothing else than 
-code pollution. See figure ~\ref{lst:unusedvar} for a code example  of an 
-unused variable.
+    \paragraph{The irrelevant warnings}
+are warnings that will not stop the compilation, and will not make the program 
+output wrong things. Warnings like \emph{unused function}, \emph{unused 
+variable}, \emph{unused label}, and \emph{unused value}, will all end up as 
+dead code, which is bad for fitting a kernel on some hardware with limited 
+space. Apart from that it is nothing else than code pollution. See figure 
+~\ref{lst:unusedvar} for a code example  of an unused variable.
 
 The irrelevant warnings are:
 
@@ -725,12 +758,11 @@ The irrelevant warnings are:
     \lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
 \figb{A program resulting in an unused variable warning.}{lst:unusedvar}
 
-This will return the warning '\texttt{unused variable 'a' [-Wunused-variable]}'.
+This will return the warning '\texttt{unused variable 'n' [-Wunused-variable]}'.
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Give real examples of unused function, and uninitialed... MAYBE
 \end{itemize}
 
 
@@ -745,9 +777,8 @@ Linux kernel based on as many random configurations as are possible to generate
 within the time span of this project.
 
 There will be generated random configurations, and these will be used to 
-compile two Linux kernels. One stable Linux kernel, and one from the 
-linux-next repository.  
-\\
+compile two different versions of the Linux kernel, a stable Linux kernel 
+version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository.
 
 
 \section{Research Questions}
@@ -804,10 +835,10 @@ number}, and a \emph{message} describing the warning in english.
 
 
 The collection of data has mainly been done on a computer at the IT University 
-of Copenhagen. It has 32 cores and 128 GB of RAM, and the mean time to compile 
-a kernel and upload the data was around 1 minute and 35 seconds. A fairly 
-regular laptop with 4 cores and 8 GB of RAM does that in just over 8 minutes 
-on average. 
+of Copenhagen. The computer has $32\times2.8 MHz$ and $128 GB$ of RAM, and the 
+average time to compile a kernel and upload the data was around 1 minute and 35 
+seconds. A fairly regular laptop with 4 cores and 8 GB of RAM does that in just 
+over 8 minutes on average. 
 \\
 
 
@@ -931,7 +962,7 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 \chapter{Threats to Validity}
 \label{sec:ttv}
 
-
+\emph{Blahblah about Threats to validity...}
 
 \section{Generalization}
 
@@ -942,22 +973,22 @@ others.
 
 This means, that when something is generally said about all of the Linux 
 Kernel, instead something is said about mostly a subset of Linuxes. See figure 
-~\ref{fig:repsubset} for a subset of configurations, where generalization is 
-representative, and figure ~\ref{fig:unrepsubset} for the opposite.
+\ref{fig:repsubset} for a visualization of subsets which are both 
+representative, and not representative.
 
 \figa
     \emph{Show an image of true representativeness}
 \figb{A representative subset}{fig:repsubset}
 
-\figa
-    \emph{Show an image of true representativeness}
-\figb{A representative subset}{fig:unrepsubset}
+    \footnote{Here needs to be explained about changing randconfig first}
 
+    \subsection*{Permutation of Kconfig files}
 Another idea was to take all the spread out Kconfig files, and concatenate 
 them all into one big text file, which would then be modified. If the order of 
 the features were randomized, then the coins would not be flipped in the same 
 order every time, and this could have an effect on the dependent features. \\
 
+    \subsection*{Generate and Filter}
 The third idea was to manually generate a configuration file, and then check - 
 somehow - if the config file was valid, and then use it if it was valid. By 
 not looking at dependencies, but only considering \emph{choice} options and 
