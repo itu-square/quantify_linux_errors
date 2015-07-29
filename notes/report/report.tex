@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Needed and Layout
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,11pt]{report}
 \usepackage[utf8]{inputenc} % utf8 encoding
 \usepackage{amsfonts}
 \usepackage[T1]{fontenc} % use for allowing < and > in cleartext
@@ -83,7 +83,7 @@
 \usepackage[hypcap=false]{caption}
 
 
-% for the \lstlisting for code blocks
+% for the \lstinputlisting for code blocks
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
@@ -135,10 +135,10 @@
 
 \setcounter{page}{1}
 
-\section{Abstract}
+\chapter{Abstract}
 \emph{---Leave blank until the end---}
 
-\section{Introduction}
+\chapter{Introduction}
 \emph{---Leave blank until the end---}
 
 
@@ -153,7 +153,7 @@
 %                           BACKGROUND
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-        \section{Background}
+        \chapter{Background}
 
 A \emph{Linux} operating system is often referring to a a \emph{GNU/Linux} 
 operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
@@ -166,14 +166,15 @@ This report will only focus on the \emph{Linux kernel}, and not the \emph{GNU}
 bundle.
 
 
-        \subsection{The Linux Kernel and Variability}
+        \section{The Linux Kernel and Variability}
 
 
 Many software products are configurable in some way. This creates the 
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different functionalities. This is called 
-\emph{variability} in software, when different programs can be made from the 
-same source code base.
+\emph{variability} in software or \emph{Software Product Lines} (SPL), when 
+different programs can be made from the same source code base.
+    \footnote{Check definition of SPL, and write it here}
 
 The options that can be changed, are called \emph{features}.
 \\
@@ -182,25 +183,26 @@ The Linux kernel is very configurable. In the configuration files (the Kconfig
 files), there is a total of 14,387 different features, that can be configured.
     \footnote {14,387 across all architectures, with an average of 9,984 per 
         architecture}
-It is one of the highest degree of variability in the available open source 
-software.
+It is the open source software product with the highest degree of variability.
+
 This high degree of variability has also had an impact on the use cases for the 
 Linux kernel. Linux is used for anything from small embedded devices (like car 
 GPSs, and cell phones) to supercomputers.
-In fact 98\% of the top 500 supercomputers in the world run a Linux distibution.
+In fact 98\% of the top 500 supercomputers in the world run a Linux distibution
     \cite{top500}
+.
 \\
 
 This high variability rate makes maintaining the code somewhat harder to 
 grasp, and this makes the code base more error prone. So what you get in 
-scalability you pay for in hardness of maintaining the code. 
+scalability you pay for in complexity of maintaining the code. 
     \footnote{Refer to Jean's project or something}
     \footnote{Also refer to a paper that andrjew made about industrial 
         something. It said something about how much more efficient the code was,
         when variability was there.}
 
 
-        \subsection{Linux Kernel Development}
+        \section{Linux Kernel Development}
 
 \begin{center}
     \emph{
@@ -209,23 +211,31 @@ scalability you pay for in hardness of maintaining the code.
 \end{center}
 
 
-        \subsubsection{Mainline tree}
+        \subsection{Mainline tree}
 
 The Linux kernel development cycle has approximately 2$\sfrac{3}{4}$ months 
-from one stable release to the next stable release.
+from one stable release to the next stable release
     \cite{crystalball}
+.
 In the meantime, \emph{RC} 
 releases, also called \emph{prepatch} releases, are released once in a while. 
 Mainly for kernel developers to test for new features. 
 
 
-        \subsubsection{linux-next tree}
+        \subsection{Stable trees}
 
-Then there is the \emph{linux-next} tree. It is a \emph{git} tree, which 
-merges over 200 other \emph{git} trees
+Then, when the top maintainers of the mainline tree think that the kernel is 
+stable enough, a new stable version is created, and the whole process is 
+repeated.
+
+
+        \subsection{linux-next tree}
+
+Then there is the \emph{linux-next} tree. It is a \emph{git} repository, which 
+merges over 200 other \emph{git} repositories
     \footnote{See <src>/Next/Trees}
 , which 
-all are based on the \emph{mainline} tree. The \emph{linux-next} tree is 
+are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
 merging these other trees every day and the merge conflicts are handled. 
 Therefore the \emph{linux-next} tree always contain the newest commits. 
 
@@ -234,21 +244,21 @@ mainline and tested on that. Comparing to a stable version, one would suspect
 the \emph{linux-next} tree to have more bugs, since it has not been tested, 
 and it is the newest code available, which means more bugs have been inserted. 
 
+This leads to our first research question.
+\\
 
-        \subsubsection{Stable trees}
-
-Then, when the top maintainers of the mainline tree think that the kernel is 
-stable enough, a new stable version is created, and the whole process is 
-repeated.
+\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
+the stable kernel.
 \\
 
 For this thesis project, both the \emph{linux-next} tree and the latest stable 
-version is used. As time of writing, the latest stable version is \emph{4.1.1}.
+version is used. As time of data gathering, the latest stable version is 
+\emph{4.1.1}.
 
     \footnote{http://neuling.org/linux-next-size.html}
     \footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
         mailing list archive}
-    \footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of 
+    \footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of
         build robot results page.}
     \footnote{
         http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
@@ -256,18 +266,18 @@ version is used. As time of writing, the latest stable version is \emph{4.1.1}.
         in linux-next}
 
 
-        \subsection{Inner Workings of Linux Kernel}
+        \section{Inner Workings of Linux Kernel}
 
 This section will explain in coarse detail, the structure of the Linux kernel.
 
 
-        \subsubsection{Subsystems}
+        \subsection{Subsystems}
 
 The directories in the root folder of the Linux kernel source code are called 
 \emph{subsystems}. The \emph{drivers} subsystem is by far the largest one both 
-regarding lines of code (LOC) and size. A quick description of some of the subsystems will follow. 
-For a visualization of the sizes of the subsystems see figure 
-~\ref{fig:subsystems}.
+regarding lines of code (LOC) and size. A quick description of some of the 
+subsystems will follow.  For a visualization of the sizes of the subsystems see 
+figure ~\ref{fig:subsystems}.
 
 
 \figa
@@ -290,7 +300,8 @@ subsubsystem will be in use.
 
 Many of these architectures are very rarely used, but they are one of the 
 reasons that Linux can run on so many devices. There are 30 architectures in 
-the \textcode{arch} folder, and the sizes can be seen in figure ~\ref{fig:archsizes}.
+the \textcode{arch} folder, and the sizes can be seen in figure 
+~\ref{fig:archsizes}.
 
 \figa
     \includegraphics{plots/archsizes.eps}
@@ -313,14 +324,15 @@ the \textcode{arch} folder, and the sizes can be seen in figure ~\ref{fig:archsi
 \end{itemize}
 
 
-\subsection{Kconfig - The Feature Model Language}
+\section{Kconfig - The Feature Model Language}
 
 \paragraph{The feature model} is a way of representing all the possible 
 configurations. It contains dependencies and constraints for the features, and 
 if a chosen configuration fulfills the constraints, then the configuration is 
 valid.
 
-For a given configuration $\kappa$, it must satisfy the feature model $\psi_{FM}$.
+For a given configuration $\kappa$, it must satisfy the feature model 
+$\psi_{FM}$.
 
 \begin{equation}
     \kappa \in \psi_{FM}
@@ -447,7 +459,7 @@ transmission. A cross-tree dependency is also present.
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
-\subsection{randconfig}
+\section{randconfig}
 
 The Linux kernel comes with different ways of creating your own configuration 
 file. There is a question based one (\emph{config}), and some menu based ones 
@@ -565,41 +577,31 @@ The methods that was considered will be explained later in this report.
     \footnote{refer to it when you have written it} 
 They included the aforementioned \emph{randconfig} tool being rewritten, a 
 script that scrambled the Kconfig files, and a generate and filter method.
+\\
 
-
-% ---- Next 15 lines should be moved down somewhere
-Another idea was to take all the spread out Kconfig files, and concatenate 
-them all into one big text file, which would then be modified. If the order of 
-the features were randomized, then the coins would not be flipped in the same 
-order every time, and this could have an effect on the dependent features. \\
-
-The third idea was to manually generate a configuration file, and then check - 
-somehow - if the config file was valid, and then use it if it was valid. By 
-not looking at dependencies, but only considering \emph{choice} options and 
-enabling \emph{mandatory features}, a configuration file was created by 
-randomly flipping a coin per each feature.
-
-This seemed doable until after generating 100,000 configurations, not one 
-valid configuration was found. It seems like many of the $2^{11,000}$ 
-configurations are invalid.
-% ----
 
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
     \item Show some code of randconfig not doing it representatively
-    \item Show a graph with a toy example
+    \item show results from running randconfig a 1000 times.
+    \item Talk about how there is 7 layers of dependencies. And how I found out.
+    \item \^ Hmm . Are there only 7 layers when counting ifs? what about 
+        'depends on's
     \item show some scrots of menuconfig/allnoconfig/gconfig
+    \item mention that it is also called a preprocessor.
 \end{itemize}
 
 
-\subsection{gcc bug types}
+\section{gcc bug types}
 
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file. This is done mainly by \emph{gcc - The GNU Compiler 
 Collection}, which then outputs warning and error 
-messages. If there is an error, the compilation will also stop immediately.
+messages. If there is an error, the compilation will also stop immediately 
+(sometimes it will try to keep on going, but in this project, it is told to 
+stop after one error).
 
 These output messages hold the information that will be used in this project. 
 In a warning, there is information about a possible coding mistake that might 
@@ -607,100 +609,121 @@ break the code. There are about 30 different warning types \cite{gccwarnings}
 Some of these are not so interesting as others for this project.\\
 
 
-In this project, all the toy examples are made up, and not taken from the 
-actual Linux kernel. They will however be related to variability. \\
-
-
 Generally there will be distinguished between four different types of output. 
 These are \emph{relevant errors}, \emph{irrelevant errors}, \emph{relevant 
 warnings}, and \emph{irrelevant warnings}. 
 
 
-\paragraph{The relevant errors} are errors that will occur on all machines 
-when a certain configuration is being built. 
-
-A difficult task is to figure out what exactly caused the error. 
-\footnote{Give a list of possible errors... I found that site}
-
+\paragraph{The relevant errors} 
+are reproducible errors that will occur on all 
+machines when a certain configuration is being built. 
+    \footnote{Refer to the list of errors - some link somewhere}
 
 \paragraph{The irrelevant errors} 
 are a result of the building system not having some specific dependencies 
-installed. 
+installed.
+\\
 
 For instance, there is a feature in the feature model that is called 
 \textcode{CONFIG\_KERNEL\_LZO}, which dictates that the kernel should be 
 compressed by the \emph{lzop} library instead of the default \emph{gzip} 
 compression library.
 
-When a randomly configurated kernel has the \textcode{CONFIG\_KERNEL\_LZO} 
-enabled - which would happen approximately every 6th random configuration - 
-then to build the kernel the \emph{lzop} library will have to be installed on 
-the build system. If it was not, then the compilation would crash with the 
-same error. \\ 
+If a configuration has the \textcode{CONFIG\_KERNEL\_LZO} enabled, then to 
+build the kernel, the \emph{lzop} library will have to be installed on the 
+build system. If it is not, then the compilation will stop with an error.
 
+There are six different ways to compress the Linux kernel (\emph{gzip}, 
+\emph{bzip2}, \emph{lzma}, \emph{xz}, \emph{lzo}, and \emph{lz4}),
+    \footnote{refer to the picture of gconfig and friends}
+which leads to that every sixth compilation will stop with the same error.
+\\
 
 There exist many other examples like this in the \emph{Linux kernel} where an 
 uninstalled program will result in an unbuilt kernel. These \emph{irrelevant 
 errors} would have to be minimized, since they are not actual kernel errors, 
-but local errors. \footnote{Give list of all the features I have disabled} 
+but local errors. 
+    \footnote{Give list of all the features I have disabled} 
+
+On the build system for this project, the \emph{lzo} package was in the Linux 
+distribution's repository, and therefore easy to install. The \emph{lz4} 
+packager however was not.
 \\
 
-The feature \textcode{CONFIG\_STANDALONE} for instance, has been enabled in all 
-the configurations in this project. If this feature is disabled, it allows for 
-firmware drivers to be compiled in the kernel. But these firmware drivers are 
-not open source, and must be placed in the kernel directories manually for the 
-compilation to work.
+The following list is a \emph{build system mandatory features}
+    \footnote{maybe find another word for this?}
+list, which decreases the configuration space of this project, but otherwise 
+would just give a lot of false positives.
 
-Since it would be too cumbersome to find all the proprietary drivers, this 
-option of enabling the \textcode{CONFIG\_STANDALONE} feature has been chosen, 
-and will commit to a threat to validity in respect to representativeness.
-\\
+All these lines are added to the configurations, which are generated in
+this project.
 
-Also every feature that had some relation to the \emph{z4c} library has been 
-diabled. This would require the host \footnote{explain what a host and target 
-are at some point further up} to have this library installed. This library was 
-not in the Linux distribution's repository, and it would have been too time 
-consuming to have it installed. 
+\begin{itemize}
+    \item \textcode{CONFIG\_STANDALONE=y}
+    \item \textcode{CONFIG\_FW\_LOADER=n}
+    \item \textcode{CONFIG\_SECCOMP=y}
+    \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
+    \item \textcode{CONFIG\_*LZ4*=n}
+        \footnote{This means that all features having to do with \emph{lz4} 
+                    were disabled}
+\end{itemize}
 
-Therefore this also marks as a threat to validity.
+See chapter~\ref{sec:ttv} about Threats to Validity on page \pageref{sec:ttv} 
+for a more thorough description of the specific features.
 
 
 \paragraph{The relevant warnings}
 are warnings that may cause an error at some point. The \emph{uninitialized 
 variable} warning is such a warning. If a variable is uninitialized, and ends 
-up being called, it may cause an error, and stop the compilation.
+up being called, it may cause an error, and stop the compilation. See figure 
+~\ref{lst:uninitvar} for a code example.
 
-\lstinputlisting[language=C, firstline=3]{code/uninitvar.c}
+The relevant warnings are:
 
-This will return the warning \textcode{'a' is used uninitialized in this 
-function [-Wuninitialized]} and the output, when the program is run, will
-be \textcode{0Hello world}.
+\begin{itemize}
+    \item Uninitialized variable
+    \item Maybe uninitialized
+    \item Overflow
+    \item Deprecated declarations
+        \footnote{Complete this list}
+\end{itemize}
+
+\figa
+    \lstinputlisting[language=C, firstline=3]{code/uninitvar.c}
+\figb{A toy program showing an uninitialized variable.}{lst:uninitvar}
+
+The program in figure ~\ref{lst:uninitvar} will return the warning 
+'\texttt{'a' is used uninitialized in this function [-Wuninitialized]}' and the 
+output, when the program is run, will be '\texttt{0Hello world}'.
 
 \paragraph{The irrelevant warnings}
 These are mainly warnings that represent dead code. Warnings like \emph{unused 
 function}, \emph{unused variable}, \emph{unused label}, and \emph{unused 
 value}, will all end up as dead code, which is bad for fitting a kernel 
 on some hardware with limited space. Apart from that it is nothing else than 
-code pollution. 
-\\
+code pollution. See figure ~\ref{lst:unusedvar} for a code example  of an 
+unused variable.
 
-\lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
+The irrelevant warnings are:
 
-This will return the warning \textcode{unused variable 'a' [-Wunused-variable]}
+\begin{itemize}
+    \item Unused function
+    \item Unused variable
+    \item Unused label
+    \item Unused value
+        \footnote{Complete this list}
+\end{itemize}
 
+\figa
+    \lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
+\figb{A program resulting in an unused variable warning.}{lst:unusedvar}
 
-\lstinputlisting[language=C, firstline=3]{code/unusedfunc.c}
-
-This will return the warning \textcode{'func' defined but not used 
-[-Wunused-function]}. Notice, that the function will have to be static for the 
-warning to show.
-
+This will return the warning '\texttt{unused variable 'a' [-Wunused-variable]}'.
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-    \item Give real examples of unused function, and uninitialed... bla
-    \item Give unreal examples of ditto
+    \item Give real examples of unused function, and uninitialed... MAYBE
 \end{itemize}
 
 
@@ -708,7 +731,7 @@ warning to show.
 %                           METHODOLOGY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Methodology}
+\chapter{Methodology}
 
 The objective is to make a quantitative analysis of errors and warnings in the 
 Linux kernel based on as many random configurations as are possible to generate 
@@ -720,7 +743,7 @@ linux-next repository.
 \\
 
 
-\subsection{Research Questions}
+\section{Research Questions}
 
 The point of the stable versions are that they have been tested more, and 
 generally are stable. duh! This should mean that fewer errors and warnings 
@@ -732,9 +755,6 @@ testing happen. So how many errors are there before stabilization vs after.
 This leads to the first research question.
 \\
 
-\textbf{RQ1:} Will the unstable linux-next repository generate more errors than the 
-stable kernel, and how many more. 
-\\
 
 
 It is likely that some errors or warnings are more severe than others, and some 
@@ -780,7 +800,7 @@ more warnings than others.
 
 
 
-\subsection{Collecting data}
+\section{Collecting data}
 
 Every time a randomly configured compilation is running, \emph{gcc} will 
 output warning and error messages in the \emph{standard error} output. This 
@@ -859,6 +879,7 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
     \end{tabular}
 \figb{The Files table referring to the Bugs table}{fig:filestable}
 
+% TODO
 \begin{itemize}
     %\item Grepping the stderr
     \item Tell why we need to compile
@@ -875,7 +896,7 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 %                                 DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Data}
+\chapter{Data}
 
 %\begin{itemize}
     %\item Example of data structure
@@ -884,31 +905,42 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 
 
 
+% TODO
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+        \item 
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                               RESULTS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Results}
+\chapter{Results}
 
-\subsection{Analyzing the data}
+\section{Analyzing the data}
 
-\subsection{Number of valid configurations}
+\section{Number of valid configurations}
 
-\subsection{Observations}
+\section{Observations}
 
 
+% TODO
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+        \item 
+\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           THREATS TO VALIDITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Threats to Validity}
+\chapter{Threats to Validity}
+\label{sec:ttv}
 
 
 
-\subsection{Generalization}
+\section{Generalization}
 
 One major threat to validity is in the representativeness of the random 
 configurations. Since the configurations are created using the \textcode{make 
@@ -928,7 +960,22 @@ representative, and figure ~\ref{fig:unrepsubset} for the opposite.
     \emph{Show an image of true representativeness}
 \figb{A representative subset}{fig:unrepsubset}
 
-\subsubsection{Architecture}
+Another idea was to take all the spread out Kconfig files, and concatenate 
+them all into one big text file, which would then be modified. If the order of 
+the features were randomized, then the coins would not be flipped in the same 
+order every time, and this could have an effect on the dependent features. \\
+
+The third idea was to manually generate a configuration file, and then check - 
+somehow - if the config file was valid, and then use it if it was valid. By 
+not looking at dependencies, but only considering \emph{choice} options and 
+enabling \emph{mandatory features}, a configuration file was created by 
+randomly flipping a coin per each feature.
+
+This seemed doable until after generating 100,000 configurations, not one 
+valid configuration was found. It seems like many of the $2^{11,000}$ 
+configurations are invalid.
+
+\subsection{Architecture}
 
 To create a true representative sample space, all the different architectures 
 should be compiled for. There exist 31 different architectures, but the most 
@@ -943,7 +990,7 @@ cumbersome.
 This potentially leaves out 97\% \footnote{is this number true. Should I 
 calculate?} of the possible configurations to check.
 
-\subsubsection{Firmware}
+\subsection{Firmware}
 
 Some places in the kernel, there are drivers, which rely on some external 
 proprietary binary blob, before they can be built. These binaries are not in 
@@ -958,6 +1005,27 @@ This gives another bias in the sample, which now does not contain any
 configurations with these features on.
 
 
+% --- 19 lines copied from further up
+The feature \textcode{CONFIG\_STANDALONE} for instance, has been enabled in all 
+the configurations in this project. If this feature is disabled, it allows for 
+firmware drivers to be compiled in the kernel. But these firmware drivers are 
+not open source, and must be placed in the kernel directories manually for the 
+compilation to work.
+
+Since it would be too cumbersome to find all the proprietary drivers, this 
+option of enabling the \textcode{CONFIG\_STANDALONE} feature has been chosen, 
+and will commit to a threat to validity in respect to representativeness.
+\\
+
+Also every feature that had some relation to the \emph{z4c} library has been 
+diabled. This would require the host \footnote{explain what a host and target 
+are at some point further up} to have this library installed. This library was 
+not in the Linux distribution's repository, and it would have been too time 
+consuming to have it installed. 
+
+Therefore this also marks as a threat to validity.
+% ---- 19 lines
+
 \begin{itemize}
     %\item Only run on x86 architecture
     \item randconfig bias
@@ -966,7 +1034,7 @@ configurations with these features on.
     \item The mandatory features?
 \end{itemize}
 
-\subsection{Generate'n'Filter}
+\section{Generate'n'Filter}
 
 
 
@@ -977,16 +1045,18 @@ configurations with these features on.
     \item sharpSAT?
 \end{itemize}
 
-\subsection{elvisconfig}
+\section{elvisconfig}
 
+
+\section{RandomSAT}
+
+
+% TODO
 \begin{itemize}
+    \item \underline{\textbf{TODO}}
     \item Maybe the permutation script can be used elsewhere (Thorsten seemed 
         interested)
 \end{itemize}
-
-\subsection{RandomSAT}
-
-
 
 
 
@@ -994,9 +1064,11 @@ configurations with these features on.
 %                           RELATED WORK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Related Work}
+\chapter{Related Work}
 
+% TODO
 \begin{itemize}
+    \item \textbf{\underline{TODO}}
     \item 42 bugs
     \item Variability in ...
     \item Paper from Iago
@@ -1006,7 +1078,7 @@ configurations with these features on.
 
 
 \newpage
-\section{Conclusion}
+\chapter{Conclusion}
 \emph{--- Leave empty until the end---}
 
 
@@ -1018,13 +1090,23 @@ configurations with these features on.
 
 \end{document}
 
+
+
+
+
+
+
+
+
+
+
 % Example of Bibliography
 \newpage
 \bibliography{bibliography}
 
 % Example of Appendix
 \begin{appendices}
-\section{Code}
+\chapter{Code}
 \lstinputlisting[language=Python]{../temp.py}
 \end{appendices}
 
