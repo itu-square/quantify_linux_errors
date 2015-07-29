@@ -269,44 +269,47 @@ version is used. As time of data gathering, the latest stable version is
         \section{Inner Workings of Linux Kernel}
 
 This section will explain in coarse detail, the structure of the Linux kernel.
+From the directory structure, over configuration, to compilation of the kernel.
 
 
         \subsection{Subsystems}
 
 The directories in the root folder of the Linux kernel source code are called 
-\emph{subsystems}. The \emph{drivers} subsystem is by far the largest one both 
-regarding lines of code (LOC) and size. A quick description of some of the 
-subsystems will follow.  For a visualization of the sizes of the subsystems see 
-figure ~\ref{fig:subsystems}.
+\emph{subsystems}. 
+
+% --- Not showing this graph ---
+% \figa
+%     \includegraphics{plots/subsystemsizes.eps}
+% \figb{Visualization of the sizes of the subsystems}{fig:subsystems}
+% ---
+
+The \textcode{drivers/} subsystem is by far the largest subsystem. It contains 
+all hardware drivers. It is also mostly contributed to by hardware vendors.
+    \footnote{Source? and is it true? -What would Greg Kroah Hartman say?}
+Since it is the largest subsystem, one could suspect it to contain the most 
+errors. And even when taking relative size into account, one could suspect this
+on the grounds of the majority of the code being written by hardware vendors.
+
+This leads to next research question:
+
+\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
+subsystems, in what subsubsystem? 
+\\
 
 
-\figa
-    \includegraphics{plots/subsystemsizes.eps}
-\figb{Visualization of the sizes of the subsystems}{fig:subsystems}
-
-
-\textcode{Documentation} is as the name states, purely documentation about all 
-different kinds of aspects of the Linux kernel.
-
-\begin{center}
-    \emph{Quote from Greg K. Hartman about they write tons of docs, but none 
-    are read}
-\end{center}
-
-
-\textcode{arch} contains architecture specific source code. In this project, 
+The \textcode{arch/} contains architecture specific source code. In this project, 
 only the \textcode{arch/x86} architecture is compiled for, so only this 
 subsubsystem will be in use. 
 
-Many of these architectures are very rarely used, but they are one of the 
-reasons that Linux can run on so many devices. There are 30 architectures in 
-the \textcode{arch} folder, and the sizes can be seen in figure 
-~\ref{fig:archsizes}.
+Many of these architectures are very rarely used in day to day computing, but 
+they are one of the reasons that Linux can run on so many devices. There are 30 
+architectures in the \textcode{arch} folder.
 
-\figa
-    \includegraphics{plots/archsizes.eps}
-\figb{The sizes of the different architecture diretories}{fig:archsizes}
-
+% --- Not showing this graph ---
+% \figa
+%     \includegraphics{plots/archsizes.eps}
+% \figb{The sizes of the different architecture diretories}{fig:archsizes}
+% ---
 
 
 % TODO
@@ -320,16 +323,19 @@ the \textcode{arch} folder, and the sizes can be seen in figure
         Linux kernel made of?
     \item talk about who contributes to the kernel. (intel, novell). Both in 
         code and money?
-    \item talk about subsystems
+    \item mention some more subsystems other than drivers and arch
 \end{itemize}
 
 
-\section{Kconfig - The Feature Model Language}
+\subsection{Kconfig - The Feature Model Language}
 
-\paragraph{The feature model} is a way of representing all the possible 
-configurations. It contains dependencies and constraints for the features, and 
-if a chosen configuration fulfills the constraints, then the configuration is 
-valid.
+\paragraph{A feature model} is a way of representing all the possible 
+configurations - \emph{the configuration space}. 
+
+that describes the feature model of the Linux kernel.
+It contains dependencies and 
+constraints for the features, and if a chosen configuration fulfills the 
+constraints, then the configuration is valid.
 
 For a given configuration $\kappa$, it must satisfy the feature model 
 $\psi_{FM}$.
@@ -340,6 +346,7 @@ $\psi_{FM}$.
 
 \paragraph{The Kconfig language} is the language of the feature model in Linux 
 (also used for other projects like busybox, buildroot, and others).
+    \footnote{Cite the Variablity Modeling in the systems software domain paper}
 The configuration files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
 other.
@@ -459,7 +466,7 @@ transmission. A cross-tree dependency is also present.
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
-\section{randconfig}
+\subsection{randconfig}
 
 The Linux kernel comes with different ways of creating your own configuration 
 file. There is a question based one (\emph{config}), and some menu based ones 
@@ -594,7 +601,7 @@ script that scrambled the Kconfig files, and a generate and filter method.
 \end{itemize}
 
 
-\section{gcc bug types}
+\subsection{Compilation}
 
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file. This is done mainly by \emph{gcc - The GNU Compiler 
@@ -745,17 +752,6 @@ linux-next repository.
 
 \section{Research Questions}
 
-The point of the stable versions are that they have been tested more, and 
-generally are stable. duh! This should mean that fewer errors and warnings 
-would occur when compiling stable versions.
-
-When the unstable version is getting tested, many errors get fixed.
-An interesting question would be to see how many errors exist before all the 
-testing happen. So how many errors are there before stabilization vs after. 
-This leads to the first research question.
-\\
-
-
 
 It is likely that some errors or warnings are more severe than others, and some 
 types of errors get fixed more than others. This leads to the next question.
@@ -783,9 +779,6 @@ or kernel} And therefore the bug types must differ from subsystem to subsystem.
 \\
 
 
-\textbf{RQ4:} In what subsystems do the most errors occur. And in the largest 
-subsystems, in what subsubsystem? 
-\\
 
 
 \textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
