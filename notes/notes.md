@@ -1,23 +1,34 @@
+================================================================================
   x Maybe not do this
   o Thing to do
   + Thing that I MUST do
   F Figure
+  ~ Done
 
 
 === TODO ===
 
   o Make presentation for Monday
 
+
     === Pres for Monday
       o Top 10 of all
       o Also drivers/xx subsystems
+      o Threats to validity
+
+
+    === Questions for Monday
+      o Differentiate 'tween invalid configurations and nonsense configurations.
+        In regards to: can it compile, but will it EVER be compiled by anyone.
+        But I will probably not meet these since I am using randconfig, and not
+        generateNfilter
+
 
     === Read about
       o TypeChef. What is it, 
 
 
     === Write about
-      o the UM (Linux User Mode) arch
       o manyoptions choice. There is only one (USB Gadget Drivers).
         Write about how useless it is...
       o Write about why I do not cross compile, and what archs I can compile for
@@ -45,14 +56,18 @@
       o `randconfig` will sometimes make an invalid config (25% actually)
       o Sketch up how Jaccard similarity can be used to find the features that 
         cause a specific error.
+      ~ the UM (Linux User Mode) arch
+      o TTV: DERIVED and CAPABILITY features will never be chosen by `make 
+        randconfig`, and lots of configurations will never be created.
 
 
 
 
     === Programming wise
-      + Backup the database
-      o Remove bogus data from database
-      o Start a generate n filter instance to find the number of valid configs
+
+      o Look at data, and try to say something about it.
+
+      + Start a generate n filter instance to find the number of valid configs
           o Can I figure it out logically? 
           x Or start a script (that has no crossconstraints) that increases the 
             amount of features, and then checks how many are valid
@@ -60,15 +75,69 @@
       + Try to run some configs and running `mrproper` between them.
         Then run the same configs, and do not run `mrproper` in between.
         Is the warning output the same?
-      + Test if randconfig does not consider features that does not have a 
-        description. If it does not, all the data might be kind of bogus.
+          # I have started this experiment. (30. july 02:00)
+          # It looks as if it does not matter. But I have only run 10. Running 
+            10 more
+
       o Make test configs and permute them to see that it wont do squat.
+
       o Does randconfig always take the default values?
+
       o If I run `make allnoconfig`, what are the `int` and `string` values set 
         to?
+
       o Is the preprocessed code stored on HDD after compilation
+
       x Do Jaccard similarity to find out what features cause the same errors.
 
+      ~ Backup the database
+
+      ~ Test if randconfig does not consider features that does not have a 
+        description. If it does not, all the data might be kind of bogus.
+          # I have started an experiment, which creates 1000 randconfigs.
+            I can use these to check if some of the *no_prompts* are enabled
+            by randconfig, or only by other features that *select* them.
+          # But they might just create nonsense configurations. (Also write 
+            about that)
+          # There ARE features that have not been enabled in 1000 randconfigs.
+            It MIGHT be because there are `select CONFIG_XXX=n` somewhere.
+            But there AREN'T
+              $ grep "^\ *select\ .*\ " concatenated_kconfig | grep n # 9 matchs
+              $ grep "^\ *select\ .*\ " concatenated_kconfig | grep m # 1 match
+              $ grep "^\ *select\ .*\ " concatenated_kconfig | grep y # 5 matchs
+            And all of these are lines like:
+            `select FOO if BAR = n`
+            THIS MEANS that they are NOT selected by `make randconfig` so the
+            no-prompts are dead features, that can only be enabled by `select`s
+          # Threat to validity: representativeness gets worse
+
+      ~ Remove bogus data from database
+          # View of all configurations NOT in pairs:
+              > create view loners as 
+              > select distinct hash 
+              > from configurations 
+              > group by hash 
+              > having count(*) = 1;
+          # All bugs from these configurations:
+              > create view loners_bugs as
+              > select hash from bugs
+              > where config in 
+              > ( select hash from loners );
+          # All files from these bugs:
+          # (This takes around 3-4 minutes to run)
+              > create view loners_files as
+              > select id,bug_id from files 
+              > where bug_id in 
+              > ( select hash from loners_bugs );
+          # I have started to copy the database to my own computer from a file
+          # Export from server:
+              $ mysqldump -h mydb.itu.dk -u elvis_thesis -plinux > dump_<date>
+          # Import to local machine:
+              $ cat dump_<date> | mysql -u root -plinux elvis_thesis
+          # Delete the bogus data:
+              > delete from loners_files;
+              > delete from loners_bugs;
+              > delete from configurations where hash in (select * from loners);
 
 === FIND LINKS FOR THIS ===
   o TypeChef
@@ -181,3 +250,11 @@
 [X] http://www.linuxjournal.com/content/kbuild-linux-kernel-build-system
     2012 article about Kbuild
 
+[Y] http://neuling.org/linux-next-size.html
+
+[Z] http://kisskb.ellerman.id.au/kisskb/matrix
+    Some kind of build robot results page
+
+[00]    http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/
+        Next/Trees ?id=HEAD
+        All the git repos that linux-next merges.

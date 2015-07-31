@@ -1,4 +1,22 @@
+% === Notes from Elvis ===
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The above line is 80 characters long. Try to keep it under this width.
+
+% There are 3 ways of highlighting:
+%  o \texttt
+%      o Folders
+%      o Files
+%      o Program names
+%  o \emph
+%      o Company names
+%      o New concepts that are introduced
+%  o \textcode (\texttt with grey background)
+%      o Commands
+%      o Command output
+
+% === Setup ===
+
 % Needed and Layout
 \documentclass[a4paper,11pt]{report}
 \usepackage[utf8]{inputenc} % utf8 encoding
@@ -165,6 +183,11 @@ needed, to have a working operating system.
 This report will only focus on the \emph{Linux kernel}, and not the \emph{GNU} 
 bundle.
 
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+    \item Write about Variability
+\end{itemize}
+
 
         \section{The Linux Kernel and Variability}
 
@@ -255,12 +278,11 @@ For this thesis project, both the \emph{linux-next} tree and the latest stable
 version is used. As time of data gathering, the latest stable version is 
 \emph{4.1.1}.
 
-    \footnote{http://neuling.org/linux-next-size.html}
+    \footnote{[Y] http://neuling.org/linux-next-size.html}
     \footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
         mailing list archive}
-    \footnote{http://kisskb.ellerman.id.au/kisskb/matrix/ - this is some kind of
-        build robot results page.}
-    \footnote{
+    \footnote{[Z] http://kisskb.ellerman.id.au/kisskb/matrix/A}
+    \footnote{ [00] 
         http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
         tree/Next/Trees ?id=HEAD - here are all the git trees that are merged 
         in linux-next}
@@ -291,19 +313,26 @@ errors. And even when taking relative size into account, one could suspect this
 on the grounds of the majority of the code being written by hardware vendors.
 
 This leads to next research question:
+\\
 
 \textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
 subsystems, in what subsubsystem? 
 \\
 
 
-The \textcode{arch/} contains architecture specific source code. In this project, 
-only the \textcode{arch/x86} architecture is compiled for, so only this 
-subsubsystem will be in use. 
+The \texttt{arch/} subsystem contains architecture specific source code. In 
+this project, only the \texttt{arch/x86/} architecture is compiled for, so 
+only this subsubsystem will be in use. 
 
 Many of these architectures are very rarely used in day to day computing, but 
-they are one of the reasons that Linux can run on so many devices. There are 30 
-architectures in the \textcode{arch} folder.
+they are one of the reasons that Linux can run on so many devices. There are 29 
+architectures in the \texttt{arch/} folder excluding the \texttt{um} 
+architecture, which is really about virtualization.
+
+Linux is the operating system, which supports the most architectures in the 
+world.
+    \cite{22thbirthday}
+.
 
 % --- Not showing this graph ---
 % \figa
@@ -459,6 +488,7 @@ size. A cross-tree dependency is also present.
 
 \begin{itemize}
     \item \underline{\textbf{TODO}}
+    \item Mention desugaring
     \item Explain what the Linux kernel tree is.
     \item Find another example than a car
     \item Find a more simple Kconfig code example

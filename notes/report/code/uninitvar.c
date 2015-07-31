@@ -1,10 +1,10 @@
 #include<stdio.h>
 
 int main(void) {
-    int a;
+    int n;
     #ifdef A
-        a = 10;
+        n = 10;
     #endif
-    printf("%d", a);
+    printf("%d", n);
     return 0;
 }

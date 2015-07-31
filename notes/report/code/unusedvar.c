@@ -1,9 +1,9 @@
 #include<stdio.h>
 
 int main(void) {
-    int a = 50;
+    int n = 50;
     #ifdef A
-    printf("%d", a);
+        printf("%d", a);
     #endif
     return 0;
 }
