@@ -952,6 +952,8 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 \newpage
 \chapter{Data}
 
+
+
 %\begin{itemize}
     %\item Example of data structure
     %\item Graph of tables
@@ -971,9 +973,90 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 \newpage
 \chapter{Results}
 
+A total of 42,060 configurations were compiled. Half of them from the unstable 
+(linux-next) Linux version, and the other half a stable version of Linux 
+(version 4.1.1).
+
+    \section{Errors}
+
+Out of 21,030 compilations, 7911 (38\%) of the unstable ones had an error and 
+stopped. For the stable ones, it was 3611 (17\%), which had an error.
+
+    \subsection{Stable}
+
+Out of the 17\% of the compilations, that had errors, here is a sorted list of 
+the warnings. To know exactly which warning is 'responsible' for the error, 
+one would have to look into every case, and find out.
+
+
+\figa
+    \begin{tabular}{c|c}
+        \hline 
+        \hline
+
+        \textbf{Warning type} & \textbf{Percent} \\
+
+        \hline
+
+        unused-function & 57\% \\
+        maybe-uninitialized & 45\% \\
+        unused-variable & 35\% \\
+        logical-not-parentheses & 34\% \\
+        error=implicit-function-declaration & 27\% \\
+        frame-larger-than= & 24\% \\
+        cpp & 23\% \\
+        pointer-to-int-cast & 20\% \\
+        discarded-array-qualifiers & 19\% \\
+        switch-bool & 17\% \\
+        int-conversion & 14\% \\
+        array-bounds & 14\% \\
+        return-type & 12\% \\
+        uninitialized & 12\% \\
+        overflow & 11\% \\
+        unused-label & 8.1\% \\
+        deprecated-declarations & 5.4\% \\
+        int-to-pointer-cast & 4.5\% \\
+        implicit-function-declaration & 1.7\% \\
+        incompatible-pointer-types & 0.44\% \\
+        error=implicit-int & 0.17\% \\
+
+        \hline 
+        \hline
+    \end{tabular}
+\figb{The warnings distribution of the stable Linux of the compilations with 
+    errors}{tab:stablewarnwitherrs}
+
+In 89\% of the compilations that stopped.
+
+
+    \subsection{Unstable vs.Stable}
+
+
+    \section{Warnings}
+
+In this section, it will be the warning distribution, not only for the ones 
+with errors, which stopped compiling, but for all of the compilation.
+
+    \subsection{Stable}
+
+\figa
+    \begin{tabular}{c|c}
+
+    \end{tabular}
+\figb{The warnings distribution of the stable Linux}{tab:stablewarn}
+
+    \subsection{Unstable vs.Stable}
+
 \section{Analyzing the data}
 
-\section{Number of valid configurations}
+    \section{Number of valid configurations}
+
+There was a hope, that something could be said about the percentage of valid 
+configurations out of all possible combinations.
+
+Some mandatory features were fixed, and an experiment was run, but after 100,000
+configurations, none of them were valid. This can only be used to say something
+about the upper bound of the percentage.
 
 \section{Observations}
 
