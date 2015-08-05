@@ -19,7 +19,7 @@
     === Write about
       o manyoptions choice. There is only one (USB Gadget Drivers).
         Write about how useless it is...
-      o Write about why I do not cross compile, and what archs I can compile for
+      ~ Write about why I do not cross compile, and what archs I can compile for
       o That make always runs `gcc -Wall` (I found out that 55/2000 times it 
         does not run -Wall but only `gcc`
       o Maybe I should have put `gcc -Wextra`
@@ -51,10 +51,11 @@
       o Mention that security/ has basically no errors.
       o Explain small paragraph of each warning. 
         Make the examples real (and maybe simplified)
-      o Write about 100,000 generated configs, and that I will not do it, but
-        mention it. Or something.
       o Write about security/, and about how it has not really been touched.
       o pointer-to-int is normally bad, but is used in Linux to emulate OOS
+
+      ~ Write about 100,000 generated configs, and that I will not do it, but
+        mention it. Or something.
 
     === SQL queries ===
 

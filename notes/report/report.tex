@@ -15,6 +15,12 @@
 %      o Commands
 %      o Command output
 
+%\chapter
+%    \section
+%        \subsection
+%            \subsubsection
+%            \paragraph
+
 % === Setup ===
 
 % Needed and Layout
@@ -334,6 +340,101 @@ world.
     \cite{22thbirthday}
 .
 
+        \subsection{The gcc warnings}
+Here follows a list of the warnings that was found during the compilations. 
+They are ordered alphabetically.
+
+
+            \paragraph{array-bounds}
+is given, when there is a possibility that an array is out of bounds. 
+
+% See example in figure \ref{lst:arraybounds}.
+
+% \figa
+    % \lstinputlisting[language=C]{code/arraybounds}
+% \figb{}{lst:arraybounds}
+
+
+            \paragraph{cpp}
+
+
+            \paragraph{deprecated-declarations}
+            \paragraph{discarded-array-qualifiers}
+            \paragraph{error=}
+is a prefix, which means that the warning will cause an error. Sometimes 
+developers do not want a specific warning to happen without the compilation 
+stopping. Then they can enable this flag in the makefile.
+
+There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
+
+
+            \paragraph{frame-larger-than=}
+            \paragraph{implicit-function-declaration}
+            \paragraph{incompatible-pointer-types}
+            \paragraph{int-conversion}
+            \paragraph{int-to-pointer-cast}
+\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
+
+            \paragraph{logical-not-parentheses}
+occurs when the left hand side of an expression contains a \emph{logical not} 
+(a \texttt{!} in C). An example is a line in the file \texttt{crypto/testmgr.c}
+\textcode{if (!ret == template[i].fail)}.
+
+The warning refers to the \textcode{!ret}, which should have been inside 
+parentheses to be correct, like so \textcode{(!ret)}.
+
+
+            \paragraph{maybe-uninitialized}
+is when there is an uncertainty about a variable being uninitialized. In the 
+case in figure \ref{lst:maybeuninitializedreal} there is a 
+\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
+
+If \emph{gcc} cannot see for sure that the variable is initialized, 
+even if it would have been initialized in all of the cases, it will return this 
+warning.
+
+\figa
+    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+
+
+            \paragraph{overflow}
+            \paragraph{pointer-to-int-cast}
+
+\label{par:pointertoint}
+This warning would normally be sign of bad code. It is usually when a pointer 
+is cast to a \texttt{long} and then later cast back into a function call. This 
+is widely spread in Linux to simulate the effects of \emph{Object Oriented 
+Programming}
+
+
+            \paragraph{return-type}
+            \paragraph{switch-bool}
+            \paragraph{uninitialized}
+            \paragraph{unused-function}
+is a warning about a function that has never been called. This represents dead 
+code, or code pollution. 
+
+In the example in figure \ref{lst:unusedfuncreal}, the function 
+\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
+\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
+unused function.
+
+\figa
+    \lstinputlisting[language=C]{code/unusedfuncreal}
+\figb{A real example of unused function - from the file 
+    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
+
+
+            \paragraph{unused-variable}
+is basically the same as \texttt{unused-function}, but only with a variable 
+instead of a function. There will be no example of this.
+
+
+            \paragraph{unused-label}
+
+
+
 % --- Not showing this graph ---
 % \figa
 %     \includegraphics{plots/archsizes.eps}
@@ -356,9 +457,9 @@ world.
 \end{itemize}
 
 
-\subsection{Kconfig - The Language of the Feature Model}
+        \subsection{Kconfig - The Language of the Feature Model}
 
-\paragraph{A feature model} is a way of representing all the possible 
+            \paragraph{A feature model} is a way of representing all the possible 
 configurations - \emph{the configuration space}. It contains all the features, 
 with all the constraints and dependencies.
 
@@ -369,7 +470,8 @@ model $\psi_{FM}$.
     \kappa \in \psi_{FM}
 \end{equation}
 
-\paragraph{The Kconfig language} is the language of the feature model in Linux 
+            \paragraph{The Kconfig language} is the language of the feature 
+                model in Linux 
 (also used for other projects like busybox, buildroot, and others).
     \footnote{Cite the Variablity Modeling in the systems software domain paper}
 The configuration files have the prefix \textcode{Kconfig}, and are 
@@ -499,7 +601,7 @@ size. A cross-tree dependency is also present.
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
-\subsection{Configuring of Linux}
+        \subsection{Configuring of Linux}
 
 The Linux kernel comes with different ways of creating your own configuration 
 file. There is a question based one (\texttt{config}), and some menu based ones 
@@ -987,6 +1089,7 @@ stopped. For the stable ones, it was 3611 (17\%), which had an error.
 Out of the 17\% of the compilations, that had errors, here is a sorted list of 
 the warnings. To know exactly which warning is 'responsible' for the error, 
 one would have to look into every case, and find out.
+    \footnote{refer to GNU GCC warning options and also refer to the figure underneath}
 
 
 \figa
@@ -1025,81 +1128,6 @@ one would have to look into every case, and find out.
     \end{tabular}
 \figb{The warnings distribution of the stable Linux of the compilations with 
     errors}{tab:stablewarnwitherrs}
-
-
-    \paragraph{unused-function}
-
-is a warning about a function that has never been called. This represents dead 
-code, or code pollution. 
-
-In the example in figure \ref{lst:unusedfuncreal}, the function 
-\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
-\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
-unused function.
-
-\figa
-    \lstinputlisting[language=C]{code/unusedfuncreal}
-\figb{A real example of unused function - from the file 
-    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
-
-
-    \paragraph{maybe-uninitialized}
-is when there is an uncertainty about a variable being uninitialized. In the 
-case in figure \ref{lst:maybeuninitializedreal} there is a 
-\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
-
-If \emph{gcc} cannot see for sure that the variable is initialized, 
-even if it would have been initialized in all of the cases, it will return this 
-warning.
-
-\figa
-    \lstinputlisting[language=C]{code/maybeuninitializedreal}
-\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
-
-
-    \paragraph{unused-variable}
-is basically the same as \texttt{unused-function}, but only with a variable 
-instead of a function. There will be no example of this.
-
-
-    \paragraph{logical-not-parentheses}
-occurs when the left hand side of an expression contains a \emph{logical not} 
-(a \texttt{!} in C). An example is a line in the file \texttt{crypto/testmgr.c}
-\textcode{if (!ret == template[i].fail)}.
-
-The warning refers to the \textcode{!ret}, which should have been inside 
-parentheses to be correct, like so \textcode{(!ret)}.
-
-
-    \paragraph{error=implicit-function-declaration}
-
-
-    \paragraph{frame-larger-than=}
-    \paragraph{cpp}
-    \paragraph{pointer-to-int-cast}
-
-\label{par:pointertoint}
-This warning would normally be sign of bad code. It is usually when a pointer 
-is cast to a \texttt{long} and then later cast back into a function call. This 
-is widely spread in Linux to simulate the effects of \emph{Object Oriented 
-Programming}
-
-    \paragraph{discarded-array-qualifiers}
-    \paragraph{switch-bool}
-    \paragraph{int-conversion}
-    \paragraph{array-bounds}
-    \paragraph{return-type}
-    \paragraph{uninitialized}
-    \paragraph{overflow}
-    \paragraph{unused-label}
-    \paragraph{deprecated-declarations}
-    \paragraph{int-to-pointer-cast}
-
-See the section about pointer-to-int on page \pageref{par:pointertoint}
-    \paragraph{implicit-function-declaration}
-    \paragraph{incompatible-pointer-types}
-    \paragraph{error=implicit-int}
-
 
     \subsection{Unstable vs.Stable}
 
