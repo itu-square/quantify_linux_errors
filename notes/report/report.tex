@@ -518,7 +518,7 @@ configuration tools look.
     \includegraphics[scale=0.25]{pngs/configs50percent.png}
 \figb{gconfig, menuconfig, nconfig, and xconfig}{fig:lineofconfigs}
 
-That last one \texttt{randconfig} is interesting, as it will go through the 
+\texttt{randconfig} is interesting, as it will go through the 
 Kconfig feature model files, and pick random values for all of the features. 
 This should be perfect for the goal for this project. Although time will tell 
 that it is indeed biased, and will not create configurations that are of 
@@ -619,7 +619,7 @@ merely used as a simple fuzz testing tool with the help of entropy.
 To make this representative, one would have to make \texttt{randconfig} aware of
 the whole dependency tree or the whole configuration space before randomly 
 selecting, to skew the possibilities. This seems infeasible since the 
-configuration space is so large.
+configuration space is so large. It will not fit in memory.
 \\
 
 Some different ways of generating a representative sample was considered. In 
@@ -627,7 +627,7 @@ the end, \texttt{randconfig} was chosen because it showed to be too cumbersome
 to create a method that actually was representative. 
 
 The methods that was considered will be explained later in this report. 
-    \footnote{refer to it when you have written it} 
+See section \ref{sec:gen} on page \pageref{sec:gen}.
 They included the aforementioned \texttt{randconfig} tool being rewritten, a 
 script that scrambled the Kconfig files, and a generate and filter method.
 \\
@@ -736,7 +736,7 @@ this project.
                     were disabled}
 \end{itemize}
 
-See chapter~\ref{sec:ttv} about Threats to Validity on page \pageref{sec:ttv} 
+See chapter~\ref{ch:ttv} about Threats to Validity on page \pageref{ch:ttv} 
 for a more thorough description of the specific features.
 
 
@@ -1026,7 +1026,79 @@ one would have to look into every case, and find out.
 \figb{The warnings distribution of the stable Linux of the compilations with 
     errors}{tab:stablewarnwitherrs}
 
-In 89\% of the compilations that stopped.
+
+    \paragraph{unused-function}
+
+is a warning about a function that has never been called. This represents dead 
+code, or code pollution. 
+
+In the example in figure \ref{lst:unusedfuncreal}, the function 
+\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
+\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
+unused function.
+
+\figa
+    \lstinputlisting[language=C]{code/unusedfuncreal}
+\figb{A real example of unused function - from the file 
+    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
+
+
+    \paragraph{maybe-uninitialized}
+is when there is an uncertainty about a variable being uninitialized. In the 
+case in figure \ref{lst:maybeuninitializedreal} there is a 
+\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
+
+If \emph{gcc} cannot see for sure that the variable is initialized, 
+even if it would have been initialized in all of the cases, it will return this 
+warning.
+
+\figa
+    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+
+
+    \paragraph{unused-variable}
+is basically the same as \texttt{unused-function}, but only with a variable 
+instead of a function. There will be no example of this.
+
+
+    \paragraph{logical-not-parentheses}
+occurs when the left hand side of an expression contains a \emph{logical not} 
+(a \texttt{!} in C). An example is a line in the file \texttt{crypto/testmgr.c}
+\textcode{if (!ret == template[i].fail)}.
+
+The warning refers to the \textcode{!ret}, which should have been inside 
+parentheses to be correct, like so \textcode{(!ret)}.
+
+
+    \paragraph{error=implicit-function-declaration}
+
+
+    \paragraph{frame-larger-than=}
+    \paragraph{cpp}
+    \paragraph{pointer-to-int-cast}
+
+\label{par:pointertoint}
+This warning would normally be sign of bad code. It is usually when a pointer 
+is cast to a \texttt{long} and then later cast back into a function call. This 
+is widely spread in Linux to simulate the effects of \emph{Object Oriented 
+Programming}
+
+    \paragraph{discarded-array-qualifiers}
+    \paragraph{switch-bool}
+    \paragraph{int-conversion}
+    \paragraph{array-bounds}
+    \paragraph{return-type}
+    \paragraph{uninitialized}
+    \paragraph{overflow}
+    \paragraph{unused-label}
+    \paragraph{deprecated-declarations}
+    \paragraph{int-to-pointer-cast}
+
+See the section about pointer-to-int on page \pageref{par:pointertoint}
+    \paragraph{implicit-function-declaration}
+    \paragraph{incompatible-pointer-types}
+    \paragraph{error=implicit-int}
 
 
     \subsection{Unstable vs.Stable}
@@ -1072,12 +1144,13 @@ about the upper bound of the percentage.
 %                           THREATS TO VALIDITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\chapter{Threats to Validity}
-\label{sec:ttv}
+    \chapter{Threats to Validity}
+\label{ch:ttv}
 
 \emph{Blahblah about Threats to validity...}
 
 \section{Generalization}
+\label{sec:gen}
 
 One major threat to validity is in the representativeness of the random 
 configurations. Since the configurations are created using the \textcode{make 

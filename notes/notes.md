@@ -57,25 +57,52 @@
       o pointer-to-int is normally bad, but is used in Linux to emulate OOS
 
     === SQL queries ===
-      o select type,count(config) from 
-            (select distinct type, config 
-                from bugs where linux_version rlike '4.1.1' 
-                and config in 
-                    (select * from stable_conf_with_errs)) as a 
-        group by type 
-        order by count(config) desc;
-        # Den viser top 10 antal warnings i de bugs, der har ERRORS
 
       o This one shows the top warnings from unstable configs with errors.
+
         select type, count(config) from (select distinct type, config from 
         bugs where linux_version rlike 'next' and config in (select hash from 
         configurations where exit_status = 1 and linux_version rlike 'next')) 
         as a group by type order by count(config) desc;
 
+        You can exchange the 'next' with '4.1.1', to get stable
+
+      o This will get all the configurations where the warning had something
+        to do with SECCOMP
+
+        select count(distinct config) from bugs where linux_version rlike 
+        'next' and original rlike 'seccomp';
+    
 
 
 
-    === Programming wise
+
+=== Host errors ===
+
+            Next    4.1.1   
+--------------------------
+seccomp     2046    2471
+chaoskey    146     0
+quantify    18      5
+nouveau     1949    2954
+i2c         6387    6459
+
+# Found with this SQL query:
+
+    select count(distinct config) from bugs where linux_version rlike 'next' and
+    original not rlike 'seccomp' and original rlike 'i2c';
+
+Maybe look at what files are the top files.
+This query will get the top files from the bugs, that have errors.
+
+    select distinct path, count(*) from files where bug_id in (select hash 
+    from bugs where linux_version rlike 'next' and type = 'makeMsg' ) group by 
+    path order by count(*) desc limit 30;
+
+
+
+
+    === Programming wise ===
 
       o Look into ERRORS, and make top 10 of that.
           o Are there any wrong errors? Are there many of the same errors?

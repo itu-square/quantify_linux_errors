@@ -1,0 +1,5 @@
+if (!ret == template[i].fail) {
+    pr_err("alg: skcipher%s: setkey failed on chunk test %d for %s: flags=%x\n",
+           d, j, algo, crypto_ablkcipher_get_flags(tfm));
+    goto out;
+} 
