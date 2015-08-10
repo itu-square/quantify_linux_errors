@@ -109,6 +109,12 @@ This query will get the top files from the bugs, that have errors.
 
     === Programming wise ===
 
+      o Check if the EXPERIMENTAL features are more error prone. Basically do 
+        the same as below.
+
+        # egrep -b1 EXPERIMENTAL permute | grep config
+        # der er 26 af dem.
+
       o Does configuration warnings have anything to say to the error percentage?
             === 4.1.1 ===
         err_pct without conf errs = 2605/15754 = 17%
