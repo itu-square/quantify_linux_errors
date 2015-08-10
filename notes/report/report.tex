@@ -321,8 +321,8 @@ subsystems, in what subsubsystem?
 
 
 The \texttt{arch/} subsystem contains architecture specific source code. In 
-this project, only the \texttt{arch/x86/} architecture is compiled for, so 
-only this subsubsystem will be in use. 
+this project, only the \texttt{arch/x86/} architecture is compiled for, 
+because of complications with cross compiling.
 
 Many of these architectures are very rarely used in day to day computing, but 
 they are one of the reasons that Linux can run on so many devices. There are 29 
@@ -646,7 +646,7 @@ script that scrambled the Kconfig files, and a generate and filter method.
 \end{itemize}
 
 
-\subsection{Compiling and Catching errors}
+\subsection{Compiling and Catching Errors and Warnings}
 
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file by running the command \textcode{make all}. This looks 
@@ -666,7 +666,7 @@ Some of these are not so interesting as others for this project.
 \\
 
 If there is an error, the compilation will stop immediately 
-(sometimes it will try to keep on going, but in this project, it is told to 
+(at default it will try to keep on going, but in this project, it is told to 
 stop after one error).
 \\
 
@@ -680,6 +680,19 @@ The different types of output will be described here.
     \paragraph{The Linux errors} 
 are reproducible errors that will occur on all 
 machines when a certain configuration is being built. 
+\\
+
+In traditional bug finding, there are \emph{analysis-time}, 
+\emph{compile-time}, and \emph{runtime}. With configurable software, there 
+exists another one \emph{instantiation-time} or \emph{configuration-time}, 
+which checks the preprocessing.
+    \cite{IntDatSPL}
+
+In this project \emph{compile-time} is in focus, and \emph{gcc} is both the 
+compiler and in a sense, also the test-suite.
+\\
+
+
     \footnote{Refer to the list of errors - some link somewhere}
 
     \paragraph{The host errors} 
