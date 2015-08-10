@@ -15,6 +15,12 @@
 %      o Commands
 %      o Command output
 
+%\chapter
+%    \section
+%        \subsection
+%            \subsubsection
+%            \paragraph
+
 % === Setup ===
 
 % Needed and Layout
@@ -334,6 +340,101 @@ world.
     \cite{22thbirthday}
 .
 
+        \subsection{The gcc warnings}
+Here follows a list of the warnings that was found during the compilations. 
+They are ordered alphabetically.
+
+
+            \paragraph{array-bounds}
+is given, when there is a possibility that an array is out of bounds. 
+
+% See example in figure \ref{lst:arraybounds}.
+
+% \figa
+    % \lstinputlisting[language=C]{code/arraybounds}
+% \figb{}{lst:arraybounds}
+
+
+            \paragraph{cpp}
+
+
+            \paragraph{deprecated-declarations}
+            \paragraph{discarded-array-qualifiers}
+            \paragraph{error=}
+is a prefix, which means that the warning will cause an error. Sometimes 
+developers do not want a specific warning to happen without the compilation 
+stopping. Then they can enable this flag in the makefile.
+
+There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
+
+
+            \paragraph{frame-larger-than=}
+            \paragraph{implicit-function-declaration}
+            \paragraph{incompatible-pointer-types}
+            \paragraph{int-conversion}
+            \paragraph{int-to-pointer-cast}
+\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
+
+            \paragraph{logical-not-parentheses}
+occurs when the left hand side of an expression contains a \emph{logical not} 
+(a \texttt{!} in C). An example is a line in the file \texttt{crypto/testmgr.c}
+\textcode{if (!ret == template[i].fail)}.
+
+The warning refers to the \textcode{!ret}, which should have been inside 
+parentheses to be correct, like so \textcode{(!ret)}.
+
+
+            \paragraph{maybe-uninitialized}
+is when there is an uncertainty about a variable being uninitialized. In the 
+case in figure \ref{lst:maybeuninitializedreal} there is a 
+\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
+
+If \emph{gcc} cannot see for sure that the variable is initialized, 
+even if it would have been initialized in all of the cases, it will return this 
+warning.
+
+\figa
+    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+
+
+            \paragraph{overflow}
+            \paragraph{pointer-to-int-cast}
+
+\label{par:pointertoint}
+This warning would normally be sign of bad code. It is usually when a pointer 
+is cast to a \texttt{long} and then later cast back into a function call. This 
+is widely spread in Linux to simulate the effects of \emph{Object Oriented 
+Programming}
+
+
+            \paragraph{return-type}
+            \paragraph{switch-bool}
+            \paragraph{uninitialized}
+            \paragraph{unused-function}
+is a warning about a function that has never been called. This represents dead 
+code, or code pollution. 
+
+In the example in figure \ref{lst:unusedfuncreal}, the function 
+\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
+\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
+unused function.
+
+\figa
+    \lstinputlisting[language=C]{code/unusedfuncreal}
+\figb{A real example of unused function - from the file 
+    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
+
+
+            \paragraph{unused-variable}
+is basically the same as \texttt{unused-function}, but only with a variable 
+instead of a function. There will be no example of this.
+
+
+            \paragraph{unused-label}
+
+
+
 % --- Not showing this graph ---
 % \figa
 %     \includegraphics{plots/archsizes.eps}
@@ -356,9 +457,9 @@ world.
 \end{itemize}
 
 
-\subsection{Kconfig - The Language of the Feature Model}
+        \subsection{Kconfig - The Language of the Feature Model}
 
-\paragraph{A feature model} is a way of representing all the possible 
+            \paragraph{A feature model} is a way of representing all the possible 
 configurations - \emph{the configuration space}. It contains all the features, 
 with all the constraints and dependencies.
 
@@ -369,7 +470,8 @@ model $\psi_{FM}$.
     \kappa \in \psi_{FM}
 \end{equation}
 
-\paragraph{The Kconfig language} is the language of the feature model in Linux 
+            \paragraph{The Kconfig language} is the language of the feature 
+                model in Linux 
 (also used for other projects like busybox, buildroot, and others).
     \footnote{Cite the Variablity Modeling in the systems software domain paper}
 The configuration files have the prefix \textcode{Kconfig}, and are 
@@ -499,7 +601,7 @@ size. A cross-tree dependency is also present.
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
-\subsection{Configuring of Linux}
+        \subsection{Configuring of Linux}
 
 The Linux kernel comes with different ways of creating your own configuration 
 file. There is a question based one (\texttt{config}), and some menu based ones 
@@ -518,7 +620,7 @@ configuration tools look.
     \includegraphics[scale=0.25]{pngs/configs50percent.png}
 \figb{gconfig, menuconfig, nconfig, and xconfig}{fig:lineofconfigs}
 
-That last one \texttt{randconfig} is interesting, as it will go through the 
+\texttt{randconfig} is interesting, as it will go through the 
 Kconfig feature model files, and pick random values for all of the features. 
 This should be perfect for the goal for this project. Although time will tell 
 that it is indeed biased, and will not create configurations that are of 
@@ -619,7 +721,7 @@ merely used as a simple fuzz testing tool with the help of entropy.
 To make this representative, one would have to make \texttt{randconfig} aware of
 the whole dependency tree or the whole configuration space before randomly 
 selecting, to skew the possibilities. This seems infeasible since the 
-configuration space is so large.
+configuration space is so large. It will not fit in memory.
 \\
 
 Some different ways of generating a representative sample was considered. In 
@@ -627,7 +729,7 @@ the end, \texttt{randconfig} was chosen because it showed to be too cumbersome
 to create a method that actually was representative. 
 
 The methods that was considered will be explained later in this report. 
-    \footnote{refer to it when you have written it} 
+See section \ref{sec:gen} on page \pageref{sec:gen}.
 They included the aforementioned \texttt{randconfig} tool being rewritten, a 
 script that scrambled the Kconfig files, and a generate and filter method.
 \\
@@ -749,7 +851,7 @@ this project.
                     were disabled}
 \end{itemize}
 
-See chapter~\ref{sec:ttv} about Threats to Validity on page \pageref{sec:ttv} 
+See chapter~\ref{ch:ttv} about Threats to Validity on page \pageref{ch:ttv} 
 for a more thorough description of the specific features.
 
 
@@ -965,6 +1067,8 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 \newpage
 \chapter{Data}
 
+
+
 %\begin{itemize}
     %\item Example of data structure
     %\item Graph of tables
@@ -984,9 +1088,88 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 \newpage
 \chapter{Results}
 
+A total of 42,060 configurations were compiled. Half of them from the unstable 
+(linux-next) Linux version, and the other half a stable version of Linux 
+(version 4.1.1).
+
+    \section{Errors}
+
+Out of 21,030 compilations, 7911 (38\%) of the unstable ones had an error and 
+stopped. For the stable ones, it was 3611 (17\%), which had an error.
+
+    \subsection{Stable}
+
+Out of the 17\% of the compilations, that had errors, here is a sorted list of 
+the warnings. To know exactly which warning is 'responsible' for the error, 
+one would have to look into every case, and find out.
+    \footnote{refer to GNU GCC warning options and also refer to the figure underneath}
+
+
+\figa
+    \begin{tabular}{c|c}
+        \hline 
+        \hline
+
+        \textbf{Warning type} & \textbf{Percent} \\
+
+        \hline
+
+        unused-function & 57\% \\
+        maybe-uninitialized & 45\% \\
+        unused-variable & 35\% \\
+        logical-not-parentheses & 34\% \\
+        error=implicit-function-declaration & 27\% \\
+        frame-larger-than= & 24\% \\
+        cpp & 23\% \\
+        pointer-to-int-cast & 20\% \\
+        discarded-array-qualifiers & 19\% \\
+        switch-bool & 17\% \\
+        int-conversion & 14\% \\
+        array-bounds & 14\% \\
+        return-type & 12\% \\
+        uninitialized & 12\% \\
+        overflow & 11\% \\
+        unused-label & 8.1\% \\
+        deprecated-declarations & 5.4\% \\
+        int-to-pointer-cast & 4.5\% \\
+        implicit-function-declaration & 1.7\% \\
+        incompatible-pointer-types & 0.44\% \\
+        error=implicit-int & 0.17\% \\
+
+        \hline 
+        \hline
+    \end{tabular}
+\figb{The warnings distribution of the stable Linux of the compilations with 
+    errors}{tab:stablewarnwitherrs}
+
+    \subsection{Unstable vs.Stable}
+
+
+    \section{Warnings}
+
+In this section, it will be the warning distribution, not only for the ones 
+with errors, which stopped compiling, but for all of the compilation.
+
+    \subsection{Stable}
+
+\figa
+    \begin{tabular}{c|c}
+
+    \end{tabular}
+\figb{The warnings distribution of the stable Linux}{tab:stablewarn}
+
+    \subsection{Unstable vs.Stable}
+
 \section{Analyzing the data}
 
-\section{Number of valid configurations}
+    \section{Number of valid configurations}
+
+There was a hope, that something could be said about the percentage of valid 
+configurations out of all possible combinations.
+
+Some mandatory features were fixed, and an experiment was run, but after 100,000
+configurations, none of them were valid. This can only be used to say something
+about the upper bound of the percentage.
 
 \section{Observations}
 
@@ -1002,12 +1185,13 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 %                           THREATS TO VALIDITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\chapter{Threats to Validity}
-\label{sec:ttv}
+    \chapter{Threats to Validity}
+\label{ch:ttv}
 
 \emph{Blahblah about Threats to validity...}
 
 \section{Generalization}
+\label{sec:gen}
 
 One major threat to validity is in the representativeness of the random 
 configurations. Since the configurations are created using the \textcode{make 

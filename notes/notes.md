@@ -8,24 +8,12 @@
 
 === TODO ===
 
-  o Make presentation for Monday
 
-
-    === Pres for Monday
-      o Top 10 of all
-      o Also drivers/xx subsystems
-      o Threats to validity
-
-
-    === Questions for Monday
+    === Questions
       o Differentiate 'tween invalid configurations and nonsense configurations.
         In regards to: can it compile, but will it EVER be compiled by anyone.
         But I will probably not meet these since I am using randconfig, and not
         generateNfilter
-
-
-    === Read about
-      o TypeChef. What is it, 
 
 
     === Write about
@@ -61,18 +49,76 @@
       o TTV: DERIVED and CAPABILITY features will never be chosen by `make 
         randconfig`, and lots of configurations will never be created.
       ~ Write about why I do not cross compile, and what archs I can compile for
+      o Compare bugs to 42bugs paper
+      o Mention that security/ has basically no errors.
+      o Explain small paragraph of each warning. 
+        Make the examples real (and maybe simplified)
+      o Write about security/, and about how it has not really been touched.
+      o pointer-to-int is normally bad, but is used in Linux to emulate OOS
+
+      ~ Write about 100,000 generated configs, and that I will not do it, but
+        mention it. Or something.
+
+    === SQL queries ===
+
+      o This one shows the top warnings from unstable configs with errors.
+
+        select type, count(config) from (select distinct type, config from 
+        bugs where linux_version rlike 'next' and config in (select hash from 
+        configurations where exit_status = 1 and linux_version rlike 'next')) 
+        as a group by type order by count(config) desc;
+
+        You can exchange the 'next' with '4.1.1', to get stable
+
+      o This will get all the configurations where the warning had something
+        to do with SECCOMP
+
+        select count(distinct config) from bugs where linux_version rlike 
+        'next' and original rlike 'seccomp';
+    
 
 
 
 
-    === Programming wise
+=== Host errors ===
 
-      o Look at data, and try to say something about it.
+            Next    4.1.1   
+--------------------------
+seccomp     2046    2471
+chaoskey    146     0
+quantify    18      5
+nouveau     1949    2954
+i2c         6387    6459
 
-      + Start a generate n filter instance to find the number of valid configs
-          o Can I figure it out logically? 
-          x Or start a script (that has no crossconstraints) that increases the 
-            amount of features, and then checks how many are valid
+# Found with this SQL query:
+
+    select count(distinct config) from bugs where linux_version rlike 'next' and
+    original not rlike 'seccomp' and original rlike 'i2c';
+
+Maybe look at what files are the top files.
+This query will get the top files from the bugs, that have errors.
+
+    select distinct path, count(*) from files where bug_id in (select hash 
+    from bugs where linux_version rlike 'next' and type = 'makeMsg' ) group by 
+    path order by count(*) desc limit 30;
+
+
+
+
+    === Programming wise ===
+
+      o Look into ERRORS, and make top 10 of that.
+          o Are there any wrong errors? Are there many of the same errors?
+
+      o Top 10 warnings inside subsystems? Is this too much data?
+
+      o How many new features are there in kconfig in linux-next compared to 
+        4.1.1?
+
+      o Look into mm/ and make a top 10 subsystem
+
+      o Top 10 subsystemwarnings should have bugs/LOC (as a percentage)
+
 
       + Try to run some configs and running `mrproper` between them.
         Then run the same configs, and do not run `mrproper` in between.
@@ -91,6 +137,14 @@
       o Is the preprocessed code stored on HDD after compilation
 
       x Do Jaccard similarity to find out what features cause the same errors.
+
+      x Start a generate n filter instance to find the number of valid configs
+          x Can I figure it out logically? 
+          x Or start a script (that has no crossconstraints) that increases the 
+            amount of features, and then checks how many are valid
+
+      ~ Has security/ even been touched.
+          ~ Not really
 
       ~ Backup the database
 
@@ -140,6 +194,13 @@
               > delete from loners_files;
               > delete from loners_bugs;
               > delete from configurations where hash in (select * from loners);
+
+      ~ How many ERRORS have conf_errs.?
+          ~ It look like there is not a 100% correlation.
+            17 % of stable have ERRORS
+                28% of those have config errors
+            38 % of next have ERRORS
+                45% of those have config errors
 
 === FIND LINKS FOR THIS ===
   o TypeChef

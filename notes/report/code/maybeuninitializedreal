@@ -1,0 +1,23 @@
+static int __add_delayed_refs()
+{
+	int sgn;
+
+	while (n) {
+
+		switch (node->action) {
+		case BTRFS_ADD_DELAYED_EXTENT:
+		case BTRFS_UPDATE_DELAYED_HEAD:
+			WARN_ON(1);
+			continue;
+		case BTRFS_ADD_DELAYED_REF:
+			sgn = 1;
+			break;
+		case BTRFS_DROP_DELAYED_REF:
+			sgn = -1;
+			break;
+		default:
+			BUG_ON(1);
+		}
+		*total_refs += (node->ref_mod * sgn);
+	}
+}
