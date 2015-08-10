@@ -197,15 +197,21 @@ bundle.
 
         \section{The Linux Kernel and Variability}
 
-
 Many software products are configurable in some way. This creates the 
 possibility of tailoring the software to suit different needs. For example 
-different kinds of hardware, or different functionalities. This is called 
-\emph{variability} in software or \emph{Software Product Lines} (SPL), when 
-different programs can be made from the same source code base.
-    \footnote{Check definition of SPL, and write it here}
+different kinds of hardware, or different functionalities. 
 
-The options that can be changed, are called \emph{features}.
+In Linux this is done before compilation, at a preprocessing step. The Linux 
+kernel in its entirety is not a valid program, it will have to be preprocessed 
+to make sense of the source code.
+This is done by the preprocessing tool (in this case \emph{gcc}).
+    \cite{IntDatSPL}
+    \footnote{cite some ifdef thing (look at IntDatSPL pg. 1 [3][4]}
+\\
+
+This is also called \emph{variability} in software and a software products of 
+this type is called \emph{Software Product Lines} (SPL). When different 
+software programs can be derived from the same source code base.  
 \\
 
 The Linux kernel is very configurable. In the configuration files (the Kconfig 
@@ -340,101 +346,6 @@ world.
     \cite{22thbirthday}
 .
 
-        \subsection{The gcc warnings}
-Here follows a list of the warnings that was found during the compilations. 
-They are ordered alphabetically.
-
-
-            \paragraph{array-bounds}
-is given, when there is a possibility that an array is out of bounds. 
-
-% See example in figure \ref{lst:arraybounds}.
-
-% \figa
-    % \lstinputlisting[language=C]{code/arraybounds}
-% \figb{}{lst:arraybounds}
-
-
-            \paragraph{cpp}
-
-
-            \paragraph{deprecated-declarations}
-            \paragraph{discarded-array-qualifiers}
-            \paragraph{error=}
-is a prefix, which means that the warning will cause an error. Sometimes 
-developers do not want a specific warning to happen without the compilation 
-stopping. Then they can enable this flag in the makefile.
-
-There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
-
-
-            \paragraph{frame-larger-than=}
-            \paragraph{implicit-function-declaration}
-            \paragraph{incompatible-pointer-types}
-            \paragraph{int-conversion}
-            \paragraph{int-to-pointer-cast}
-\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
-
-            \paragraph{logical-not-parentheses}
-occurs when the left hand side of an expression contains a \emph{logical not} 
-(a \texttt{!} in C). An example is a line in the file \texttt{crypto/testmgr.c}
-\textcode{if (!ret == template[i].fail)}.
-
-The warning refers to the \textcode{!ret}, which should have been inside 
-parentheses to be correct, like so \textcode{(!ret)}.
-
-
-            \paragraph{maybe-uninitialized}
-is when there is an uncertainty about a variable being uninitialized. In the 
-case in figure \ref{lst:maybeuninitializedreal} there is a 
-\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
-
-If \emph{gcc} cannot see for sure that the variable is initialized, 
-even if it would have been initialized in all of the cases, it will return this 
-warning.
-
-\figa
-    \lstinputlisting[language=C]{code/maybeuninitializedreal}
-\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
-
-
-            \paragraph{overflow}
-            \paragraph{pointer-to-int-cast}
-
-\label{par:pointertoint}
-This warning would normally be sign of bad code. It is usually when a pointer 
-is cast to a \texttt{long} and then later cast back into a function call. This 
-is widely spread in Linux to simulate the effects of \emph{Object Oriented 
-Programming}
-
-
-            \paragraph{return-type}
-            \paragraph{switch-bool}
-            \paragraph{uninitialized}
-            \paragraph{unused-function}
-is a warning about a function that has never been called. This represents dead 
-code, or code pollution. 
-
-In the example in figure \ref{lst:unusedfuncreal}, the function 
-\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
-\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
-unused function.
-
-\figa
-    \lstinputlisting[language=C]{code/unusedfuncreal}
-\figb{A real example of unused function - from the file 
-    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
-
-
-            \paragraph{unused-variable}
-is basically the same as \texttt{unused-function}, but only with a variable 
-instead of a function. There will be no example of this.
-
-
-            \paragraph{unused-label}
-
-
-
 % --- Not showing this graph ---
 % \figa
 %     \includegraphics{plots/archsizes.eps}
@@ -472,11 +383,16 @@ model $\psi_{FM}$.
 
             \paragraph{The Kconfig language} is the language of the feature 
                 model in Linux 
-(also used for other projects like busybox, buildroot, and others).
-    \footnote{Cite the Variablity Modeling in the systems software domain paper}
+(also used for other projects like BusyBox, BuildRoot, CoreBoot, Freetz and 
+others)
+    \cite[p. 4]{VarModSSD}
+.
 The configuration files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
-other.
+other. There are 1195 Kconfig files in total in the Linux kernel
+    \footnote{Found with the command \textcode{find . | grep Kconfig | wc}}
+with 956 of them relevant for the \texttt{x86/} architecture.
+.
 \\
 
 The different data types are \textcode{boolean}, \textcode{tristate}, 
@@ -506,10 +422,10 @@ syntax.
 % \figb{A real Kconfig example showing a choice clause with 5 
 %     choices}{kconfigtypes}
 
-\figa
-    \includegraphics{plots/datatypestats.eps}
-\figb{The distribution of different datatypes in the feature 
-    model of the x86 architecture}{datatypesdistribution}
+% \figa
+    % \includegraphics{plots/datatypestats.eps}
+% \figb{The distribution of different datatypes in the feature 
+    % model of the x86 architecture}{datatypesdistribution}
 
 A feature model can be visualized in a feature diagram. The example given here 
 will be tiny compared to that of the Linux kernel. The feature model of the 
@@ -520,6 +436,10 @@ diagram. See figure \ref{kconfiglaptop} for the corresponding Kconfig file. It
 depicts a feature model of a laptop configuration, where there are some 
 mandatory features and some optional, and also a choice option for the screen 
 size. A cross-tree dependency is also present.
+
+There is no consensus on a unified notation for attributes in feature models
+    \cite{AAFM}
+.
 
 % 65 lines down to \figb
 \figa
@@ -588,8 +508,38 @@ size. A cross-tree dependency is also present.
 \figb{An example of a feature diagram of a car}{featurediagramcar}
 % 65 lines up to \figa
 
+
+The features can be split into four different types, \emph{User features}, 
+\emph{Implementation features}, \emph{Derived features}, and \emph{Capability 
+features}
+    \cite[p. 8]{VarModSSD}
+.
+
+\emph{User} features are features that the user chooses a value for in the 
+configurator. In other words, a feature, that has a prompt option in the 
+Kconfig language. 
+
+These features may not directly inflict the compiler's choices, but may only 
+open up for other features in the configurator.
+
+\emph{Implementation} features are referenced in the source code, and will 
+directly influence what code the preprocessor will select for compilation.
+
+\emph{Derived} features are invisible to the user, and are set by other 
+features using the \textcode{select FOO} syntax.
+
+\emph{Capability} features in Linux are features, that simulate a reverse 
+dependency. 
+    \footnote{Should I give an example here of the capability one?}
+    \footnote{How many are there of each of these}
+
+
+
 \begin{itemize}
     \item \underline{\textbf{TODO}}
+    \item mention how many of boolean and tristate and so on, there are. Maybe 
+            to use to say something about how many possible configurations can 
+            be created.
     \item Mention desugaring
     \item Explain what the Linux kernel tree is.
     \item Find another example than a car
@@ -731,7 +681,8 @@ to create a method that actually was representative.
 The methods that was considered will be explained later in this report. 
 See section \ref{sec:gen} on page \pageref{sec:gen}.
 They included the aforementioned \texttt{randconfig} tool being rewritten, a 
-script that scrambled the Kconfig files, and a generate and filter method.
+script that \emph{scrambled the Kconfig} files, and a \emph{generate and 
+filter} method.
 \\
 
 
@@ -751,9 +702,12 @@ script that scrambled the Kconfig files, and a generate and filter method.
 \subsection{Compiling and Catching Errors and Warnings}
 
 When a configuration has been created, the Linux kernel is compiled using 
-that configuration file by running the command \textcode{make all}. This looks 
-in a \texttt{Makefile}, which specifies what files to compile. The compilation 
-of the files is done mainly by \emph{gcc - The GNU Compiler Collection}.
+that configuration file by running the command \textcode{make all}
+    \footnote{Or simply \textcode{make}, since \textcode{make all} is the 
+        default behaviour}
+. This looks in a \texttt{Makefile}, which specifies what files to compile. The 
+compilation of the files is done mainly by \emph{gcc - The GNU Compiler 
+Collection}.
 \\
 
 During compilation, \texttt{gcc} will output warnings if there are any. These 
@@ -904,6 +858,109 @@ The irrelevant warnings are:
 \figb{A program resulting in an unused variable warning.}{lst:unusedvar}
 
 This will return the warning '\texttt{unused variable 'n' [-Wunused-variable]}'.
+
+        \subsection{The Gcc Warnings}
+Here follows a list of the warnings that was found during the compilations. 
+They are ordered alphabetically.
+
+
+            \paragraph{array-bounds}
+is given, when gcc is certain that a subscript to an array is always out of 
+bounds.
+
+% See example in figure \ref{lst:arraybounds}.
+
+% \figa
+    % \lstinputlisting[language=C]{code/arraybounds}
+% \figb{}{lst:arraybounds}
+
+
+            \paragraph{cpp}
+will show \textcode{\#warning} directives written in the code. This is a warning 
+message that the coder can pass to the compiler. Often they will not result in 
+an error.
+
+
+            \paragraph{deprecated-declarations}
+will show warnings when functions, variables, or types have been declared 
+deprecated be a programmer.
+
+
+            \paragraph{discarded-array-qualifiers}
+            \paragraph{error=}
+is a prefix, which means that the warning will cause an error. Sometimes 
+developers do not want a specific warning to happen without the compilation 
+stopping. Then they can enable this flag in the makefile.
+
+There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
+
+
+            \paragraph{frame-larger-than=}
+            \paragraph{implicit-function-declaration}
+            \paragraph{incompatible-pointer-types}
+            \paragraph{int-conversion}
+            \paragraph{int-to-pointer-cast}
+\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
+
+            \paragraph{logical-not-parentheses}
+occurs when the left hand side of an expression contains a \emph{logical not} 
+(a \texttt{!} in C). An example is \textcode{if (!ret == template[i].fail)}
+    \footnote{From the file \texttt{crypto/testmgr.c}}
+.
+
+The warning refers to the \textcode{!ret}, which should have been inside 
+parentheses to be correct, like so \textcode{(!ret)}.
+
+
+            \paragraph{maybe-uninitialized}
+is when there is an uncertainty about a variable being uninitialized. In the 
+case in figure \ref{lst:maybeuninitializedreal} there is a 
+\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
+
+If \emph{gcc} cannot see for sure that the variable is initialized, 
+even if it would have been initialized in all of the cases, it will return this 
+warning.
+
+\figa
+    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+
+
+            \paragraph{overflow}
+            \paragraph{pointer-to-int-cast}
+
+\label{par:pointertoint}
+This warning would normally be sign of bad code. It is usually when a pointer 
+is cast to a \texttt{long} and then later cast back into a function call. This 
+is widely spread in Linux to simulate the effects of \emph{Object Oriented 
+Programming}
+
+
+            \paragraph{return-type}
+            \paragraph{switch-bool}
+            \paragraph{uninitialized}
+            \paragraph{unused-function}
+is a warning about a function that has never been called. This represents dead 
+code, or code pollution. 
+
+In the example in figure \ref{lst:unusedfuncreal}, the function 
+\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
+\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
+unused function.
+
+\figa
+    \lstinputlisting[language=C]{code/unusedfuncreal}
+\figb{A real example of unused function - from the file 
+    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
+
+
+            \paragraph{unused-variable}
+is basically the same as \texttt{unused-function}, but only with a variable 
+instead of a function. There will be no example of this.
+
+
+            \paragraph{unused-label}
+
 
 % TODO
 \begin{itemize}
@@ -1177,7 +1234,8 @@ about the upper bound of the percentage.
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-        \item 
+        \item Talk about 25\% of the configs to have warnings. And that it does 
+        not matter (See notes.md)
 \end{itemize}
 
 

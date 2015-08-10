@@ -18,11 +18,13 @@
 
     === Write about
       o Write about all the warning types.
+          o Mention in the section about all bugs, that I do not talk about bugs, 
+            which I did not find any of.
       F Make a laptop model insstad  of a car one.
-      o manyoptions choice. There is only one (USB Gadget Drivers).
-        Write about how useless it is...
-      o That make always runs `gcc -Wall` (I found out that 55/2000 times it 
+      o That `make` always runs `gcc -Wall` (I found out that 55/2000 times it 
         does not run -Wall but only `gcc`
+          o Mention that I kinda cannot control if Wall is enabled by all.
+            And that sometimes (55/2000) coders do it themselves.
       o Maybe I should have put `gcc -Wextra`
       o Find out the number of HAVE_XXXs, because those are maybe not `real` 
         features.
@@ -107,6 +109,24 @@ This query will get the top files from the bugs, that have errors.
 
     === Programming wise ===
 
+      o Does configuration warnings have anything to say to the error percentage?
+            === 4.1.1 ===
+        err_pct without conf errs = 2605/15754 = 17%
+        err_pct with conf errs = 1007/5276 = 19%
+            === next ===
+        err_pct without conf errs = 4317/12052 = 36
+        err_pct with conf errs = 3594/8977 = 40%
+
+        # 2605 :
+            # select config from bugs where config in (select hash from 
+                configurations where conf_errs not rlike 'warning' and 
+                linux_version rlike '4.1.1') and type = 'makeMsg' and 
+                linux_version rlike '4.1.1'
+        # 15754
+            # select hash from configurations where conf_errs not rlike 
+                'warning' and linux_version rlike '4.1.1'
+        
+
       o Look into ERRORS, and make top 10 of that.
           o Are there any wrong errors? Are there many of the same errors?
 
@@ -120,14 +140,14 @@ This query will get the top files from the bugs, that have errors.
       o Top 10 subsystemwarnings should have bugs/LOC (as a percentage)
 
 
-      + Try to run some configs and running `mrproper` between them.
+      ~ Try to run some configs and running `mrproper` between them.
         Then run the same configs, and do not run `mrproper` in between.
         Is the warning output the same?
           # I have started this experiment. (30. july 02:00)
           # It looks as if it does not matter. But I have only run 10. Running 
             10 more
 
-      o Make test configs and permute them to see that it wont do squat.
+      ~ Make test configs and permute them to see that it wont do squat.
 
       o Does randconfig always take the default values?
 
