@@ -29,9 +29,10 @@
 
 
     === Write about
+      o Write about all the warning types.
+      F Make a laptop model insstad  of a car one.
       o manyoptions choice. There is only one (USB Gadget Drivers).
         Write about how useless it is...
-      o Write about why I do not cross compile, and what archs I can compile for
       o That make always runs `gcc -Wall` (I found out that 55/2000 times it 
         does not run -Wall but only `gcc`
       o Maybe I should have put `gcc -Wextra`
@@ -59,6 +60,7 @@
       ~ the UM (Linux User Mode) arch
       o TTV: DERIVED and CAPABILITY features will never be chosen by `make 
         randconfig`, and lots of configurations will never be created.
+      ~ Write about why I do not cross compile, and what archs I can compile for
 
 
 
