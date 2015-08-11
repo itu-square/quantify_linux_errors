@@ -200,7 +200,8 @@ In Linux this is done before compilation, at a preprocessing step. The Linux
 kernel in its entirety is not a valid program, it will have to be preprocessed 
 to make sense of the source code.
 This is done by the preprocessing tool (in this case \emph{gcc}).
-    \cite{IntDatSPL}
+    \cite[p. 1]{IntDatSPL}
+    \footnote{\url{http://gcc.gnu.org/}}
     \footnote{cite some ifdef thing (look at IntDatSPL pg. 1 [3][4]}
 \\
 
@@ -372,9 +373,10 @@ world.
 
         \subsection{Kconfig - The Language of the Feature Model}
 
-            \paragraph{A feature model} is a way of representing all the possible 
-configurations - \emph{the configuration space}. It contains all the features, 
-with all the constraints and dependencies.
+            \paragraph{A feature model} 
+is a way of representing all the possible configurations - \emph{the 
+configuration space}. It contains all the features with their respective 
+options and all the constraints and dependencies.
 
 For a given configuration $\kappa$, that configuration must satisfy the feature 
 model $\psi_{FM}$.
@@ -383,10 +385,9 @@ model $\psi_{FM}$.
     \kappa \in \psi_{FM}
 \end{equation}
 
-            \paragraph{The Kconfig language} is the language of the feature 
-                model in Linux 
-(also used for other projects like BusyBox, BuildRoot, CoreBoot, Freetz and 
-others)
+            \paragraph{The Kconfig language} 
+is the language of the feature model in Linux (also used for other projects 
+like BusyBox, BuildRoot, CoreBoot, Freetz and others)
     \cite[p. 4]{VarModSSD}
 .
 The configuration files have the prefix \textcode{Kconfig}, and are 
@@ -394,11 +395,12 @@ scattered all over the Linux kernel source code tree, where they include each
 other. There are 1195 Kconfig files in total in the Linux kernel
     \footnote{Found with the command \textcode{find . | grep Kconfig | wc}}
 with 956 of them relevant for the \texttt{x86/} architecture.
-.
 \\
 
 The different data types are \textcode{boolean}, \textcode{tristate}, 
-\textcode{string}, \textcode{hex}, and \textcode{integer}.
+\textcode{string}, \textcode{hex}, and \textcode{integer}. For a description of 
+the context free grammar of the Kconfig language, see the appendices.
+    \footnote{Write the Backus Naur Form of Kconfig in the Appendix}
 \\
 
 See figure \ref{kconfiglanguageex} for a toy Kconfig example showing some of the 
@@ -939,9 +941,10 @@ warning.
 
 
             \paragraph{overflow}
-            \paragraph{pointer-to-int-cast}
 
-\label{par:pointertoint}
+
+            \paragraph{pointer-to-int-cast}
+            \label{par:pointertoint}
 This warning would normally be sign of bad code. It is usually when a pointer 
 is cast to a \texttt{long} and then later cast back into a function call. This 
 is widely spread in Linux to simulate the effects of \emph{Object Oriented 
@@ -1242,12 +1245,34 @@ about the upper bound of the percentage.
 
 \section{Observations}
 
+    \subsection{Configuration Warnings}
+When creating a random configuration, 25\%
+    \footnote{get the correct percentage}
+of the times, it will output a warning about unmet dependencies. One might
+suspect that configurations, which yielded a warning would result in
+compilation errors. 
+
+\figa
+    \begin{tabular}{|c|c}
+    \hline
+    \hline
+    \multicolumn{2}{c}{\textbf{Stable}} \\
+    \hline
+    No error & 17\% \\
+    Error & 19\% \\
+    \hline
+    \multicolumn{2}{c}{\textbf{Unstable}} \\
+    No error & 36\% \\
+    Error & 40\% \\
+    \hline
+    \hline
+    \end{tabular}
+\figb{Percentage of the configs with and without warnings, which resulted in an 
+    erroneous compilation}{tbl:confwarns}
 
 % TODO
 \begin{itemize}
     \item \underline{\textbf{TODO}}
-        \item Talk about 25\% of the configs to have warnings. And that it does 
-        not matter (See notes.md)
 \end{itemize}
 
 
@@ -1277,13 +1302,32 @@ representative, and not representative.
     \emph{Show an image of true representativeness}
 \figb{A representative subset}{fig:repsubset}
 
-    \footnote{Here needs to be explained about changing randconfig first}
+Three ways was thought of, that would make the configurations more 
+generalizable. If successful with any of the methods, they could have been 
+committed to the Linux kernel. Unfortunately, none of them were successful.
+
+    \subsection*{Changing the code of \texttt{randconfig}}
+The first idea was to change the code of \texttt{randconfig}, so it would know
+what the possibilities of each outcome should be. See figure 
+\ref{randconfigtoy33} for a visualization.
+
+This was deemed impossible due to the very large feature model. The 
+\emph{Abstract Syntax Tree (AST)} would simply not fit in memory of any 
+computer.
+    \footnote{Give short example}
+
 
     \subsection*{Permutation of Kconfig files}
 Another idea was to take all the spread out Kconfig files, and concatenate 
 them all into one big text file, which would then be modified. If the order of 
 the features were randomized, then the coins would not be flipped in the same 
-order every time, and this could have an effect on the dependent features. \\
+order every time, and this could have an effect on the dependent features. 
+\\
+
+It turned out, that \texttt{randconfig} does not regard the order of the 
+kconfig files. The Kconfig files are loaded, and \texttt{randconfig} then 
+utilizes the AST and randomly selects from the root of that, which gives the
+same result as when Kconfig is not permuted.
 
     \subsection*{Generate and Filter}
 The third idea was to manually generate a configuration file, and then check - 
@@ -1292,9 +1336,12 @@ not looking at dependencies, but only considering \emph{choice} options and
 enabling \emph{mandatory features}, a configuration file was created by 
 randomly flipping a coin per each feature.
 
-This seemed doable until after generating 100,000 configurations, not one 
-valid configuration was found. It seems like many of the $2^{11,000}$ 
-configurations are invalid.
+This seemed doable, but after generating 100,000 configurations, not one 
+valid configuration was found.
+
+It was considered running \emph{SharpSAT} (or \emph{\#SAT}) to count the number
+of valid configurations, but it was deemed out of scope of this project.
+    \footnote{Link to sharpSAT thingy}
 
 \subsection{Architecture}
 
