@@ -17,6 +17,7 @@
 
 
     === Write about
+      o Add some of the 2 new downloaded papers as Related work... Maybe.. Or maybe not.
       o Write about all the warning types.
           o Mention in the section about all bugs, that I do not talk about bugs, 
             which I did not find any of.
