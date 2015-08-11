@@ -1,0 +1,30 @@
+mainmenu MOBILE
+    config CALLS
+        bool "Needed to make calls"
+    config GPS
+        bool "GPS location system"
+    config MEDIA
+        bool "Media modules"
+        default y
+    config SCREEN
+        bool "Screen module"
+        default y
+
+    choice
+        prompt "Choose screen type"
+        depends on SCREEN
+        config COLOR
+            bool "Color screen"
+        config BW
+            bool "Black and white screen"
+        config HD
+            bool "High Definition screen"
+    endchoice
+
+    if HD
+        config CAMERA
+            bool "Camera support"
+        config MP3
+            bool "MP3 support"
+    endif
+endmenu

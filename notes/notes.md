@@ -21,7 +21,6 @@
       o Write about all the warning types.
           o Mention in the section about all bugs, that I do not talk about bugs, 
             which I did not find any of.
-      F Make a laptop model insstad  of a car one.
       o That `make` always runs `gcc -Wall` (I found out that 55/2000 times it 
         does not run -Wall but only `gcc`
           o Mention that I kinda cannot control if Wall is enabled by all.
@@ -31,36 +30,39 @@
         features.
       o mtlab.itu.dk being able to unpack it all in RAM.
       o Write the Backus Naur Form of the Kconfig syntactic language.
-      o Version of gcc, and that a lot has happened lately (Some are compiled 
-        with 4.9, and others with 5.1)
-          o I hope, that I have noted this down somewhere.
-      o Makefiles
-         Fx Maybe make a graph showing the order of commands that are needed to 
-            run. `make config (makefiles)` -> `gcc` -> `make (makefiles)` -> 
-            `gcc`
-      o How to unclause a choice option
-      F Figure of how the permutation can be. something with aggregates of 7 
-        layers, and then showing either the top level scrambled, or all of them 
-        scrambled.
-      o I used kconfiglib, but not for much
-      o Permutations didnt do squat. ( I think)
       o `randconfig` will sometimes make an invalid config (25% actually)
       o Sketch up how Jaccard similarity can be used to find the features that 
         cause a specific error.
-      ~ the UM (Linux User Mode) arch
       o TTV: DERIVED and CAPABILITY features will never be chosen by `make 
         randconfig`, and lots of configurations will never be created.
-      ~ Write about why I do not cross compile, and what archs I can compile for
       o Compare bugs to 42bugs paper
       o Mention that security/ has basically no errors.
       o Explain small paragraph of each warning. 
         Make the examples real (and maybe simplified)
       o Write about security/, and about how it has not really been touched.
+      o Write about CTCR (Cross Tree Constraint Ratio)
+        Mention VarModSSD (Thorsten et al) on page 22. Linux CTCR = 93%
+      ~ I used kconfiglib, but not for much
+            # will not do
+      ~ the UM (Linux User Mode) arch
+      ~ Write about why I do not cross compile, and what archs I can compile for
+      ~ Desugaring: How to unclause a choice option
+            # Will not talk about choice option. Mentioned desugaring
+      ~ Figure of how the permutation can be. something with aggregates of 7 
+        layers, and then showing either the top level scrambled, or all of them 
+        scrambled.
+            # Will not
+      ~ Permutations didnt do squat. ( I think)
       ~ pointer-to-int is normally bad, but is used in Linux to emulate OOS
 
       ~ Abstract Syntax Trees and parsers (is randconfig a parser?)
       ~ Write about 100,000 generated configs, and that I will not do it, but
         mention it. Or something.
+      ~ Refer to SPLOT somewhere
+      ~ Version of gcc, and that a lot has happened lately (Some are compiled 
+        with 4.9, and others with 5.1)
+          o I hope, that I have noted this down somewhere.
+      ~ Make a phone model insstad  of a car one.
 
     === SQL queries ===
 

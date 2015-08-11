@@ -234,8 +234,8 @@ In fact 98\% of the top 500 supercomputers in the world run a Linux distibution
 This high variability rate makes maintaining the code somewhat harder to 
 grasp, and this makes the code base more error prone. So what you get in 
 scalability you pay for in complexity of maintaining the code. 
-    \footnote{Refer to Jean's project or something}
-    \footnote{Also refer to a paper that andrjew made about industrial 
+    \footnote{Refer to Jean's project maybe}
+    \footnote{Also refer to a paper that andrzej made about industrial 
         something. It said something about how much more efficient the code was,
         when variability was there.}
 
@@ -244,7 +244,7 @@ scalability you pay for in complexity of maintaining the code.
 
 \begin{center}
     \emph{
-        Comment from the linux-next page or something
+        Comment from the Linux team or something...
     }
 \end{center}
 
@@ -436,11 +436,11 @@ A feature model can be visualized in a feature diagram. The example given here
 will be tiny compared to that of the Linux kernel. The feature model of the 
 Linux kernel is too big to fit in a normal sized report.
 
-See figure \ref{featurediagramlaptop} for the toy example of a feature 
-diagram. See figure \ref{kconfiglaptop} for the corresponding Kconfig file. It 
-depicts a feature model of a laptop configuration, where there are some 
+See figure \ref{featurediagramphone} for the toy example of a feature 
+diagram. See figure \ref{kconfigphone} for the corresponding Kconfig file. It 
+depicts a feature model of a phone configuration, where there are some 
 mandatory features and some optional, and also a choice option for the screen 
-size. A cross-tree dependency is also present.
+type. A cross-tree dependency is also present.
 
 There is no consensus on a unified notation for attributes in feature models
     \cite{AAFM}
@@ -450,69 +450,94 @@ There is no consensus on a unified notation for attributes in feature models
 \figa
     \begin{tikzpicture}
         % The top box
-        \draw (2,3) rectangle (4,3.6);
-        \draw (3,3.3) node {Car};
+        \draw (3,3) rectangle (5,3.6);
+        \draw (4,3.3) node {Mobile};
 
-        % The other boxes
-        \draw (-0.5,2) rectangle (2.2,1.5);
-        \draw (2.45,2) rectangle (4.35,1.5);
-        \draw (5,2) rectangle (7.7,1.5);
+        % Middle words
+        \draw (0.00,1.75) node {Calls};
+        \draw (3,1.75) node {Screen};
+        \draw (6,1.75) node {Media};
+        \draw (9,1.75) node {GPS};
 
-        \draw (-3,0) rectangle (0,-0.5);
-        \draw (0.5,0) rectangle (2.5,-0.5);
-        \draw (3,0) rectangle (5,-0.5);
-        \draw (5.5,0) rectangle (8,-0.5);
+        % Middle edges
+        \draw (0,2.1) edge (4,3);
+        \draw (3,2.1) edge (4,3);
+        \draw (6,2.1) edge (4,3);
+        \draw (9,2.1) edge (4,3);
 
-        % The words in the boxes
-        \draw (0.85,1.75) node {Transmission};
-        \draw (3.35,1.75) node {Wheels};
-        \draw (6.35,1.75) node {Hydraulics};
+        % Middle dots
+        \draw[fill=black] (0,2.1) circle (0.1);
+        \draw[fill=black] (3,2.1) circle (0.1);
+        \draw[fill=white] (6,2.1) circle (0.1);
+        \draw[fill=white] (9,2.1) circle (0.1);
 
-        \draw (-1.5,-0.25) node {Automatic};
-        \draw (1.5,-0.25) node {Manual};
-        \draw (4,-0.25) node {Aluminum};
-        \draw (6.75,-0.25) node {Puncturefree};
+        % Middle boxes
+        \draw (-1,1.5) rectangle (1,2);
+        \draw (2,1.5) rectangle (4,2);
+        \draw (5,1.5) rectangle (7,2);
+        \draw (8,1.5) rectangle (10,2);
 
-        % The edges
-        \draw (0.85,2.1) edge (3,3);
-        \draw (3.35,2.1) edge (3,3);
-        \draw (6.35,2.1) edge (3,3);
+        % Bottom words
+        \draw (0,-0.25) node {Color};
+        \draw (1.5,-0.25) node {BW};
+        \draw (4,-0.25) node {High Definition};
+        \draw (7,-0.25) node {Camera};
+        \draw (9,-0.25) node {MP3};
 
-        \draw (-1.5,0) edge  (0.85,1.5);
-        \draw (1.5,0) edge  (0.85,1.5);
-        \draw (4,0.1) edge  (3.35,1.5);
-        \draw (6.75,0.1) edge  (3.35,1.5);
+        % Bottom edges
+        \draw (0,0.1) edge (3,1.5);
+        \draw (1.5,0.1) edge (3,1.5);
+        \draw (4,0.1) edge (3,1.5);
+        \draw (7,0.1) edge (6,1.5);
+        \draw (9,0.1) edge (6,1.5);
+
+        % Bottom dots
+        %\draw[fill=white] (0,0.1) circle (0.1);
+        %\draw[fill=white] (2,0.1) circle (0.1);
+        %\draw[fill=white] (4,0.1) circle (0.1);
+        \draw[fill=white] (7,0.1) circle (0.1);
+        \draw[fill=white] (9,0.1) circle (0.1);
 
         % The 'or'
-        \draw (-0.325,0.75) edge [bend right] (1.175,0.75);
+        \draw (1.5,0.8) edge [bend right] (3.5,0.8);
 
-        % The dots
-        \draw[fill=black] (0.85,2.1) circle (0.1);
-        \draw[fill=black] (3.35,2.1) circle (0.1);
-        \draw[fill=white] (6.35,2.1) circle (0.1);
+        % Bottom boxes
+        \draw (-1,-0.5) rectangle (0.8,0);
+        \draw (1.1,-0.5) rectangle (1.9,0);
+        \draw (2.5,-0.5) rectangle (5.5,0);
+        \draw (6,-0.5) rectangle (7.9,0);
+        \draw (8.4,-0.5) rectangle (9.6,0);
 
-        \draw[fill=white] (4,0.1) circle (0.1);
-        \draw[fill=white] (6.75,0.1) circle (0.1);
 
         % The legend
-        \draw[fill=black] (3,-1.5) circle (0.1);
-        \draw[fill=white] (3,-2) circle (0.1);
-        \draw[right] (3.2,-1.5) node {Mandatory feature};
-        \draw[right] (3.2,-2) node {Optional feature};
+        \draw[fill=black] (4,-1.5) circle (0.1);
+        \draw[fill=white] (4,-2) circle (0.1);
+        \draw[right] (4.2,-1.5) node {Mandatory feature};
+        \draw[right] (4.2,-2) node {Optional feature};
 
-        \draw (3.0,-2.3) edge (3.2,-2.7);
-        \draw (3.0,-2.3) edge (2.8,-2.7);
-        \draw (3.1,-2.55) edge [bend left] (2.9,-2.55);
-        \draw[right] (3.2,-2.5) node {Choice};
+        \draw (4.0,-2.3) edge (4.2,-2.7);
+        \draw (4.0,-2.3) edge (3.8,-2.7);
+        \draw (4.1,-2.55) edge [bend left] (3.9,-2.55);
+        \draw[right] (4.2,-2.5) node {Choice};
 
         % The cross-tree dependency
-        \draw[right] (-3, -2) node {\textbf{Aluminum} selects 
-            \textbf{Hydraulics}};
+        \draw[right] (-3, -2) node {\textbf{Media} depends on 
+            \textbf{High Definition}};
 
     \end{tikzpicture}
-\figb{An example of a feature diagram of a car}{featurediagramcar}
+\figb{An example of a feature diagram of a phone}{featurediagramphone}
 % 65 lines up to \figa
 
+
+\figa
+    \lstinputlisting[]{code/kconfigphone}
+\figb{Kconfig for the phone example}{kconfigphone}
+
+The phone example is greatly inspired by examples from the SPLOT repository of 
+example and real feature models
+    \cite{SPLOT}
+.
+\\
 
 The features can be split into four different types, \emph{User features}, 
 \emph{Implementation features}, \emph{Derived features}, and \emph{Capability 
@@ -721,7 +746,8 @@ that configuration file by running the command \textcode{make all}
         default behaviour}
 . This looks in a \texttt{Makefile}, which specifies what files to compile. The 
 compilation of the files is done mainly by \emph{gcc - The GNU Compiler 
-Collection}.
+Collection}
+    footnote{Notice that both gcc version 4.9.2 and version 5.2.0 are used}
 \\
 
 During compilation, \texttt{gcc} will output warnings if there are any. These 
@@ -1214,6 +1240,7 @@ one would have to look into every case, and find out.
 \figb{The warnings distribution of the stable Linux of the compilations with 
     errors}{tab:stablewarnwitherrs}
 
+
     \subsection{Unstable vs.Stable}
 
 
@@ -1221,6 +1248,7 @@ one would have to look into every case, and find out.
 
 In this section, it will be the warning distribution, not only for the ones 
 with errors, which stopped compiling, but for all of the compilation.
+
 
     \subsection{Stable}
 
@@ -1230,9 +1258,12 @@ with errors, which stopped compiling, but for all of the compilation.
     \end{tabular}
 \figb{The warnings distribution of the stable Linux}{tab:stablewarn}
 
+
     \subsection{Unstable vs.Stable}
 
+
 \section{Analyzing the data}
+
 
     \section{Number of valid configurations}
 
@@ -1243,7 +1274,9 @@ Some mandatory features were fixed, and an experiment was run, but after 100,000
 configurations, none of them were valid. This can only be used to say something
 about the upper bound of the percentage.
 
+
 \section{Observations}
+
 
     \subsection{Configuration Warnings}
 When creating a random configuration, 25\%
@@ -1252,18 +1285,19 @@ of the times, it will output a warning about unmet dependencies. One might
 suspect that configurations, which yielded a warning would result in
 compilation errors. 
 
+As can be seen in figure \ref{tbl:confwarns}, fewer of the stable kernels that 
+had configuration warnings also had an error in the compilation. But the rise 
+in erroneous compilations from configurations without config warnings to 
+configurations with config warnings is very little, and is claimed irrelevant.
+
 \figa
-    \begin{tabular}{|c|c}
+    \begin{tabular}{c|c|c}
     \hline
     \hline
-    \multicolumn{2}{c}{\textbf{Stable}} \\
+        & \textbf{Stable} & \textbf{Unstable} \\
     \hline
-    No error & 17\% \\
-    Error & 19\% \\
-    \hline
-    \multicolumn{2}{c}{\textbf{Unstable}} \\
-    No error & 36\% \\
-    Error & 40\% \\
+    No config warnings & 17\% & 36\%\\
+    Config warnings & 19\% & 40\%\\
     \hline
     \hline
     \end{tabular}
@@ -1306,6 +1340,7 @@ Three ways was thought of, that would make the configurations more
 generalizable. If successful with any of the methods, they could have been 
 committed to the Linux kernel. Unfortunately, none of them were successful.
 
+
     \subsection*{Changing the code of \texttt{randconfig}}
 The first idea was to change the code of \texttt{randconfig}, so it would know
 what the possibilities of each outcome should be. See figure 
@@ -1319,15 +1354,17 @@ computer.
 
     \subsection*{Permutation of Kconfig files}
 Another idea was to take all the spread out Kconfig files, and concatenate 
-them all into one big text file, which would then be modified. If the order of 
-the features were randomized, then the coins would not be flipped in the same 
-order every time, and this could have an effect on the dependent features. 
+them all into one big text file, which would then be modified and exposed to 
+syntactic desugaring. If the order of the features were randomized, then the 
+coins would not be flipped in the same order every time, and this could have an 
+effect on the dependent features. 
 \\
 
 It turned out, that \texttt{randconfig} does not regard the order of the 
 kconfig files. The Kconfig files are loaded, and \texttt{randconfig} then 
 utilizes the AST and randomly selects from the root of that, which gives the
 same result as when Kconfig is not permuted.
+
 
     \subsection*{Generate and Filter}
 The third idea was to manually generate a configuration file, and then check - 
@@ -1343,11 +1380,21 @@ It was considered running \emph{SharpSAT} (or \emph{\#SAT}) to count the number
 of valid configurations, but it was deemed out of scope of this project.
     \footnote{Link to sharpSAT thingy}
 
-\subsection{Architecture}
+
+    \subsection{Gcc versions}
+Roughly a third of the compilations were done with gcc version 5.1.0 and two 
+thirds with gcc version 4.9.2. This should not matter on what warnings are 
+returned. There is only one new warning that is enabled by the \texttt{-Wall} 
+flag in version 5.1.0
+    \footnote{\texttt{-Wc++14compat}}
+, and none of this type was found.
+
+
+    \subsection{Architecture}
 
 To create a true representative sample space, all the different architectures 
 should be compiled for. There exist 31 different architectures, but the most 
-common one for laptop and server use is the \emph{x86} architecture.
+common one for laptop and server use is the \texttt{x86} architecture.
 
 This architecture is the only one, that are compiled for in this project, as 
 getting the cross compilers for all the different architectures would be very 
@@ -1453,7 +1500,7 @@ Therefore this also marks as a threat to validity.
 
 
 \newpage
-\bibliographystyle{alpha}
+\bibliographystyle{plain}
 \bibliography{bib}
 
 \end{document}
