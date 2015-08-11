@@ -1,0 +1,7 @@
+void mdfld_dsi_dpi_mode_set()
+{
+	int pipe = mdfld_dsi_encoder_get_pipe(dsi_encoder);
+
+	u32 pipeconf = dev_priv->pipeconf[pipe];
+	u32 dspcntr = dev_priv->dspcntr[pipe];
+}

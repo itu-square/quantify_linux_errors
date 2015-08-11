@@ -31,7 +31,6 @@
         features.
       o mtlab.itu.dk being able to unpack it all in RAM.
       o Write the Backus Naur Form of the Kconfig syntactic language.
-      o Abstract Syntax Trees and parsers (is randconfig a parser?)
       o Version of gcc, and that a lot has happened lately (Some are compiled 
         with 4.9, and others with 5.1)
           o I hope, that I have noted this down somewhere.
@@ -57,8 +56,9 @@
       o Explain small paragraph of each warning. 
         Make the examples real (and maybe simplified)
       o Write about security/, and about how it has not really been touched.
-      o pointer-to-int is normally bad, but is used in Linux to emulate OOS
+      ~ pointer-to-int is normally bad, but is used in Linux to emulate OOS
 
+      ~ Abstract Syntax Trees and parsers (is randconfig a parser?)
       ~ Write about 100,000 generated configs, and that I will not do it, but
         mention it. Or something.
 
@@ -115,24 +115,6 @@ This query will get the top files from the bugs, that have errors.
 
         # egrep -b1 EXPERIMENTAL permute | grep config
         # der er 26 af dem.
-
-      o Does configuration warnings have anything to say to the error percentage?
-            === 4.1.1 ===
-        err_pct without conf errs = 2605/15754 = 17%
-        err_pct with conf errs = 1007/5276 = 19%
-            === next ===
-        err_pct without conf errs = 4317/12052 = 36
-        err_pct with conf errs = 3594/8977 = 40%
-
-        # 2605 :
-            # select config from bugs where config in (select hash from 
-                configurations where conf_errs not rlike 'warning' and 
-                linux_version rlike '4.1.1') and type = 'makeMsg' and 
-                linux_version rlike '4.1.1'
-        # 15754
-            # select hash from configurations where conf_errs not rlike 
-                'warning' and linux_version rlike '4.1.1'
-        
 
       o Look into ERRORS, and make top 10 of that.
           o Are there any wrong errors? Are there many of the same errors?
@@ -229,6 +211,23 @@ This query will get the top files from the bugs, that have errors.
             38 % of next have ERRORS
                 45% of those have config errors
 
+      ~ Does configuration warnings have anything to say to the error percentage?
+            === 4.1.1 ===
+        err_pct without conf errs = 2605/15754 = 17%
+        err_pct with conf errs = 1007/5276 = 19%
+            === next ===
+        err_pct without conf errs = 4317/12052 = 36
+        err_pct with conf errs = 3594/8977 = 40%
+
+        # 2605 :
+            # select config from bugs where config in (select hash from 
+                configurations where conf_errs not rlike 'warning' and 
+                linux_version rlike '4.1.1') and type = 'makeMsg' and 
+                linux_version rlike '4.1.1'
+        # 15754
+            # select hash from configurations where conf_errs not rlike 
+                'warning' and linux_version rlike '4.1.1'
+        
 === FIND LINKS FOR THIS ===
   o TypeChef
   o kconfiglib
