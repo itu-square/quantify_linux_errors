@@ -159,8 +159,12 @@
 
 \setcounter{page}{1}
 
-\chapter{Abstract}
-\emph{---Leave blank until the end---}
+
+\begin{abstract}
+    \emph{---Leave blank until the end---}
+
+\end{abstract}
+
 
 \chapter{Introduction}
 \emph{---Leave blank until the end---}
@@ -249,45 +253,36 @@ scalability you pay for in complexity of maintaining the code.
 \end{center}
 
 
-        \subsection{Mainline tree}
+        \subsection*{Stable and Mainline tree}
 
 The Linux kernel development cycle has approximately 2$\sfrac{3}{4}$ months 
 from one stable release to the next stable release
     \cite{crystalball}
 .
-In the meantime, \emph{RC} 
-releases, also called \emph{prepatch} releases, are released once in a while. 
-Mainly for kernel developers to test for new features. 
-
-
-        \subsection{Stable trees}
+In the meantime, \emph{Release Candidates (RCs)}, are released approximately 
+once every week.
 
 Then, when the top maintainers of the mainline tree think that the kernel is 
 stable enough, a new stable version is created, and the whole process is 
 repeated.
 
 
-        \subsection{linux-next tree}
+        \subsection*{linux-next tree}
 
 Then there is the \emph{linux-next} tree. It is a \emph{git} repository, which 
 merges over 200 other \emph{git} repositories
-    \footnote{See <src>/Next/Trees}
+    \cite{nextTrees}
 , which 
 are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
 merging these other trees every day and the merge conflicts are handled. 
 Therefore the \emph{linux-next} tree always contain the newest commits. 
 
+\textcolor{gray}{
 This tree will get some bugs fixed sooner than if everyone contributed to the 
 mainline and tested on that. Comparing to a stable version, one would suspect 
 the \emph{linux-next} tree to have more bugs, since it has not been tested, 
-and it is the newest code available, which means more bugs have been inserted. 
-
-This leads to our first research question.
-\\
-
-\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
-the stable kernel.
-\\
+and it is the newest code available, which means more bugs have been inserted.
+}
 
 For this thesis project, both the \emph{linux-next} tree and the latest stable 
 version is used. As time of data gathering, the latest stable version is 
@@ -297,10 +292,6 @@ version is used. As time of data gathering, the latest stable version is
     \footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
         mailing list archive}
     \footnote{[Z] http://kisskb.ellerman.id.au/kisskb/matrix/A}
-    \footnote{ [00] 
-        http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
-        tree/Next/Trees ?id=HEAD - here are all the git trees that are merged 
-        in linux-next}
 
 
         \section{Inner Workings of Linux Kernel}
@@ -320,34 +311,25 @@ The directories in the root folder of the Linux kernel source code are called
 % \figb{Visualization of the sizes of the subsystems}{fig:subsystems}
 % ---
 
-The \textcode{drivers/} subsystem is by far the largest subsystem. It contains 
+The \texttt{drivers/} subsystem is by far the largest subsystem. It contains 
 all hardware drivers. It is also mostly contributed to by hardware vendors.
     \footnote{Source? and is it true? -What would Greg Kroah Hartman say?}
 Since it is the largest subsystem, one could suspect it to contain the most 
 errors. And even when taking relative size into account, one could suspect this
 on the grounds of the majority of the code being written by hardware vendors.
-
-This leads to next research question:
 \\
 
-\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
-subsystems, in what subsubsystem? 
-\\
-
-
-The \texttt{arch/} subsystem contains architecture specific source code. In 
-this project, only the \texttt{arch/x86/} architecture is compiled for, 
-because of complications with cross compiling.
-
-Many of these architectures are very rarely used in day to day computing, but 
-they are one of the reasons that Linux can run on so many devices. There are 29 
-architectures in the \texttt{arch/} folder excluding the \texttt{um} 
-architecture, which is really about virtualization.
-
-Linux is the operating system, which supports the most architectures in the 
-world.
+The \texttt{arch/} subsystem contains architecture specific source code. 
+There are 29 architectures in the \texttt{arch/} folder, which is why Linux is 
+the operating system, which supports the most architectures in the world.
     \cite{22thbirthday}
 .
+\\
+
+The \texttt{mm/} subsystem is for memory management, \texttt{security} is 
+libraries regarding security, and \texttt{kernel} is the where the kernel 
+specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and 
+\texttt{lib/}
 
 % --- Not showing this graph ---
 % \figa
@@ -378,12 +360,19 @@ is a way of representing all the possible configurations - \emph{the
 configuration space}. It contains all the features with their respective 
 options and all the constraints and dependencies.
 
-For a given configuration $\kappa$, that configuration must satisfy the feature 
-model $\psi_{FM}$.
+A feature model can be visualized in a feature diagram. The example given here 
+will be tiny compared to that of the Linux kernel. The feature model of the 
+Linux kernel is too big to fit in a normal sized report.
 
-\begin{equation}
-    \kappa \in \psi_{FM}
-\end{equation}
+See figure \ref{featurediagramphone} for the toy example of a feature 
+diagram. It 
+depicts a feature model of a phone configuration, where there are some 
+mandatory features and some optional, and also a choice option for the screen 
+type. A cross-tree dependency is also present.
+
+There is no consensus on a unified notation for attributes in feature models
+    \cite{AAFM}
+.
 
             \paragraph{The Kconfig language} 
 is the language of the feature model in Linux (also used for other projects 
@@ -403,48 +392,7 @@ the context free grammar of the Kconfig language, see the appendices.
     \footnote{Write the Backus Naur Form of Kconfig in the Appendix}
 \\
 
-See figure \ref{kconfiglanguageex} for a toy Kconfig example showing some of the 
-syntax.
 
-\figa
-    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-        depends, on, bool, selects, endchoice, tristate, choice,
-        help,{||}}] 
-        {code/kconfiglanguageex}
-\figb{A toy example of the Kconfig language.}{kconfiglanguageex}
-
-
-% --- This is not used ---
-% \figa
-%     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-%         depends, on, bool, endchoice, choice,{||}}]{code/kconfigtypesreal}
-% \figb{A real Kconfig example showing the basic data types}{kconfigchoice}
-
-% --- This is not used ---
-% \figa
-%     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-%         depends, on, bool, endchoice, choice,{||}}]{code/kconfigboolreal}
-% \figb{A real Kconfig example showing a choice clause with 5 
-%     choices}{kconfigtypes}
-
-% \figa
-    % \includegraphics{plots/datatypestats.eps}
-% \figb{The distribution of different datatypes in the feature 
-    % model of the x86 architecture}{datatypesdistribution}
-
-A feature model can be visualized in a feature diagram. The example given here 
-will be tiny compared to that of the Linux kernel. The feature model of the 
-Linux kernel is too big to fit in a normal sized report.
-
-See figure \ref{featurediagramphone} for the toy example of a feature 
-diagram. See figure \ref{kconfigphone} for the corresponding Kconfig file. It 
-depicts a feature model of a phone configuration, where there are some 
-mandatory features and some optional, and also a choice option for the screen 
-type. A cross-tree dependency is also present.
-
-There is no consensus on a unified notation for attributes in feature models
-    \cite{AAFM}
-.
 
 % 65 lines down to \figb
 \figa
@@ -533,15 +481,10 @@ There is no consensus on a unified notation for attributes in feature models
     \lstinputlisting[]{code/kconfigphone}
 \figb{Kconfig for the phone example}{kconfigphone}
 
-The phone example is greatly inspired by examples from the SPLOT repository of 
-example and real feature models
-    \cite{SPLOT}
-.
-\\
-
-The features can be split into four different types, \emph{User features}, 
-\emph{Implementation features}, \emph{Derived features}, and \emph{Capability 
-features}
+        {\color{gray}
+The features in Kconfig can be split into four different types, \emph{User 
+features}, \emph{Implementation features}, \emph{Derived features}, and 
+\emph{Capability features}
     \cite[p. 8]{VarModSSD}
 .
 \\ 
@@ -566,7 +509,7 @@ dependency. These features are also not randomly chosen by
 . Their names often start with \textcode{CONFIG\_HAVE\_} or 
 \textcode{CONFIG\_ARCH\_HAVE\_}, and only have \emph{type} option set (often to 
 \texttt{bool}).
-
+        } % color gray
 
     \footnote{describe that all models are typically wide and shallow, VarModSSD page 19}
     \footnote{write how Kconfig is a beast sometimes. Child nodes exclusding their parents}
@@ -579,14 +522,9 @@ dependency. These features are also not randomly chosen by
     \item mention how many of boolean and tristate and so on, there are. Maybe 
             to use to say something about how many possible configurations can 
             be created.
-    \item Mention desugaring
-    \item Explain what the Linux kernel tree is.
-    \item Find another example than a car
-    \item Find a more simple Kconfig code example
     \item Explain the Kconfig language a bit
     \item Reference to Thorsten's projects
     \item Refer to the /Documentation/kbuild/kconfig-language.txt
-    \item explain that CONFIG\_MMU and MMU is the same
     \item Should I have the Backus Naur Form of the Kconfig language here?
 \end{itemize}
 
@@ -1026,7 +964,12 @@ version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository.
 
 \section{Research Questions}
 
+\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
+the stable kernel.
 
+\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
+subsystems, in what subsubsystem? 
+\\
 It is likely that some errors or warnings are more severe than others, and some 
 types of errors get fixed more than others. This leads to the next question.
 \\
@@ -1158,27 +1101,6 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                 DATA
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\chapter{Data}
-
-
-
-%\begin{itemize}
-    %\item Example of data structure
-    %\item Graph of tables
-%\end{itemize}
-
-
-
-% TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-        \item 
-\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                               RESULTS
