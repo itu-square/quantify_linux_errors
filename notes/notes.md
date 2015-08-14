@@ -5,6 +5,13 @@
   F Figure
   ~ Done
 
+=== WEDNESDAY MEEETING ===
+ ~o ERRORS
+      o I think he means the graph in RESULTS section
+        but maybe make one more for the unstable one.
+  o relate 42bugs regarding bugs/line in each subsystem
+  o things to look into
+  ~ structure revisit
 
 === TODO ===
 

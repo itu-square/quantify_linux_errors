@@ -140,7 +140,7 @@
 
 % Front Page
 \date{September 1st 2015\\ IT University of Copenhagen}
-\title{A Quantitative Analysis of Variability Bugs in Linux}
+\title{A Quantitative Analysis of Variability Bugs in Linux \\ Draft: \today}
 \author{Elvis Flesborg\\
 \texttt{efle@itu.dk}}
 \clearpage\maketitle
@@ -1200,7 +1200,8 @@ stopped. For the stable ones, it was 3611 (17\%), which had an error.
 Out of the 17\% of the compilations, that had errors, here is a sorted list of 
 the warnings. To know exactly which warning is 'responsible' for the error, 
 one would have to look into every case, and find out.
-    \footnote{refer to GNU GCC warning options and also refer to the figure underneath}
+    \footnote{refer to GNU GCC warning options and also refer to the figure 
+        underneath}
 
 
 \figa
@@ -1260,6 +1261,74 @@ with errors, which stopped compiling, but for all of the compilation.
 
 
     \subsection{Unstable vs.Stable}
+
+
+    \subsection{Subsystems With Errors}
+
+
+
+\figa
+    \begin{tabular}{c|c|c|c}
+        \hline
+        \hline
+        ss     & errors  & loc [M]     & err/loc \\
+        \hline 
+        usr     & 2471    & 845          & 290 \% \\
+        samples & 2471    & 7,500        & 32\% \\
+        include & 2421    & 692,000      & 0.35 \% \\
+        drivers & 1405    & 10,800,000   & 0.013 \% \\
+        lib     & 99      & 1,050,00     & 0.094 \% \\
+        init    & 1       & 5,730        & 0.017 \% \\
+        ipc     & 1       & 8,860        & 0.011 \% \\
+        net     & 88      & 890,000      & 0.0099 \% \\
+        crypto  & 8       & 83,900       & 0.0095 \% \\
+        arch/x86 & 26     & 343,000      & 0.0076 \% \\
+        scripts & 5       & 90,700       & 0.0055 \% \\
+        sound   & 26      & 876,000      & 0.0030 \% \\
+        mm      & 3       & 108,000      & 0.0028 \% \\
+        fs      & 31      & 1,170,000    & 0.0026 \% \\
+        kernel  & 6       & 244,000      & 0.0025 \% \\
+        arch    & 26      & 3,440,000    & 0.00076 \% \\
+        firmware & 0       & 129,000      & 0.00046 \% \\
+        virt    & 0       & 10,500       & 0    \% \\
+        tools   & 1       & 218,000      & 0    \% \\
+        block   & 0       & 38,100       & 0    \% \\
+        security & 0       & 75,500       & 0   \% \\
+        \hline
+        \hline
+    \end{tabular}
+\figb{}{}
+
+\figa
+    \begin{tabular}{l|r}
+        \hline
+        \hline
+        \textbf{Subsystem} & \textbf{Percent} \\
+        \hline
+        
+        samples & 68\%\\
+        usr     & 68\%\\
+        include & 67\%\\
+        drivers/    &   39\% \\
+        lib     & 2.7\%\\
+        net     & 2.4\%\\
+        fs/         & 0.86\% \\
+        sound   & 0.72\%\\
+        arch/   & 0.71\%\\
+        crypto/ & 0.22\%\\
+        kernel  & 0.17\%\\
+        scripts & 0.13\%\\
+        mm/ & 0.083\% \\
+        init    & 0.028\%\\
+        ipc     & 0.028\%\\
+        security & 0.0\%\\
+        block/  & 0.0\%\\
+
+        \hline
+        \hline
+        
+    \end{tabular}
+\figb{Percentage of subsystems that were present in errorneous compilations}{}
 
 
 \section{Analyzing the data}
@@ -1379,6 +1448,19 @@ valid configuration was found.
 It was considered running \emph{SharpSAT} (or \emph{\#SAT}) to count the number
 of valid configurations, but it was deemed out of scope of this project.
     \footnote{Link to sharpSAT thingy}
+
+
+    \subsection{Features in Stable vs. Unstable}
+In the unstable Linux version, there are 20 more features than in the stable 
+one. This means that there is a possibility that errors might happen in this 
+new code.
+
+Configurations are created in the unstable version, and when the stable version 
+runs the same configuration file, it will just disregard these unknown features.
+\\
+
+If it was done the other way around, the unstable version would always set the 
+new features to the default value, and they would therefore not be randomized.
 
 
     \subsection{Gcc versions}
