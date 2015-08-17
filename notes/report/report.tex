@@ -719,58 +719,47 @@ instead of a function. There will be no example of this.
 
 \emph{Objective:}
 The objective is to make a quantitative analysis of warnings in randomly 
-generated Linux kernels. 
-
-\emph{Subject:}
-There will be generated random configurations, and these will be used to 
-compile two different versions of the Linux kernel, a stable Linux kernel 
-version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository.
-
-
-\section{Research Questions}
-
-\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
-the stable kernel.
-
-\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
-subsystems, in what subsubsystem? 
+generated Linux kernels. The warnings functions as a proxy of errors.
+These are the research questions:
 \\
 
-It is likely that some errors or warnings are more severe than others, and some 
-types of errors get fixed more than others. This leads to the next question.
+\textbf{RQ1:} Will the unstable linux-next repository generate more warnings 
+than the stable kernel.
 \\
 
-\textbf{RQ2:} What warnings are mostly generated.  
+\textbf{RQ2:} In what subsystems do the most errors occur?
 \\
 
-And this can also be different between the stable and unstable versions. Hence 
-the next question. 
+\textbf{RQ3:} What warnings are the most common.
 \\
 
-\textbf{RQ3:} What bugs seem to be fixed the most when going from unstable to 
-stable. 
+\textbf{RQ4:} Is there any significant difference in the warnings in the 
+stable versus the unstable.
 \\
 
-As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
-it}, the subsystems of the kernel are of very different character. 
-\footnote{mention somewhere earlier, that drivers are different from security 
-or kernel} And therefore the bug types must differ from subsystem to subsystem. 
-\\
-
-
-
-
-\textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
-valid. 
-\\
-
-
-\textbf{RQ6:} Are there any specific features, that when enabled, will produce 
+\textbf{RQ5:} Are there any specific features, that when enabled, will produce 
 more warnings than others. 
 \\
 
 
+\emph{Subject:}
+There will be generated random configurations, and these will be used to 
+compile two different versions of the Linux kernel, a stable Linux kernel 
+version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository
+    \footnote{Can both be found on \url{https://www.kernel.org}}.
+\\
+
+When compiling the kernels, the 
+
+
+
 \section{Configuring}
+
+The configurator \texttt{randconfig} is used in this project. It is used as a 
+proxy for totally representative configurations. The truth is that 
+\texttt{randconfig} is not representative, but is biased towards features 
+higher up in the feature model tree.
+\\
 
 See figure ~\ref{randconfigtoy} for a toy example of a Kconfig feature model. 
 It is a very small example with only two features, but it will easily explain 
@@ -859,28 +848,27 @@ representative.
 \figb{A toy example showing a correct selection of features}{randconfigtoy33}
 % --- 32 lines up ---
 
-This has apparently not been implemented in the Linux kernel tools, possibly 
-because representativeness does not matter for what it is used for. It is 
-merely used as a simple fuzz testing tool with the help of entropy.
+Representativeness does not matter for the Linux kernel developers, the 
+\texttt{randconfig} function is merely used as a simple fuzz testing tool
     \footnote{source}
+.
 
-To make this representative, one would have to make \texttt{randconfig} aware of
-the whole dependency tree or the whole configuration space before randomly 
-selecting, to skew the possibilities. This seems infeasible since the 
-configuration space is so large. It will not fit in memory.
+This ultimately means that \texttt{randconfig} is not representative in its 
+configuration creation. more about representativeness in the next section.
+
+    \subsection{The Hunt for Representativeness}
+To make the configuration creation representative, three different ways were
+thought of, and researched if feasible. They were \emph{changing randconfig}, 
+\emph{permuting Kconfig}, and \emph{generate and filter}.
+
+To change \texttt{randconfig} to make it representative, one would have to make 
+it aware of the whole dependency tree or the whole configuration space before 
+randomly selecting a features. This seems infeasible since the configuration 
+space is so large. It will not fit in memory.
 \\
 
-Some different ways of generating a representative sample was considered. In 
-the end, \texttt{randconfig} was chosen because it showed to be too cumbersome 
-to create a method that actually was representative. 
 
-The methods that was considered will be explained later in this report. 
-See section \ref{sec:gen} on page \pageref{sec:gen}.
-They included the aforementioned \texttt{randconfig} tool being rewritten, a 
-script that \emph{scrambled the Kconfig} files, and a \emph{generate and 
-filter} method.
-\\
-
+\section{Compiling}
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file by running the command \textcode{make all}
     \footnote{Or simply \textcode{make}, since \textcode{make all} is the 
@@ -890,8 +878,6 @@ compilation of the files is done mainly by \emph{gcc - The GNU Compiler
 Collection}
     \footnote{Notice that both gcc version 4.9.2 and version 5.2.0 are used}
 \\
-
-\section{Compiling}
 Generally there will be distinguished between four different types of output. 
 These are \textbf{Linux errors}, \textbf{host errors}, 
 \textbf{relevant warnings}, and \textbf{irrelevant warnings}. 
