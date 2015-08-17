@@ -44,6 +44,11 @@
     \setlength{\parsep}{0pt}
 }
 
+% Creating blue citations
+%\newcommand{\cit}[1]{
+    %\textcolor{blue}{\cite{#1}}
+%}
+
 
 % Creating my own inline code font
 \newcommand{\textcode}[1]{
@@ -81,6 +86,7 @@
 \usepackage{subcaption}
 \usepackage{latexsym}
 \usepackage{fixltx2e}    % use for textsubscript
+\usepackage{datetime}    % for the \currenttime
 \usepackage[titletoc,title]{appendix}
 \usepackage[framemethod=tikz]{mdframed}
 \usepackage[titletoc,title]{appendix}
@@ -101,10 +107,18 @@
 \DeclareCaptionStyle{algori}{singlelinecheck=off,format=algor,labelsep=space}
 \captionsetup[algorithm]{style=algori}
 
-% URLs ? maybe
-%\usepackage{hyperref}
+% Citations and refs
+\usepackage{hyperref} % Citations and refs are links
+\usepackage{cite}
+
+\let\oldcite\cite
+\newcommand{\cit}[1]{
+    \citeleft\@biblabel{#1}\citeright
+}
+
+% URLs 
 \usepackage{url}
-\usepackage[hypcap=false]{caption}
+\usepackage[hypcap=true]{caption}
 
 
 % for the \lstinputlisting for code blocks
@@ -140,7 +154,7 @@
 
 % Front Page
 \date{September 1st 2015\\ IT University of Copenhagen}
-\title{A Quantitative Analysis of Variability Bugs in Linux}
+\title{A Quantitative Analysis of Variability Bugs in Linux \\ Draft: \today~\currenttime}
 \author{Elvis Flesborg\\
 \texttt{efle@itu.dk}}
 \clearpage\maketitle
@@ -166,15 +180,29 @@
 \end{abstract}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           INTRODUCTION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-\emph{---Leave blank until the end---}
+Large amount of variability
+
+Software Product Lines
+
+Linux Kernel
+
+42 BUGS paper
+
+During development (stable vs unstable)
+
+Following contributions:
+
+o distribution of warnings in Linux
+
+o difference in stable and unstable
+
+o distribution of subsystems
 
 
-% TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-        \item Explain about representative samples
-\end{itemize}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,7 +214,7 @@
 A \emph{Linux} operating system is often referring to a a \emph{GNU/Linux} 
 operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
 and the \emph{GNU} part is a software bundle with utilities (eg. a shell, a 
-compiler, etc...) \cite{gnu_pack}. Both is 
+compiler, etc...) \cit{gnupack}. Both is 
 needed, to have a working operating system. 
 \\
 
@@ -364,37 +392,17 @@ A feature model can be visualized in a feature diagram. The example given here
 will be tiny compared to that of the Linux kernel. The feature model of the 
 Linux kernel is too big to fit in a normal sized report.
 
-See figure \ref{featurediagramphone} for the toy example of a feature 
-diagram. It 
-depicts a feature model of a phone configuration, where there are some 
-mandatory features and some optional, and also a choice option for the screen 
-type. A cross-tree dependency is also present.
+See figure \ref{featurediagramphone} for a toy example of a feature 
+diagram. It depicts a feature model of a phone configuration, where there are 
+some mandatory features and some optional, and also a choice option for the 
+screen type. A cross-tree dependency is also present.
 
 There is no consensus on a unified notation for attributes in feature models
     \cite{AAFM}
-.
-
-            \paragraph{The Kconfig language} 
-is the language of the feature model in Linux (also used for other projects 
-like BusyBox, BuildRoot, CoreBoot, Freetz and others)
-    \cite[p. 4]{VarModSSD}
-.
-The configuration files have the prefix \textcode{Kconfig}, and are 
-scattered all over the Linux kernel source code tree, where they include each 
-other. There are 1195 Kconfig files in total in the Linux kernel
-    \footnote{Found with the command \textcode{find . | grep Kconfig | wc}}
-with 956 of them relevant for the \texttt{x86/} architecture.
-\\
-
-The different data types are \textcode{boolean}, \textcode{tristate}, 
-\textcode{string}, \textcode{hex}, and \textcode{integer}. For a description of 
-the context free grammar of the Kconfig language, see the appendices.
-    \footnote{Write the Backus Naur Form of Kconfig in the Appendix}
-\\
 
 
-
-% 65 lines down to \figb
+% The feature diagram
+% 80 lines down to \figb
 \figa
     \begin{tikzpicture}
         % The top box
@@ -474,8 +482,28 @@ the context free grammar of the Kconfig language, see the appendices.
 
     \end{tikzpicture}
 \figb{An example of a feature diagram of a phone}{featurediagramphone}
-% 65 lines up to \figa
+% 80 lines up to \figa
 
+
+            \paragraph{The Kconfig language} 
+is the language of the feature model in Linux (also used for other projects 
+like BusyBox, BuildRoot, CoreBoot, Freetz and others)
+    \cite[p. 4]{VarModSSD}
+.
+The configuration files have the prefix \textcode{Kconfig}, and are 
+scattered all over the Linux kernel source code tree, where they include each 
+other. There are 1195 Kconfig files in total in the Linux kernel
+    \footnote{Found with the command \textcode{find . | grep Kconfig | wc}}
+with 956 of them relevant for the \texttt{x86/} architecture.
+\\
+
+A feature is prefixed with \textcode{CONFIG\_} in the Linux kernel.
+
+The different data types are \textcode{boolean}, \textcode{tristate}, 
+\textcode{string}, \textcode{hex}, and \textcode{integer}. For a description of 
+the context free grammar of the Kconfig language, see the appendices.
+    \footnote{Write the Backus Naur Form of Kconfig in the Appendix}
+\\
 
 \figa
     \lstinputlisting[]{code/kconfigphone}
@@ -547,11 +575,202 @@ configuration tools look.
     \includegraphics[scale=0.25]{pngs/configs50percent.png}
 \figb{gconfig, menuconfig, nconfig, and xconfig}{fig:lineofconfigs}
 
-\texttt{randconfig} is interesting, as it will go through the 
-Kconfig feature model files, and pick random values for all of the features. 
-This should be perfect for the goal for this project. Although time will tell 
-that it is indeed biased, and will not create configurations that are of 
-representative character. 
+\texttt{randconfig} is interesting, as it will pick random values for all of 
+the features in the feature model.
+\\
+
+
+
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+    \item .config file
+    \item Talk about how there is 7 layers of dependencies. And how I found out.
+    \item \^ Hmm . Are there only 7 layers when counting ifs? what about 
+        'depends on's
+\end{itemize}
+
+
+\subsection{Compiling and Catching Errors and Warnings}
+
+The compilation is done mainly by \emph{GCC - The GNU Compiler Collection}.
+
+During compilation, \texttt{gcc} will output warnings if there are any. These 
+warnings warn about bad code, which might result in a compilation error.
+
+In a warning, there is information about a possible coding mistake that might 
+break the code. There are about 30 different warning types that are enabled by 
+default \cite{gccwarnings} Some of them are more severe than others.
+\\
+
+        \subsection{The Gcc Warnings}
+Here follows a list of the warnings that was found during the compilations. 
+They are ordered alphabetically.
+
+
+            \paragraph{array-bounds}
+is given, when gcc is certain that a subscript to an array is always out of 
+bounds.
+
+% See example in figure \ref{lst:arraybounds}.
+
+% \figa
+    % \lstinputlisting[language=C]{code/arraybounds}
+% \figb{}{lst:arraybounds}
+
+
+            \paragraph{cpp}
+will show \textcode{\#warning} directives written in the code. This is a warning 
+message that the coder can pass to the compiler. Often they will not result in 
+an error.
+
+
+            \paragraph{deprecated-declarations}
+will show warnings when functions, variables, or types have been declared 
+deprecated be a programmer.
+
+
+            \paragraph{discarded-array-qualifiers}
+            \paragraph{error=}
+is a prefix, which means that the warning will cause an error. Sometimes 
+developers do not want a specific warning to happen without the compilation 
+stopping. Then they can enable this flag in the makefile.
+
+There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
+
+
+            \paragraph{frame-larger-than=}
+            \paragraph{implicit-function-declaration}
+            \paragraph{incompatible-pointer-types}
+            \paragraph{int-conversion}
+            \paragraph{int-to-pointer-cast}
+\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
+
+            \paragraph{logical-not-parentheses}
+occurs when the left hand side of an expression contains a \emph{logical not} 
+(a \texttt{!} in C). An example is \textcode{if (!ret == template[i].fail)}
+    \footnote{From the file \texttt{crypto/testmgr.c}}
+.
+
+The warning refers to the \textcode{!ret}, which should have been inside 
+parentheses to be correct, like so \textcode{(!ret)}.
+
+
+            \paragraph{maybe-uninitialized}
+is when there is an uncertainty about a variable being uninitialized. In the 
+case in figure \ref{lst:maybeuninitializedreal} there is a 
+\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
+
+If \emph{gcc} cannot see for sure that the variable is initialized, 
+even if it would have been initialized in all of the cases, it will return this 
+warning.
+
+\figa
+    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+
+
+            \paragraph{overflow}
+
+
+            \paragraph{pointer-to-int-cast}
+            \label{par:pointertoint}
+This warning would normally be sign of bad code. It is usually when a pointer 
+is cast to a \texttt{long} and then later cast back into a function call. This 
+is widely spread in Linux to simulate the effects of \emph{Object Oriented 
+Programming}
+
+
+            \paragraph{return-type}
+            \paragraph{switch-bool}
+            \paragraph{uninitialized}
+            \paragraph{unused-function}
+is a warning about a function that has never been called. This represents dead 
+code, or code pollution. 
+
+In the example in figure \ref{lst:unusedfuncreal}, the function 
+\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
+\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
+unused function.
+
+\figa
+    \lstinputlisting[language=C]{code/unusedfuncreal}
+\figb{A real example of unused function - from the file 
+    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
+
+
+            \paragraph{unused-variable}
+is basically the same as \texttt{unused-function}, but only with a variable 
+instead of a function. There will be no example of this.
+
+
+            \paragraph{unused-label}
+
+
+\begin{itemize}
+    \item \underline{\textbf{TODO}}
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           METHODOLOGY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\chapter{Methodology}
+
+\emph{Objective:}
+The objective is to make a quantitative analysis of warnings in randomly 
+generated Linux kernels. 
+
+\emph{Subject:}
+There will be generated random configurations, and these will be used to 
+compile two different versions of the Linux kernel, a stable Linux kernel 
+version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository.
+
+
+\section{Research Questions}
+
+\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
+the stable kernel.
+
+\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
+subsystems, in what subsubsystem? 
+\\
+
+It is likely that some errors or warnings are more severe than others, and some 
+types of errors get fixed more than others. This leads to the next question.
+\\
+
+\textbf{RQ2:} What warnings are mostly generated.  
+\\
+
+And this can also be different between the stable and unstable versions. Hence 
+the next question. 
+\\
+
+\textbf{RQ3:} What bugs seem to be fixed the most when going from unstable to 
+stable. 
+\\
+
+As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
+it}, the subsystems of the kernel are of very different character. 
+\footnote{mention somewhere earlier, that drivers are different from security 
+or kernel} And therefore the bug types must differ from subsystem to subsystem. 
+\\
+
+
+
+
+\textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
+valid. 
+\\
+
+
+\textbf{RQ6:} Are there any specific features, that when enabled, will produce 
+more warnings than others. 
+\\
+
+
+\section{Configuring}
 
 See figure ~\ref{randconfigtoy} for a toy example of a Kconfig feature model. 
 It is a very small example with only two features, but it will easily explain 
@@ -662,22 +881,6 @@ script that \emph{scrambled the Kconfig} files, and a \emph{generate and
 filter} method.
 \\
 
-
-
-% TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-    \item .config file
-    \item show results from running randconfig a 1000 times.
-    \item Talk about how there is 7 layers of dependencies. And how I found out.
-    \item \^ Hmm . Are there only 7 layers when counting ifs? what about 
-        'depends on's
-    \item mention that it is also called a preprocessor.
-\end{itemize}
-
-
-\subsection{Compiling and Catching Errors and Warnings}
-
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file by running the command \textcode{make all}
     \footnote{Or simply \textcode{make}, since \textcode{make all} is the 
@@ -685,25 +888,10 @@ that configuration file by running the command \textcode{make all}
 . This looks in a \texttt{Makefile}, which specifies what files to compile. The 
 compilation of the files is done mainly by \emph{gcc - The GNU Compiler 
 Collection}
-    footnote{Notice that both gcc version 4.9.2 and version 5.2.0 are used}
+    \footnote{Notice that both gcc version 4.9.2 and version 5.2.0 are used}
 \\
 
-During compilation, \texttt{gcc} will output warnings if there are any. These 
-warnings warn about bad code, which might result in a compilation error, or 
-which might result in dead code, or they might just warn about bad code 
-practice.
-
-These output messages hold the information that will be used in this project. 
-In a warning, there is information about a possible coding mistake that might 
-break the code. There are about 30 different warning types \cite{gccwarnings}
-Some of these are not so interesting as others for this project.
-\\
-
-If there is an error, the compilation will stop immediately 
-(at default it will try to keep on going, but in this project, it is told to 
-stop after one error).
-\\
-
+\section{Compiling}
 Generally there will be distinguished between four different types of output. 
 These are \textbf{Linux errors}, \textbf{host errors}, 
 \textbf{relevant warnings}, and \textbf{irrelevant warnings}. 
@@ -837,177 +1025,6 @@ The irrelevant warnings are:
 
 This will return the warning '\texttt{unused variable 'n' [-Wunused-variable]}'.
 
-        \subsection{The Gcc Warnings}
-Here follows a list of the warnings that was found during the compilations. 
-They are ordered alphabetically.
-
-
-            \paragraph{array-bounds}
-is given, when gcc is certain that a subscript to an array is always out of 
-bounds.
-
-% See example in figure \ref{lst:arraybounds}.
-
-% \figa
-    % \lstinputlisting[language=C]{code/arraybounds}
-% \figb{}{lst:arraybounds}
-
-
-            \paragraph{cpp}
-will show \textcode{\#warning} directives written in the code. This is a warning 
-message that the coder can pass to the compiler. Often they will not result in 
-an error.
-
-
-            \paragraph{deprecated-declarations}
-will show warnings when functions, variables, or types have been declared 
-deprecated be a programmer.
-
-
-            \paragraph{discarded-array-qualifiers}
-            \paragraph{error=}
-is a prefix, which means that the warning will cause an error. Sometimes 
-developers do not want a specific warning to happen without the compilation 
-stopping. Then they can enable this flag in the makefile.
-
-There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
-
-
-            \paragraph{frame-larger-than=}
-            \paragraph{implicit-function-declaration}
-            \paragraph{incompatible-pointer-types}
-            \paragraph{int-conversion}
-            \paragraph{int-to-pointer-cast}
-\emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
-
-            \paragraph{logical-not-parentheses}
-occurs when the left hand side of an expression contains a \emph{logical not} 
-(a \texttt{!} in C). An example is \textcode{if (!ret == template[i].fail)}
-    \footnote{From the file \texttt{crypto/testmgr.c}}
-.
-
-The warning refers to the \textcode{!ret}, which should have been inside 
-parentheses to be correct, like so \textcode{(!ret)}.
-
-
-            \paragraph{maybe-uninitialized}
-is when there is an uncertainty about a variable being uninitialized. In the 
-case in figure \ref{lst:maybeuninitializedreal} there is a 
-\texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
-
-If \emph{gcc} cannot see for sure that the variable is initialized, 
-even if it would have been initialized in all of the cases, it will return this 
-warning.
-
-\figa
-    \lstinputlisting[language=C]{code/maybeuninitializedreal}
-\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
-
-
-            \paragraph{overflow}
-
-
-            \paragraph{pointer-to-int-cast}
-            \label{par:pointertoint}
-This warning would normally be sign of bad code. It is usually when a pointer 
-is cast to a \texttt{long} and then later cast back into a function call. This 
-is widely spread in Linux to simulate the effects of \emph{Object Oriented 
-Programming}
-
-
-            \paragraph{return-type}
-            \paragraph{switch-bool}
-            \paragraph{uninitialized}
-            \paragraph{unused-function}
-is a warning about a function that has never been called. This represents dead 
-code, or code pollution. 
-
-In the example in figure \ref{lst:unusedfuncreal}, the function 
-\texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
-\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
-unused function.
-
-\figa
-    \lstinputlisting[language=C]{code/unusedfuncreal}
-\figb{A real example of unused function - from the file 
-    \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
-
-
-            \paragraph{unused-variable}
-is basically the same as \texttt{unused-function}, but only with a variable 
-instead of a function. There will be no example of this.
-
-
-            \paragraph{unused-label}
-
-
-% TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-\end{itemize}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                           METHODOLOGY
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\chapter{Methodology}
-
-The objective is to make a quantitative analysis of errors and warnings in the 
-Linux kernel based on as many random configurations as are possible to generate 
-within the time span of this project.
-
-There will be generated random configurations, and these will be used to 
-compile two different versions of the Linux kernel, a stable Linux kernel 
-version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository.
-
-
-\section{Research Questions}
-
-\textbf{RQ1:} Will the unstable linux-next repository generate more errors than 
-the stable kernel.
-
-\textbf{RQ2:} In what subsystems do the most errors occur. And in the largest 
-subsystems, in what subsubsystem? 
-\\
-It is likely that some errors or warnings are more severe than others, and some 
-types of errors get fixed more than others. This leads to the next question.
-\\
-
-
-\textbf{RQ2:} What warnings are mostly generated.  
-\\
-
-
-And this can also be different between the stable and unstable versions. Hence 
-the next question. 
-\\
-
-
-\textbf{RQ3:} What bugs seem to be fixed the most when going from unstable to 
-stable. 
-\\
-
-
-As mentioned \footnote{Where is this mentioned about the subsystems? refer to 
-it}, the subsystems of the kernel are of very different character. 
-\footnote{mention somewhere earlier, that drivers are different from security 
-or kernel} And therefore the bug types must differ from subsystem to subsystem. 
-\\
-
-
-
-
-\textbf{RQ5:} What percentage of the possible configurations for the Kernel are 
-valid. 
-\\
-
-
-\textbf{RQ6:} Are there any specific features, that when enabled, will produce 
-more warnings than others. 
-\\
-
-
 
 
 \section{Collecting data}
@@ -1122,7 +1139,8 @@ stopped. For the stable ones, it was 3611 (17\%), which had an error.
 Out of the 17\% of the compilations, that had errors, here is a sorted list of 
 the warnings. To know exactly which warning is 'responsible' for the error, 
 one would have to look into every case, and find out.
-    \footnote{refer to GNU GCC warning options and also refer to the figure underneath}
+    \footnote{refer to GNU GCC warning options and also refer to the figure 
+        underneath}
 
 
 \figa
@@ -1182,6 +1200,74 @@ with errors, which stopped compiling, but for all of the compilation.
 
 
     \subsection{Unstable vs.Stable}
+
+
+    \subsection{Subsystems With Errors}
+
+
+
+\figa
+    \begin{tabular}{c|c|c|c}
+        \hline
+        \hline
+        ss     & errors  & loc [M]     & err/loc \\
+        \hline 
+        usr     & 2471    & 845          & 290 \% \\
+        samples & 2471    & 7,500        & 32\% \\
+        include & 2421    & 692,000      & 0.35 \% \\
+        drivers & 1405    & 10,800,000   & 0.013 \% \\
+        lib     & 99      & 1,050,00     & 0.094 \% \\
+        init    & 1       & 5,730        & 0.017 \% \\
+        ipc     & 1       & 8,860        & 0.011 \% \\
+        net     & 88      & 890,000      & 0.0099 \% \\
+        crypto  & 8       & 83,900       & 0.0095 \% \\
+        arch/x86 & 26     & 343,000      & 0.0076 \% \\
+        scripts & 5       & 90,700       & 0.0055 \% \\
+        sound   & 26      & 876,000      & 0.0030 \% \\
+        mm      & 3       & 108,000      & 0.0028 \% \\
+        fs      & 31      & 1,170,000    & 0.0026 \% \\
+        kernel  & 6       & 244,000      & 0.0025 \% \\
+        arch    & 26      & 3,440,000    & 0.00076 \% \\
+        firmware & 0       & 129,000      & 0.00046 \% \\
+        virt    & 0       & 10,500       & 0    \% \\
+        tools   & 1       & 218,000      & 0    \% \\
+        block   & 0       & 38,100       & 0    \% \\
+        security & 0       & 75,500       & 0   \% \\
+        \hline
+        \hline
+    \end{tabular}
+\figb{}{}
+
+\figa
+    \begin{tabular}{l|r}
+        \hline
+        \hline
+        \textbf{Subsystem} & \textbf{Percent} \\
+        \hline
+        
+        samples & 68\%\\
+        usr     & 68\%\\
+        include & 67\%\\
+        drivers/    &   39\% \\
+        lib     & 2.7\%\\
+        net     & 2.4\%\\
+        fs/         & 0.86\% \\
+        sound   & 0.72\%\\
+        arch/   & 0.71\%\\
+        crypto/ & 0.22\%\\
+        kernel  & 0.17\%\\
+        scripts & 0.13\%\\
+        mm/ & 0.083\% \\
+        init    & 0.028\%\\
+        ipc     & 0.028\%\\
+        security & 0.0\%\\
+        block/  & 0.0\%\\
+
+        \hline
+        \hline
+        
+    \end{tabular}
+\figb{Percentage of subsystems that were present in errorneous compilations}{}
 
 
 \section{Analyzing the data}
@@ -1303,6 +1389,19 @@ of valid configurations, but it was deemed out of scope of this project.
     \footnote{Link to sharpSAT thingy}
 
 
+    \subsection{Features in Stable vs. Unstable}
+In the unstable Linux version, there are 20 more features than in the stable 
+one. This means that there is a possibility that errors might happen in this 
+new code.
+
+Configurations are created in the unstable version, and when the stable version 
+runs the same configuration file, it will just disregard these unknown features.
+\\
+
+If it was done the other way around, the unstable version would always set the 
+new features to the default value, and they would therefore not be randomized.
+
+
     \subsection{Gcc versions}
 Roughly a third of the compilations were done with gcc version 5.1.0 and two 
 thirds with gcc version 4.9.2. This should not matter on what warnings are 
@@ -1422,7 +1521,7 @@ Therefore this also marks as a threat to validity.
 
 
 \newpage
-\bibliographystyle{plain}
+\bibliographystyle{siam}
 \bibliography{bib}
 
 \end{document}

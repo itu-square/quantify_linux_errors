@@ -5,6 +5,13 @@
   F Figure
   ~ Done
 
+=== WEDNESDAY MEEETING ===
+ ~o ERRORS
+      o I think he means the graph in RESULTS section
+        but maybe make one more for the unstable one.
+  o relate 42bugs regarding bugs/line in each subsystem
+  o things to look into
+  ~ structure revisit
 
 === TODO ===
 
@@ -17,6 +24,7 @@
 
 
     === Write about
+      o Make cites blue
       o Add some of the 2 new downloaded papers as Related work... Maybe.. Or maybe not.
       o Write about all the warning types.
           o Mention in the section about all bugs, that I do not talk about bugs, 
@@ -306,7 +314,7 @@ This query will get the top files from the bugs, that have errors.
 [M] https://github.com/groeck/linux-build-test
     Someone created a script that crosscompiles for all archs.
 
-[N] https://en.wikipedia.org/wiki/Extended_Backus–Naur_Form
+[N] https://en.wikipedia.org/wiki/Extended_Backus-Naur_Form
     Wikipedia page about the EBNF
 
 [O] http://www.lua.org/manual/5.1/manual.html
