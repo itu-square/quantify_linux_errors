@@ -109,12 +109,9 @@
 
 % Citations and refs
 \usepackage{hyperref} % Citations and refs are links
+\hypersetup{colorlinks=true,citecolor=blue}
 \usepackage{cite}
 
-\let\oldcite\cite
-\newcommand{\cit}[1]{
-    \citeleft\@biblabel{#1}\citeright
-}
 
 % URLs 
 \usepackage{url}
@@ -214,7 +211,7 @@ o distribution of subsystems
 A \emph{Linux} operating system is often referring to a a \emph{GNU/Linux} 
 operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
 and the \emph{GNU} part is a software bundle with utilities (eg. a shell, a 
-compiler, etc...) \cit{gnupack}. Both is 
+compiler, etc...) \cite{gnupack}. Both is 
 needed, to have a working operating system. 
 \\
 
