@@ -8,3 +8,21 @@ string     45     206    1657
 hex     34     247    1699
 #endchoice     64      64     640
 #endif    419     972    6482
+
+
+# This I got with the command:
+# grep -A1 "^config" permute | grep "tristate" | wc
+def_bool
+0.029178743961352657
+bool
+0.31671497584541064
+int
+0.03719806763285024
+def_tristate
+0.003864734299516908
+tristate
+0.6057971014492753
+string
+0.004057971014492754
+hex
+0.003188405797101449
