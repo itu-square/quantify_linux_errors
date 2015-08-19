@@ -182,25 +182,41 @@
 %                           INTRODUCTION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-Large amount of variability
+Software projects with high variability rate can be configured to suit many
+needs with the same code base.
+\\
 
-Software Product Lines
+Possibly the largest open source code base which adapts the variability paradigm
+is the Linux kernel. It sports 10,335 different configuration options (called
+\emph{features}) in the \texttt{x86} architecture.
+\\
 
-Linux Kernel
+The ground for this paper is somehow based on the paper \emph{42 Variability 
+Bugs in the Linux Kernel: A Qualitative Analysis}
+    \cite{42bugs}
+, where bugs are qualitatively analyzed, not quantitatively. In this report, 
+warnings will be used as a proxy for errors, and will be analysed 
+quantitatively.
+\\
 
-42 BUGS paper
+The following contributions will be made. Analysis of distributions of
+warnings in the Linux kernel, comparisson of warning distribution in a stable
+version of the Linux kernel and an unstable version. Also an analysis of which
+subsystems contain the most warnings.
 
-During development (stable vs unstable)
-
-Following contributions:
-
-o distribution of warnings in Linux
-
-o difference in stable and unstable
-
-o distribution of subsystems
-
-Research Questions
+% TODO
+\iffalse
+ v  Large amount of variability
+ .  Software Product Lines
+ v  Linux Kernel
+ v  42 bugs paper
+ .  During development (stable vs unstable)
+ v  Following contributions:
+     v  distribution of warnings in Linux
+     v  difference in stable and unstable
+     v  distribution of subsystems
+ .  Research Questions
+\fi
 
 
 
@@ -365,21 +381,20 @@ specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and
 
 
 % TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-    \item talk about allnoconfig alldefconfig in background chapter
-    \item mention exactly how many configurations there are. (maybe the report 
-        from Andrzej). like 2**11,000
-    \item Find out how to find the exact number of possible configurations. It 
-        is in some article, I got by Andrzej. Plus maybe SharpSAT.
-    \item Explain how to find the number of features by grepping.
-    \item Talk about subsystems
-    \item Maybe talk about the percentage of code in every subsystems. What is 
-        Linux kernel made of?
-    \item talk about who contributes to the kernel. (intel, novell). Both in 
-        code and money?
-    \item mention some more subsystems other than drivers and arch
-\end{itemize}
+\iffalse
+  . talk about allnoconfig alldefconfig in background chapter
+  v mention exactly how many configurations there are. (maybe the report 
+    from Andrzej). like 2**11,000
+  . Find out how to find the exact number of possible configurations. It 
+    is in some article, I got by Andrzej. Plus maybe SharpSAT.
+  . Explain how to find the number of features by grepping.
+  . Talk about subsystems
+  . Maybe talk about the percentage of code in every subsystems. What is 
+    Linux kernel made of?
+  . talk about who contributes to the kernel. (intel, novell). Both in 
+    code and money?
+  . mention some more subsystems other than drivers and arch
+\fi
 
 
         \subsection{Kconfig - The Language of the Feature Model}
@@ -551,12 +566,12 @@ dependency. These features are also not randomly chosen by
 
 
 %TODO
-\begin{itemize}
-    \item Explain the Kconfig language a bit
-    \item Reference to Thorsten's projects
-    \item Refer to the /Documentation/kbuild/kconfig-language.txt
-    \item Should I have the Backus Naur Form of the Kconfig language here?
-\end{itemize}
+\iffalse
+  . Explain the Kconfig language a bit
+  . Reference to Thorsten's projects
+  . Refer to the /Documentation/kbuild/kconfig-language.txt
+  . Should I have the Backus Naur Form of the Kconfig language here?
+\fi
 
         \subsection{Configuring of Linux}
 
@@ -581,11 +596,11 @@ configuration tools look like.
 
 
 %TODO
-\begin{itemize}
-    \item Talk about how there is 7 layers of dependencies. And how I found out.
-    \item \^ Hmm . Are there only 7 layers when counting ifs? what about 
+/iffalse
+  . Talk about how there is 7 layers of dependencies. And how I found out.
+  . Hmm . Are there only 7 layers when counting ifs? what about 
         'depends on's
-\end{itemize}
+/fi
 
 
 \subsection{Compiling and Catching Errors and Warnings}
@@ -730,9 +745,9 @@ instead of a function. There will be no example of this.
 
 
 %TODO
-\begin{itemize}
-    \item declare each warning either dangerous or not-dangerous.
-\end{itemize}
+/iffalse
+ .  declare each warning either dangerous or not-dangerous.
+/fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -777,8 +792,7 @@ version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository
 The methodology will be in four parts. First part is finding a way of
 generating random configurations. Second part is compiling the Linux kernel 
 using these configurations while obtaining information about the compilation.
-Third part is analyzing this data. Fourth part will answer the research 
-Questions based on the analysis.
+Third part is analyzing the data.
 
 
 
@@ -934,19 +948,19 @@ for a more thorough description of the specific features.
 
     \subsection{The Hunt for Representativeness}
     \label{rephunt}
-To make the sample of configurations representative, three different ways were
-thought of, and researched if feasible. They were \emph{changing randconfig}, 
+To make the sample of configurations representative, three different ways are
+proposed, and researched if feasible. They are \emph{changing randconfig}, 
 \emph{permuting Kconfig}, and \emph{generate and filter}.
 \\
 
-To change \texttt{randconfig} to be representative, one would have to make 
+To change \texttt{randconfig} to be representative, one will have to make 
 it aware of the whole dependency tree before randomly selecting features. This 
-seems infeasible since the configuration space is so large. It will not fit in 
-memory.
+seems infeasible since the configuration space is so large. It will not fit 
+in memory. 
 \\
 
-Another idea was to \emph{permute the Kconfig} files. First by desugaring the 
-Kconfig files to be in one \emph{level} only
+The next proposal is to \emph{permute the Kconfig} files. First by desugaring 
+the Kconfig files to be in one \emph{level} only
     \footnote{For example by replacing \textcode{if FOO} clauses by 
     \textcode{depends on} options in the features clauses.}
 , and then randomly scramble the feature 
@@ -954,44 +968,49 @@ clauses in the files. If the \texttt{randconfig} script then loads the Kconfig
 files from the top to the bottom, it will 'flip the coin' starting a random 
 place each time.
 
-This did not work, as \texttt{randconfig} did not flip the coin when reading 
-the Kconfig files. Rather, it read the Kconfig files, and then 'flipped the 
+This will not work, as \texttt{randconfig} does not flip the coin when reading 
+the Kconfig files. Rather, it reads the Kconfig files, and then 'flips the 
 coin' on the dependency tree.
 \\
 
-The last way of generating a representative sample of configurations was a 
-method which was dubbed \emph{generate and filter}. 
+The last way of generating a representative sample of configurations is a 
+method which is dubbed \emph{generate and filter}. 
 
-\texttt{.config} files were generated, and the invalid ones were 
-filtered away. Only the valid configurations were compiled.
+\texttt{.config} files are generated, and the invalid ones are 
+filtered away. 
 \\
 
-In the generation process, some mandatory features were given fixed values
-    \footnote{These were, among few others, features from the 
+In the generation process, some mandatory features are given fixed values
+    \footnote{These are, among few others, features from the 
     \texttt{allnoconfig}}
-. All other values were randomly generated.
+. All other values are randomly generated.
 
 Unfortunately this method never did find a valid configuration even after 
 generating 100,000 configurations.
 \\
 
-Since none of the three proposed methods worked, \texttt{randconfig} became the 
-preferable choice.
+Since none of the three proposed methods works, \texttt{randconfig} has become 
+the preferable choice.
 
 
-\section{Compiling}
+\section{Compiling and Collecting Data}
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file by running the command \textcode{make all}. This 
 command runs \emph{GNU Make}, which is instructed how to compile the kernel with
 \emph{GCC - The GNU Compiler Collection}.
-\\
 
 \emph{GCC} will output warnings and error messages, which is saved for analysis.
+\\
+
+The compilations has mainly been done on a computer at the IT University 
+of Copenhagen. The computer has $32\times2.8 MHz$ and $128 GB$ of RAM, and the 
+average time to compile a kernel and upload the data was around 1 minute and 35 
+seconds. A fairly regular laptop with 4 cores and 8 GB of RAM does that in just 
+over 8 minutes on average. 
+\\
 
 
-
-
-\iffalse % This will be commented out.
+\iffalse % fi 51 lines down
     \paragraph{The relevant warnings}
 are warnings that may cause an error at some point. The \emph{uninitialized 
 variable} warning is such a warning. If a variable is uninitialized, and ends 
@@ -1042,33 +1061,25 @@ The irrelevant warnings are:
 
 This will return the warning '\texttt{unused variable 'n' [-Wunused-variable]}'.
 
-\fi % iffalse
+\fi % iffalse 51 lines up
 
-\section{Collecting and Analyzing Data}
 
-Every time a randomly configured compilation is running, \emph{GCC} will 
-output warning and error messages in the \emph{standard error} output. This 
-output is then scraped through to categorize it.
+Every time a compilation is running, \emph{GCC} will output warning and error 
+messages in the \emph{standard error} output. This output is then scraped 
+through for categorization.
 
 An output line will contain a \emph{bug type}, a \emph{filename}, \emph{line 
 number}, and a \emph{message} describing the warning in english.
-
-
-The collection of data has mainly been done on a computer at the IT University 
-of Copenhagen. The computer has $32\times2.8 MHz$ and $128 GB$ of RAM, and the 
-average time to compile a kernel and upload the data was around 1 minute and 35 
-seconds. A fairly regular laptop with 4 cores and 8 GB of RAM does that in just 
-over 8 minutes on average. 
 \\
-
 
 When a compilation is done, the output is scraped and categorized, and then 
 uploaded to a database, for easy querying during and after the project. 
 
 See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and 
 ~\ref{fig:filestable} for the database tables.
+\\
 
-
+% 55 lines down
 \figa
     \begin{tabular}{c|c|c}
         \hline 
@@ -1123,10 +1134,27 @@ See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and
     \end{tabular}
 \figb{The Files table referring to the Bugs table}{fig:filestable}
 
-% TODO
-\begin{itemize}
-    \item Tell about coccinelle, and why we dont use that
-\end{itemize}
+% first figa 55 lines up
+
+
+\section{Analyzing Data}
+This report is a quantitative analysis in comparisson to 
+    \cite{42bugs}
+, which is a qualitative analysis of bugs in Linux.
+
+In this paper, warnings are analysed, not errors, seeing as the format of the 
+error messages prohibits to automatically make sense of categorization.
+
+
+
+\section{Original Objective}
+The original objective of this report was to categorize errors and not 
+warnings, and make a quantitative analysis on those. The majority of the error
+messages do not have an error type classified, but just a filename, and a 
+message.
+\\
+
+
 
 
 
@@ -1325,10 +1353,9 @@ configurations with config warnings is very little, and is claimed irrelevant.
     erroneous compilation}{tbl:confwarns}
 
 % TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-    \item write how many bugs/config on average there were.
-\end{itemize}
+/iffalse
+  . write how many bugs/config on average there were.
+/fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1501,11 +1528,10 @@ Therefore this also marks as a threat to validity.
 
 
 % TODO
-\begin{itemize}
-    \item \underline{\textbf{TODO}}
-    \item Maybe the permutation script can be used elsewhere (Thorsten seemed 
-        interested)
-\end{itemize}
+\iffalse
+  . Maybe the permutation script can be used elsewhere (Thorsten seemed 
+    interested)
+\fi
 
 
 
@@ -1516,13 +1542,12 @@ Therefore this also marks as a threat to validity.
 \chapter{Related Work}
 
 % TODO
-\begin{itemize}
-    \item \textbf{\underline{TODO}}
-    \item 42 bugs
-    \item Variability in ...
-    \item Paper from Iago
-    \item Fengguang Wu and Intel
-\end{itemize}
+\iffalse
+  . 42 bugs
+  . Variability in ...
+  . Paper from Iago
+  . Fengguang Wu and Intel
+\fi
 
 
 
