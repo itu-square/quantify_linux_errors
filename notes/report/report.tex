@@ -50,6 +50,19 @@
 %}
 
 
+% Creating shortcut for Red Text
+\newcommand{\rt}[1]{
+    {\color{red}#1}}
+
+% Creating shortcut for Grey Text
+\newcommand{\gt}[1]{
+    {\color{gray}#1}}
+
+% Trying to create a column tyupe that aligns the dots
+\usepackage{dcolumn}
+\newcolumntype{d}{D{.}{.}{-1} }
+
+
 % Creating my own inline code font
 \newcommand{\textcode}[1]{
     \fboxsep=1pt
@@ -75,7 +88,7 @@
 % Graphics
 \usepackage{graphicx}   % need for figures
 \usepackage{color}      % use if color is used in text 
-\usepackage{xcolor}     % use for text background color
+\usepackage[table]{xcolor}     % use for text background color
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usepackage{float}
@@ -184,11 +197,10 @@
 \chapter{Introduction}
 Software projects with high variability rate can be configured to suit many
 needs with the same code base.
-\\
 
 Possibly the largest open source code base which adapts the variability paradigm
-is the Linux kernel. It sports 10,335 different configuration options (called
-\emph{features}) in the \texttt{x86} architecture.
+is the Linux kernel. It contains approximately 10,000 different configuration 
+options.
 \\
 
 The ground for this paper is somehow based on the paper \emph{42 Variability 
@@ -227,40 +239,54 @@ subsystems contain the most warnings.
 \newpage
         \chapter{Background}
 
-A \emph{Linux} operating system is often referring to a a \emph{GNU/Linux} 
+A \emph{Linux} operating system is often referring to a \emph{GNU/Linux} 
 operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
 and the \emph{GNU} part is a software bundle with utilities (eg. a shell, a 
 compiler, etc...) \cite{gnupack}. Both is 
 needed, to have a working operating system. 
-\\
 
 This report will only focus on the \emph{Linux kernel}, and not the \emph{GNU} 
 bundle.
 
 
-        \section{The Linux Kernel and Variability}
+        \section{The Linux Kernel}
+The Linux kernel is written in by many thousand of people all over 
+the world, and has been ported to more than 20 architectures, which makes it 
+very scalable\footnote
+    {See the \textbf{README} file in the Linux kernel tree}.
 
+It was first developed in 1991 by \emph{Linus Torvalds}, and has since been 
+growing. Today the code base is 19 million lines of code\footnote
+    {\textcode{grep -r '.*' * | wc} in the kernel root folder}.
+
+
+        \section{Variability}
 Many software products are configurable in some way. This creates the 
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different functionalities. 
-
-In Linux this is done before compilation, at a preprocessing step. The Linux 
-kernel in its entirety is not a valid program, it will have to be preprocessed 
-to make sense of the source code.
-This is done by the preprocessing tool (in this case \emph{GCC}).
-    \cite[p. 1]{IntDatSPL}
 \\
 
-This is also called \emph{variability} in software and a software product of 
+This is called \emph{variability} in software and a software product of 
 this type is called \emph{Software Product Lines} (SPL). When different 
 software programs can be derived from the same source code base. 
 
+Before compilation, the source code will have to be configured, at a 
+preprocessing step, which will choose (either automatically, or the user will 
+choose) which parts of the code should be included, by enabling or disabling a 
+set of \emph{features}. 
+
+The code in its entirety is not a valid program.
+    \cite[p. 1]{IntDatSPL}
+\\
+
+
+
 Software with a high-degree of variability is usually refered to as 
-\emph{Variability-Intensive Systems} or \emph{VISs}. Other examples of 
+\emph{Variability-Intensive Systems} or \emph{VISs}. Linux is a \emph{VIS} with 
+more than 10,000 different features. Other examples of 
 \emph{VISs} are \emph{Eclipse}, \emph{Amazon Elastic Compute Service}, and 
-\emph{Drupal Content Management Framework} 
-    \cite[p. 1]{VarTesDrupal}
-to name a few.
+\emph{Drupal Content Management Framework}\cite
+    [p. 1]{VarTesDrupal} to name a few.
 \\
 
 The Linux kernel is very configurable. In the configuration files (the Kconfig 
@@ -387,8 +413,8 @@ specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and
     from Andrzej). like 2**11,000
   . Find out how to find the exact number of possible configurations. It 
     is in some article, I got by Andrzej. Plus maybe SharpSAT.
+  . Write about all the subsystems and what they are for.
   . Explain how to find the number of features by grepping.
-  . Talk about subsystems
   . Maybe talk about the percentage of code in every subsystems. What is 
     Linux kernel made of?
   . talk about who contributes to the kernel. (intel, novell). Both in 
@@ -397,21 +423,26 @@ specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and
 \fi
 
 
-        \subsection{Kconfig - The Language of the Feature Model}
+        \subsection{Feature Models}
 
-            \paragraph{A feature model} 
-is a way of representing all the possible configurations - \emph{the 
-configuration space}. It contains all the features with their respective 
-options and all the constraints and dependencies.
+A feature model is a way of representing all the possible configurations - 
+\emph{the configuration space}. It contains all the features with their 
+respective options and all the constraints and dependencies.
 
-A feature model can be visualized in a feature diagram. The example given here 
+A visualization of a feature model is called a feature diagram, there is an 
+example in Figure \ref{featurediagramphone}. The example 
 will be tiny compared to that of the Linux kernel. The feature model of the 
 Linux kernel is too big to fit in a normal sized report.
 
-See figure \ref{featurediagramphone} for a toy example of a feature 
+In Figure \ref{featurediagramphone} there is a toy example of a feature 
 diagram. It depicts a feature model of a phone configuration, where there are 
-some mandatory features and some optional, and also a choice option for the 
-screen type. A cross-tree dependency is also present.
+some mandatory features (\textbf{Screen} and \textbf{Calls}) and some optional 
+(\textbf{Media} and \textbf{GPS}), 
+and also a choice option (\textbf{Color}, \textbf{BW}, and \textbf{High 
+Definition}) for the screen type, where only one of them may be enabled. A 
+cross-tree dependency is also present, which states that \textbf{Media} with 
+all of its children can only be enabled if a \textbf{High Definition} screen is 
+enabled.
 
 There is no consensus on a unified notation for attributes in feature models
     \cite{AAFM}
@@ -597,13 +628,11 @@ configuration tools look like.
 
 %TODO
 /iffalse
-  . Talk about how there is 7 layers of dependencies. And how I found out.
-  . Hmm . Are there only 7 layers when counting ifs? what about 
-        'depends on's
+  . 
 /fi
 
 
-\subsection{Compiling and Catching Errors and Warnings}
+\subsection{Experimental Setup}
 
 The compilation is done mainly by \emph{GCC - The GNU Compiler Collection}
     \footnote{\url{https://gcc.gnu.org}}.
@@ -639,7 +668,7 @@ be called \emph{host errors}.
 
 
 
-        \subsection{The GCC Warnings}
+        \subsection{GCC Warnings}
 Here follows a list of the warnings that was found during the compilations. 
 They are ordered alphabetically.
 
@@ -797,7 +826,6 @@ Third part is analyzing the data.
 
 
 \section{Generating random configurations}
-
 The configurator \texttt{randconfig} is used in this project. It is used as a 
 proxy for totally representative configurations. The truth is that 
 \texttt{randconfig} is not representative, but is biased towards features 
@@ -1166,83 +1194,106 @@ message.
 \chapter{Results}
 
 A total of 42,060 configurations were compiled. Half of them from the unstable 
-(linux-next) Linux version, and the other half a stable version of Linux 
-(version 4.1.1).
-
-    \section{Errors}
-
-Out of 21,030 compilations, 7911 (38\%) of the unstable ones had an error and 
-stopped. For the stable ones, it was 3611 (17\%), which had an error.
+Linux version, and the other half a stable version of Linux.
 
     \subsection{Stable}
+In table \ref{stablewarndis} is shown the distribution of warnings in the 
+stable Linux kernel. The warnings that will cause code pollution are typed in 
+grey and the more severe ones, that might cause a compilation error is typed 
+in black.
 
-Out of the 17\% of the compilations, that had errors, here is a sorted list of 
-the warnings. To know exactly which warning is 'responsible' for the error, 
-one would have to look into every case, and find out.
-    \footnote{refer to GNU GCC warning options and also refer to the figure 
-        underneath}
-
-
-\figa
-    \begin{tabular}{c|c}
-        \hline 
-        \hline
-
-        \textbf{Warning type} & \textbf{Percent} \\
-
-        \hline
-
-        unused-function & 57\% \\
-        maybe-uninitialized & 45\% \\
-        unused-variable & 35\% \\
-        logical-not-parentheses & 34\% \\
-        error=implicit-function-declaration & 27\% \\
-        frame-larger-than= & 24\% \\
-        cpp & 23\% \\
-        pointer-to-int-cast & 20\% \\
-        discarded-array-qualifiers & 19\% \\
-        switch-bool & 17\% \\
-        int-conversion & 14\% \\
-        array-bounds & 14\% \\
-        return-type & 12\% \\
-        uninitialized & 12\% \\
-        overflow & 11\% \\
-        unused-label & 8.1\% \\
-        deprecated-declarations & 5.4\% \\
-        int-to-pointer-cast & 4.5\% \\
-        implicit-function-declaration & 1.7\% \\
-        incompatible-pointer-types & 0.44\% \\
-        error=implicit-int & 0.17\% \\
-
-        \hline 
-        \hline
-    \end{tabular}
-\figb{The warnings distribution of the stable Linux of the compilations with 
-    errors}{tab:stablewarnwitherrs}
-
-
-    \subsection{Unstable vs.Stable}
-
-
-    \section{Warnings}
-
-In this section, it will be the warning distribution, not only for the ones 
-with errors, which stopped compiling, but for all of the compilation.
-
-
-    \subsection{Stable}
+17\% of the compilations stopped with an error. These errors were often host 
+errors, and will not be looked into. The compilations that had errors were made 
+to stop after the first error was found to not have data pollution caused by an 
+avalanche effect.
 
 \figa
-    \begin{tabular}{c|c}
+    \begin{tabular}{r|d}
+        \hline
+        \hline
+        \textbf{Warning} & \multicolumn{1}{c}{\textbf{Percentage}} \\
+        \hline
 
+            \rowcolor[gray]{0.8}
+        {unused-function} & 59. \% \\
+        maybe-uninitialized & 45. \% \\
+        logical-not-parentheses & 30. \% \\
+            \rowcolor[gray]{0.8}
+        unused-variable & 29. \% \\
+        cpp & 24. \% \\
+        uninitialized & 19. \% \\
+            \rowcolor{red}
+        {ERROR} & 17. \%  \\
+        pointer-to-int-cast & 17.\% \\
+        discarded-array-qualifiers & 17.\% \\
+        switch-bool & 15.\% \\
+        frame-larger-than= & 14.\% \\
+        array-bounds & 11.  \% \\
+        return-type & 7.7 \% \\
+        int-to-pointer-cast & 7.6 \% \\
+        overflow & 6.5 \% \\
+            \rowcolor[gray]{0.8}
+        unused-label & 5.4 \% \\
+        deprecated-declarations & 5.4 \% \\
+            \rowcolor[gray]{0.8}
+        error=implicit-function-declaration & 4.6 \% \\
+        int-conversion & 2.7 \% \\
+        implicit-function-declaration & 1.0 \% \\
+        incompatible-pointer-types & 0.74 \% \\
+            \rowcolor[gray]{0.8}
+        error=implicit-int & 0.029 \% \\
+
+        \hline
+        \hline
     \end{tabular}
-\figb{The warnings distribution of the stable Linux}{tab:stablewarn}
-
-
-    \subsection{Unstable vs.Stable}
+\figb{Distribution of warnings in the stable kernel}{stablewarndis}
 
 
     \subsection{Subsystems With Errors}
+Every warning with a subsystem is distributed as in figure \ref{stablessdis}. 
+Many warnings contain multiple subsystems, so the percentages will not equal 
+100\%.
+
+\figa
+    %\begin{tabular}{r|r@{.}l}
+    \begin{tabular}{r|d}
+        \hline
+        \hline
+        \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
+        \hline
+        
+        drivers/ &  93. \%  \\
+        include/ &  55. \%  \\
+        fs/ &  35. \%  \\ % Same exact number as arch/
+        arch/ &  35. \%  \\ % Same exact number as fs/
+        arch/x86/ &  35. \%  \\ % Same exact number as fs/ and arch/
+        kernel/ &  24. \%  \\
+        net/ &  18. \%  \\
+        crypto/ &  17. \%  \\
+        sound/ &  16. \%  \\
+        mm/ &  14. \%  \\
+            \rowcolor[gray]{0.8} 
+        {usr/} &  12. \%  \\ % Same exact number as samples/
+            \rowcolor[gray]{0.8} 
+        {samples/} &  12. \%  \\ % Same exact number as usr/
+        lib/ &  11. \%  \\
+        block/ &  8.5  \% \\
+            \rowcolor[gray]{0.8} 
+        {scripts/} &  1.8 \% \\
+        security/ &  0.091 \% \\
+            \rowcolor[gray]{0.8} 
+        {ipc/} &  0.0048 \% \\
+            \rowcolor[gray]{0.8} 
+        {init/} &  0.0048 \% \\
+            \rowcolor[gray]{0.8} 
+        {tools/} &  0.0048 \% \\
+            \rowcolor[gray]{0.8} 
+        {virt/} &  0.0 \% \\
+
+        \hline
+        \hline
+    \end{tabular}
+\figb{Distribution of all subsystems with warnings}{stablessdis}
 
 
 
@@ -1355,6 +1406,7 @@ configurations with config warnings is very little, and is claimed irrelevant.
 % TODO
 /iffalse
   . write how many bugs/config on average there were.
+  . mention that security has none.
 /fi
 
 
@@ -1531,6 +1583,9 @@ Therefore this also marks as a threat to validity.
 \iffalse
   . Maybe the permutation script can be used elsewhere (Thorsten seemed 
     interested)
+  . There are extra features in linux-next.. is that a threat to validity
+  . I only have 4-5 different versions of linux-next. That is probably internal 
+    validity.
 \fi
 
 
