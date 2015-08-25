@@ -44,10 +44,9 @@
     \setlength{\parsep}{0pt}
 }
 
-% Creating blue citations
-%\newcommand{\cit}[1]{
-    %\textcolor{blue}{\cite{#1}}
-%}
+
+% Creating shortcut for \footnote{\fn}
+\newcommand{\f}{\footnote{\fn}}
 
 
 % Creating shortcut for Red Text
@@ -79,6 +78,11 @@
     \label{#2}
     \end{figure}
 }
+\newcommand{\figc}{
+    \end{figure}
+}
+
+\usepackage{subfigure}
 
 
 % Math
@@ -96,7 +100,6 @@
 % Other
 \usepackage{todonotes}
 \usepackage{pdfpages}
-\usepackage{subcaption}
 \usepackage{latexsym}
 \usepackage{fixltx2e}    % use for textsubscript
 \usepackage{datetime}    % for the \currenttime
@@ -107,18 +110,6 @@
 
 % Code listing
 \usepackage{listings} % For inserting code from file (I think)
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\renewcommand{\algorithmicforall}{\textbf{for each}}
-\makeatletter
-\def\BState{\State\hskip-\ALG@thistlm}
-\makeatother
-
-\DeclareCaptionFormat{algor}{%
-  \hrulefill\par\offinterlineskip\vskip1pt%
-    \textbf{#1#2}#3\offinterlineskip\hrulefill}
-\DeclareCaptionStyle{algori}{singlelinecheck=off,format=algor,labelsep=space}
-\captionsetup[algorithm]{style=algori}
 
 % Citations and refs
 \usepackage{hyperref} % Citations and refs are links
@@ -255,6 +246,12 @@ the world, and has been ported to more than 20 architectures, which makes it
 very scalable\footnote
     {See the \textbf{README} file in the Linux kernel tree}.
 
+Its use case ranges from small embedded devices like mobile phones, GPSs to 
+supercomputers. In fact 98\% of the top 500 supercomputers in the world run a Linux 
+distibution\cite
+    {top500}.
+\\
+
 It was first developed in 1991 by \emph{Linus Torvalds}, and has since been 
 growing. Today the code base is 19 million lines of code\footnote
     {\textcode{grep -r '.*' * | wc} in the kernel root folder}.
@@ -267,7 +264,7 @@ different kinds of hardware, or different functionalities.
 \\
 
 This is called \emph{variability} in software and a software product of 
-this type is called \emph{Software Product Lines} (SPL). When different 
+this type is called a \emph{Software Product Line} (SPL). When different 
 software programs can be derived from the same source code base. 
 
 Before compilation, the source code will have to be configured, at a 
@@ -275,58 +272,43 @@ preprocessing step, which will choose (either automatically, or the user will
 choose) which parts of the code should be included, by enabling or disabling a 
 set of \emph{features}. 
 
-The code in its entirety is not a valid program.
+The code in its entirety is not a valid program, it must be preprocessed.
     \cite[p. 1]{IntDatSPL}
 \\
 
-
-
 Software with a high-degree of variability is usually refered to as 
 \emph{Variability-Intensive Systems} or \emph{VISs}. Linux is a \emph{VIS} with 
-more than 10,000 different features. Other examples of 
-\emph{VISs} are \emph{Eclipse}, \emph{Amazon Elastic Compute Service}, and 
-\emph{Drupal Content Management Framework}\cite
+more than 10,000 different features\footnote
+    {14,387 across all architectures, with an average of 9,984 per 
+    architecture, and 10,335 for the \texttt{x86/} architecture}.
+Other examples of \emph{VISs} are 
+\emph{Eclipse}, \emph{Amazon Elastic Compute Service}, and \emph{Drupal Content 
+Management Framework}\cite
     [p. 1]{VarTesDrupal} to name a few.
 \\
 
-The Linux kernel is very configurable. In the configuration files (the Kconfig 
-files), there is a total of 14,387 different features, that can be configured.
-    \footnote {14,387 across all architectures, with an average of 9,984 per 
-        architecture, and 10,335 for the \texttt{x86} architecture}
-It is the open source software product with the highest degree of variability.
-
-This high degree of variability has also had an impact on the use cases for the 
-Linux kernel. Linux is used for anything from small embedded devices (like car 
-GPSs, and cell phones) to supercomputers.
-In fact 98\% of the top 500 supercomputers in the world run a Linux distibution
-    \cite{top500}
-.
-\\
-
-This high variability rate makes maintaining the code somewhat harder to 
-grasp, and this makes the code base more error prone. So what you get in 
-scalability you pay for in complexity of maintaining the code. 
-    \footnote{Refer to Jean's project maybe}
-    \footnote{Also refer to a paper that andrzej made about industrial 
-        something. It said something about how much more efficient the code was,
-        when variability was there.}
-
 
         \section{Linux Kernel Development}
+The Linux kernel development model is unique in many ways, since it has many 
+thousand people world over, who contribute, but there is a very strict 
+hierarchy where certain people have authority over a specific part of the 
+kernel\footnote
+    {See the \textcode{MAINTAINERS} file in the root folder of the Linux kernel}
 
 \begin{center}
+
+
     \emph{
         Comment from the Linux team or something...
     }
 \end{center}
 
 
-        \subsection*{Stable and Mainline tree}
+        \subsection*{Stable Releases}
 
 The Linux kernel development cycle has approximately 2$\sfrac{3}{4}$ months 
-from one stable release to the next stable release
-    \cite{crystalball}
-.
+from one stable release to the next stable release\cite
+    {crystalball}.
 In the meantime, \emph{Release Candidates (RCs)}, are released approximately 
 once every week.
 
@@ -335,34 +317,26 @@ stable enough, a new stable version is created, and the whole process is
 repeated.
 
 
-        \subsection*{linux-next tree}
+        \subsection*{In-development Releases}
 
-Then there is the \emph{linux-next} tree. It is a \emph{git} repository, which 
-merges over 200 other \emph{git} repositories
-    \cite{nextTrees}
-, which 
-are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
+The \emph{linux-next} tree is a \emph{git} repository, which 
+merges over 200 other \emph{git} repositories\cite
+    {nextTrees},
+which are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
 merging these other trees every day and the merge conflicts are handled. 
-Therefore the \emph{linux-next} tree always contain the newest commits. 
-
-\textcolor{gray}{
-This tree will get some bugs fixed sooner than if everyone contributed to the 
-mainline and tested on that. Comparing to a stable version, one would suspect 
-the \emph{linux-next} tree to have more bugs, since it has not been tested, 
-and it is the newest code available, which means more bugs have been inserted.
-}
+The \emph{linux-next} tree always contain the newest commits and is the main 
+testing version, and the latest in-development version\footnote
+    {See the original post about it here: 
+    \url{https://lkml.org/lkml/2008/2/11/512}}.
+\\
 
 For this thesis project, both the \emph{linux-next} tree and the latest stable 
-version is used. As time of data gathering, the latest stable version is 
-\emph{4.1.1}.
-
-    \footnote{[Y] http://neuling.org/linux-next-size.html}
-    \footnote{http://news.gmane.org/gmane.linux.kernel.next - the linux-next 
-        mailing list archive}
-    \footnote{[Z] http://kisskb.ellerman.id.au/kisskb/matrix/A}
+version is used. They will be referred to as the latest in-development version, 
+and the latest stable version. As time of data gathering, the latest stable 
+version is \emph{4.1.1}.
 
 
-        \section{Inner Workings of Linux Kernel}
+    \section{Inner Workings of Linux Kernel}
 
 This section will explain in coarse detail, the structure of the Linux kernel.
 From the directory structure, over configuration, to compilation of the kernel.
@@ -444,8 +418,8 @@ cross-tree dependency is also present, which states that \textbf{Media} with
 all of its children can only be enabled if a \textbf{High Definition} screen is 
 enabled.
 
-There is no consensus on a unified notation for attributes in feature models
-    \cite{AAFM}
+There is no consensus on a unified notation for attributes in feature 
+models\cite{AAFM}.
 
 
 % The feature diagram
@@ -532,14 +506,14 @@ There is no consensus on a unified notation for attributes in feature models
 % 80 lines up to \figa
 
 
-            \paragraph{The Kconfig language} 
+            \paragraph{The \textsc{Kconfig} language} 
 is the language of the feature model in Linux (also used for other projects 
 like BusyBox, BuildRoot, CoreBoot, Freetz and others)
     \cite[p. 4]{VarModSSD}
 .
 The configuration files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
-other. There are 1195 Kconfig files in total in the Linux kernel
+other. There are 1195 \textsc{Kconfig} files in total in the Linux kernel
     \footnote{Found with the command \textcode{find . | grep Kconfig | wc}}
 with 956 of them relevant for the \texttt{x86/} architecture.
 \\
@@ -550,44 +524,14 @@ In this file, all features are prefixed with \textcode{CONFIG\_}.
 The different data types and the percentage of them in the \texttt{x86} 
 architecture are \textcode{boolean} (35\%), \textcode{tristate} 
 (61\%), \textcode{string} (0.41\%), \textcode{hex} (0.32\%), and 
-\textcode{integer} (3.7\%). For a description of 
-the context free grammar of the Kconfig language, see the appendices.
-    \footnote{Write the Backus Naur Form of Kconfig in the Appendix}
+\textcode{integer} (3.7\%). For a description of the context free grammar of 
+the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
 \\
 
 \figa
     \lstinputlisting[]{code/kconfigphone}
-\figb{Kconfig for the phone example}{kconfigphone}
+\figb{\textsc{Kconfig} code for the phone example}{kconfigphone}
 
-        {\color{gray}
-The features in Kconfig can be split into four different types, \emph{User 
-features}, \emph{Implementation features}, \emph{Derived features}, and 
-\emph{Capability features}
-    \cite[p. 8]{VarModSSD}
-.
-\\ 
-
-\paragraph{User} features are features that the user chooses a value for in the 
-configurator. In other words, a feature, that has a prompt option in the 
-Kconfig language. 
-
-These features may not directly inflict the compiler's choices, but may only 
-open up for other features in the configurator.
-
-\paragraph{Implementation} features are referenced in the source code, and will 
-directly influence what code the preprocessor will select for compilation.
-
-\paragraph{Derived} features are invisible to the user, and are set by other 
-features using the \textcode{select FOO} syntax.
-
-\paragraph{Capability} features in Linux are features, that simulate a reverse 
-dependency. These features are also not randomly chosen by 
-    \texttt{randconfig}
-        \footnote{Should I give an example here of the capability one?}
-    . Their names often start with \textcode{CONFIG\_HAVE\_} or 
-    \textcode{CONFIG\_ARCH\_HAVE\_}, and only have \emph{type} option set (often to 
-    \texttt{bool}).
-            } % color gray
 
         \footnote{describe that all models are typically wide and shallow, 
         VarModSSD page 19}
@@ -604,53 +548,57 @@ dependency. These features are also not randomly chosen by
   . Should I have the Backus Naur Form of the Kconfig language here?
 \fi
 
-        \subsection{Configuring of Linux}
+        \subsection{Configuring Linux}
 
 The Linux kernel comes with different ways of creating your own configuration 
-file. There is a question based one: \texttt{config}, and some menu based ones:
-\texttt{menuconfig}, \texttt{xconfig}, \texttt{nconfig}, \texttt{gconfig}, 
-but also some that will never prompt the user for anything, but create an 
-automated config: \texttt{allyesconfig} (enabling as much as possible), 
-\texttt{allnoconfig} (disabling as much as possible), \texttt{defconfig} 
-(choosing the default values for everything), and \texttt{randconfig} (choosing 
-random values for everything).
+file - these are called \emph{configurators}. 
+
+Some of them lets the user choose the configuration. There is a question based 
+one: \texttt{config}, and some menu based ones: \texttt{menuconfig}, 
+\texttt{xconfig}, \texttt{nconfig}, \texttt{gconfig}.
 \\
 
-See figure \ref{fig:lineofconfigs} for a few examples of what the graphical 
-configuration tools look like.
+Other configurators will 
+never prompt the user for anything, but create a configuration automatically: 
+\begin{itemize}
+    \item \texttt{allyesconfig} (enabling as much as possible) 
+    \item \texttt{allnoconfig} (disabling as much as possible)
+    \item \texttt{defconfig} (choosing the default values for everything)
+    \item \texttt{randconfig} (choosing random values for everything).
+\end{itemize}
+
+Figure \ref{fig:lineofconfigs} shows what the graphical 
+configurators \texttt{gconfig}, \texttt{menuconfig}, \texttt{nconfig}, and 
+\texttt{xconfig} look like.
 \\
 
 
 \figa
     \includegraphics[scale=0.25]{pngs/configs50percent.png}
-\figb{gconfig, menuconfig, nconfig, and xconfig}{fig:lineofconfigs}
+\figb{\texttt{gconfig}, \texttt{menuconfig}, \texttt{nconfig}, and 
+    \texttt{xconfig}}{fig:lineofconfigs}
 
 
 %TODO
-/iffalse
+\iffalse
   . 
-/fi
+\fi
 
 
-\subsection{Experimental Setup}
-
-The compilation is done mainly by \emph{GCC - The GNU Compiler Collection}
-    \footnote{\url{https://gcc.gnu.org}}.
-
-During compilation, \texttt{GCC} will output warnings when there are any
-    \footnote{There are on average 12 warning messages per compilation}
-.
-
+        %%% COMPILING AND CATCHING WARNINGS
+        \subsection{Compiling and Catching Warnings}
 In a warning, there is information about a possible coding mistake that might 
 break the code. There are about 30 different warning types that are enabled by 
-default \cite{gccwarnings} Some of them are more severe than others.
+default \cite{gccwarnings} Some of them are more severe than others, that will 
+be commented on in the next section about the \textsc{gcc} warnings.
+\\
 
 The warnings have the output format \textcode{[-Wwarningtype]}, and this is 
 output whenever there is a warning. This makes the warnings very easy to 
 quantify automatically.
 \\
 
-If an error occurs during compilation, \texttt{GCC} will stop, and give an error
+If an error occurs during compilation, \textsc{gcc} will stop, and give an error
 message. The error messages though, are not as fulfilling as the warning 
 messages. Often an erroneous subprocess will return an errorcode to 
 \texttt{GCC}, which will then stop. 
@@ -723,7 +671,7 @@ parentheses to be correct, like so \textcode{(!ret)}.
 
             \paragraph{maybe-uninitialized}
 is when there is an uncertainty about a variable being uninitialized. In the 
-case in figure \ref{lst:maybeuninitializedreal} there is a 
+case in Figure \ref{lst:maybeuninitializedreal} there is a 
 \texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
 
 If \emph{GCC} cannot see for sure that the variable is initialized, 
@@ -754,7 +702,7 @@ Programming}.
 is a warning about a function that has never been called. This represents dead 
 code, or code pollution. 
 
-In the example in figure \ref{lst:unusedfuncreal}, the function 
+In the example in Figure \ref{lst:unusedfuncreal}, the function 
 \texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
 \texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is not enabled, and is therefore an 
 unused function.
@@ -774,9 +722,9 @@ instead of a function. There will be no example of this.
 
 
 %TODO
-/iffalse
- .  declare each warning either dangerous or not-dangerous.
-/fi
+\iffalse
+ .  categorize each warning within 'dead code', 'severe', or 'nonsevere'.
+\fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -786,63 +734,99 @@ instead of a function. There will be no example of this.
 \chapter{Methodology}
 
 \emph{Objective:}
-The objective is to make a quantitative analysis of warnings in randomly 
-generated Linux kernels. The warnings functions as a proxy of errors.
-These are the research questions:
+This report aims to make a quantitative analysis of warnings in all of the
+Linux kernel by checking randomly generated Linux kernels for warnings.
+%The warnings functions as a proxy for errors.
+
+This includes addressing the following research questions:
 \\
 
-\textbf{RQ1:} Will the unstable linux-next repository generate more warnings 
-than the stable kernel.
+\textbf{RQ1:} What warnings are the most common in the stable Linux kernel.
 \\
 
-\textbf{RQ2:} In what subsystems do the most errors occur?
+\textbf{RQ2:} Where do most warnings occur?
 \\
 
-\textbf{RQ3:} What warnings are the most common.
+\textbf{RQ3:} Are there any signifant differences between an in-development 
+version of Linux and a stable version?
 \\
-
-\textbf{RQ4:} Is there any significant difference in the warnings in the 
-stable versus the unstable.
-\\
-
-\textbf{RQ5:} Are there any specific features, that when enabled, will produce 
-more warnings than others. 
-\\
-
 
 \emph{Subject:}
-There will be generated random configurations, and these will be used to 
-compile two different versions of the Linux kernel, a stable Linux kernel 
-version \emph{4.1.1}, and a Linux kernel from the \emph{linux-next} repository
-    \footnote{Can both be found on \url{https://www.kernel.org}}.
+To respond to these questions there will be generated random configurations, 
+and these will be used to compile two different versions of the Linux kernel, 
+the latest stable Linux kernel version, and a two months old in-development 
+version of the Linux kernel.
+
+The warning messages will be categorized and collected, and be subject for 
+analysis.
 \\
 
 \emph{Methodology:}
-The methodology will be in four parts. First part is finding a way of
-generating random configurations. Second part is compiling the Linux kernel 
-using these configurations while obtaining information about the compilation.
-Third part is analyzing the data.
-
-
-
-\section{Generating random configurations}
-The configurator \texttt{randconfig} is used in this project. It is used as a 
-proxy for totally representative configurations. The truth is that 
-\texttt{randconfig} is not representative, but is biased towards features 
-higher up in the feature model tree.
+The methodology will be in three parts. First part is finding a way of
+generating random configurations in a representative way. Second part is 
+collecting any warnings that a compilation might return. Third part is 
+analyzing the data and answering the research questions.
 \\
 
-See figure ~\ref{randconfigtoy} for a toy example of a Kconfig feature model. 
-It is a very small example with only two features, but it will easily explain 
-some limitations of using \texttt{randconfig}.
+        \def \fn{Not counting cross-tree contraints, but also saying 
+        everything is a \texttt{boolean} and not \texttt{tristate}, or 
+        \texttt{string}.}
+Since there are more than 10,000 different features in the feature model of the
+Linux kernel, there will be approximately $2^{10,000}$ possible 
+configurations\f, which is more than the estimated number of atoms in the 
+universe. So getting a list of all the possible configurations is not possible 
+(at least not with 2 bit computers).
+
+
+\iffalse % 128 lines down
+            %% THE BUILT-IN RANDCONFIG
+            \section{The Built-In \texttt{randconfig} Configurator}
+Unfortunately, the built-in \texttt{randconfig} is not representative, but is 
+biased towards features higher up in the feature model tree. See Section 
+\ref{ch:ttv} about Threats to Validity for more information about how 
+\texttt{randconfig} is biased.
+
+So, for the sample to be representative, another way to generate configurations 
+must be found.
+\\
+
+Figure ~\ref{randconfigtoy} shows a toy example of a \textsc{Kconfig} feature 
+model written in the \textsc{Kconfig} language.  It is a very small example 
+with only two features, but it will easily explain some limitations of using 
+\texttt{randconfig}.
+\\
+
+There are two features (\texttt{A} and \texttt{B}) in the example, which can be 
+enabled or disabled, and feature \texttt{B} depends on \texttt{A} being enabled.
+This leaves three possible outcomes. 
+
+One where both is enabled, one where only \texttt{A} is enabled, and one where 
+none of them are enabled. The outcome where only \texttt{B} is enabled is an 
+invalid configuration since \texttt{B} depends on \texttt{A}.
 
 \figa
     \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
         depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
-\figb{A toy Kconfig feature model}{randconfigtoy}
+\figb{A toy \textsc{Kconfig} feature model}{randconfigtoy}
 
-% --- 33 lines down ---
+Figure \ref{fig:randtoy50} shows how \texttt{randconfig} will decide whether 
+the features are enabled or disabled. It always goes from the top of the tree 
+and down. So feature \texttt{A} will always be decided for at first. And since 
+it is a \texttt{boolean} there will be a fifty fifty chance.
+\\
+
+Then it proceeds further down in the dependency tree, and decides for feature
+\texttt{B}, which also has a fifty fifty chance.
+
+For the creation to be representative, all the three possible configurations 
+should have equal chance of being created (33\%). See Figure 
+\ref{fig:randtoy33} for a visualization of how the selection should 
+be to be representative.
+
+% --- 68 lines down ---
 \figa
+    \subfigure[How \texttt{randconfig} will select]{
+    \label{fig:randtoy50}
     \begin{tikzpicture}
         % Names of configs
         \draw (2,4) node {\textcode{CONFIG\_A}};
@@ -871,7 +855,12 @@ some limitations of using \texttt{randconfig}.
         \draw (3,0.5) node {\textbf{\underline{25\%}}};
         \draw (5,0.5) node {\textbf{\underline{25\%}}};
 
-        %%%% ==== The next graph ====
+    \end{tikzpicture}
+    }
+% ==== The next graph ====
+    \subfigure[Representative selection]{
+    \label{fig:randtoy33}
+    \begin{tikzpicture}
 
         % Names of configs
         \draw (9,4) node {\textcode{CONFIG\_A}};
@@ -892,7 +881,7 @@ some limitations of using \texttt{randconfig}.
 
         % Draw percentages
         \draw (8,3.5) node {\tiny{33\%}};
-        \draw (10,3.5) node {\tiny{66\%}};
+        \draw (10,3.5) node {\tiny{67\%}};
         \draw (10,1.5) node {\tiny{50\%}};
         \draw (12,1.5) node {\tiny{50\%}};
 
@@ -900,128 +889,118 @@ some limitations of using \texttt{randconfig}.
         \draw (10,0.5) node {\textbf{\underline{33\%}}};
         \draw (12,0.5) node {\textbf{\underline{33\%}}};
     \end{tikzpicture}
-\figb{(left) How \texttt{randconfig} will select (right) Representative 
-    selection}{randconfigtoy50}
-% --- 33 lines up ---
+    }
+\figb{}{}
+% --- 68 lines up ---
 
-The example in figure ~\ref{randconfigtoy50}(left) shows that the three possible
-configurations (\texttt{\{\}}, \texttt{\{A\}}, and \texttt{\{A,B\}}) do 
-not have the same chance of getting created by \texttt{randconfig}.
-
-For the creation to be representative, all the three possible configurations 
-should have equal chance of being created (33\%). See figure 
-~\ref{randconfigtoy50}(right) for a visualization of how the selection should 
-be to be representative.
-
-
-Representativeness does not matter for the Linux kernel developers, the 
-\texttt{randconfig} function is merely used as a simple fuzz testing tool
-    \footnote{source}
-.
+Representativeness is not of high prioritization for the Linux kernel 
+developers, the \texttt{randconfig} function is merely used as a simple fuzz 
+testing tool.
 
 This ultimately means that \texttt{randconfig} is not representative in its 
-configuration creation. more about representativeness in the section 
-\ref{rephunt}.
+configuration creation. (See more about representativeness in the section 
+\ref{rephunt}.)
 \\
 
-Even though \texttt{randconfig} generates valid configurations, there were still
-some features that showed to be creating bogus errors.
-\\
-
-For instance, there is a feature in the feature model that is called 
-\textcode{CONFIG\_KERNEL\_LZO}, which enables kernel compression with the 
-\emph{LZO library}.
-
-If the \emph{LZO library} is not installed on the host machine, then the 
-compilation will fail.
-\\
-
-There exist many other examples like this in the Linux kernel where an 
-uninstalled program will result in an unbuilt kernel. These \emph{host 
-errors} would have to be minimized, since they are not actual kernel errors, 
-but local errors. 
-
-On the build system for this project, the \emph{lzo} package was in the Linux 
-distribution's repository, and therefore easy to install. The \emph{lz4} 
-package however was not.
-    \footnote{be sure of that the warnings are ONLY for the linux kernel and
-        not \emph{host warnings}}
-\\
-
-The following is a list of mandatory features, which are added to decrease the 
-amount of host errors. In an early period of the project, it was found out that 
-these specific features with specific values would stop the compilation every 
-time.
-
-It decreases the configuration space of this project, but otherwise 
-would just give a lot of false positives.
-\\
-
-All these lines are added to the configurations, which are generated in
-this project.
-
-\begin{itemize}
-    \item \textcode{CONFIG\_STANDALONE=y}
-    \item \textcode{CONFIG\_FW\_LOADER=n}
-    \item \textcode{CONFIG\_SECCOMP=y}
-    \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
-    \item \textcode{CONFIG\_*LZ4*=n}
-        \footnote{This means that all features having to do with \emph{lz4} 
-                    were disabled}
-\end{itemize}
 
 See chapter~\ref{ch:ttv} about Threats to Validity on page \pageref{ch:ttv} 
 for a more thorough description of the specific features.
 
+\fi  % 128 lines up
 
-    \subsection{The Hunt for Representativeness}
-    \label{rephunt}
-To make the sample of configurations representative, three different ways are
-proposed, and researched if feasible. They are \emph{changing randconfig}, 
-\emph{permuting Kconfig}, and \emph{generate and filter}.
+
+
+
+        %% THE HUNT FOR REPRESENTATIVENESS
+        \section{The Hunt for Representativeness}
+        \label{rephunt}
+To make the sample of configurations representative, five different methods are
+proposed and discussed.
+
+\begin{enumerate}
+
+    \item \textbf{Using randconfig}
+
+Using the built-in \texttt{randconfig}
+
+    \item \textbf{Changing randconfig}
+
+This method will rewrite the code for \texttt{randconfig} or create a new 
+configurator (eg. \texttt{reprandconfig}).  This configurator must not have the 
+bias for features in the upper levels of the dependency tree, as 
+\texttt{randconfig} has.
+
+This would require good knowledge of programming in the \textsc{GNU C} language
+and also an algorithmic way of solving this without the time complexity 
+escalating.
+
+
+    \item \textbf{Permuting \textsc{Kconfig}}
+
+            \def \fn {For example by replacing \textcode{if FOO ... endif} 
+            clauses by \textcode{depends on} options in the features clauses.}
+
+This proposal will desugarize the \textsc{Kconfig} files to be in one level 
+only\f, and then randomly scramble the position of the feature clauses in the 
+files. 
+
+The hope is that the \texttt{randconfig} script loads the \textsc{Kconfig} 
+files from top to bottom, and will then load in the features at random each 
+time.
+
+
+    \item \textbf{Generate and filter}
+
+            \def \fn {It also is aware about \texttt{choice} clauses}
+
+In this method, a configuration file is generated with a script, which 
+does not know the relation betweeen all the features. It knows all the feature
+names, and the possible values for the features\f.
+
+It goes through the list and randomly selects values for all the features. 
 \\
 
-To change \texttt{randconfig} to be representative, one will have to make 
-it aware of the whole dependency tree before randomly selecting features. This 
-seems infeasible since the configuration space is so large. It will not fit 
-in memory. 
+Then all invalid configurations are filtered away.
+
+
+    \item \textbf{RandomSAT}
+
+The Linux kernel feature model can be extracted from the \textsc{Kconfig} 
+files, to get a propositional formula\cite{lvat}. This formula can be used to 
+check for propositional satisfiability.
+
+
+    
+\end{enumerate}
+
+
+Unfortunately, these four methods were all unobtainable, and 
+\texttt{randconfig} is used as a proxy for getting a representative sample.
+
+\iffalse
+  v 4 different ways
+  v randconfig
+  . fig (a) and (b) showing randconfig
+  . Showing the sample figure with dots and stuff.
+\fi
+
+
+
+            %% EXPERIMENTAL SETUP
+            \section{Experimental Setup}
+The experimental setup consists of a loop, where a configuration is generated,
+the Linux kernel is then compiling with this configuration, and the output 
+warnings are categorized and collected.
 \\
 
-The next proposal is to \emph{permute the Kconfig} files. First by desugaring 
-the Kconfig files to be in one \emph{level} only
-    \footnote{For example by replacing \textcode{if FOO} clauses by 
-    \textcode{depends on} options in the features clauses.}
-, and then randomly scramble the feature 
-clauses in the files. If the \texttt{randconfig} script then loads the Kconfig
-files from the top to the bottom, it will 'flip the coin' starting a random 
-place each time.
-
-This will not work, as \texttt{randconfig} does not flip the coin when reading 
-the Kconfig files. Rather, it reads the Kconfig files, and then 'flips the 
-coin' on the dependency tree.
-\\
-
-The last way of generating a representative sample of configurations is a 
-method which is dubbed \emph{generate and filter}. 
-
-\texttt{.config} files are generated, and the invalid ones are 
-filtered away. 
-\\
-
-In the generation process, some mandatory features are given fixed values
-    \footnote{These are, among few others, features from the 
-    \texttt{allnoconfig}}
-. All other values are randomly generated.
-
-Unfortunately this method never did find a valid configuration even after 
-generating 100,000 configurations.
-\\
-
-Since none of the three proposed methods works, \texttt{randconfig} has become 
-the preferable choice.
+To say something about all of the Linux kernel, the generated configurations 
+for the experiment should be a representative sample of all the possible 
+configurations. Every single configuration should have equal likelihood of being
+chosen. 
 
 
-\section{Compiling and Collecting Data}
+            %%% COMPILING AND COLLECTING DATA
+            \subsection{Compiling and Collecting Data}
 When a configuration has been created, the Linux kernel is compiled using 
 that configuration file by running the command \textcode{make all}. This 
 command runs \emph{GNU Make}, which is instructed how to compile the kernel with
@@ -1038,58 +1017,6 @@ over 8 minutes on average.
 \\
 
 
-\iffalse % fi 51 lines down
-    \paragraph{The relevant warnings}
-are warnings that may cause an error at some point. The \emph{uninitialized 
-variable} warning is such a warning. If a variable is uninitialized, and ends 
-up being called, it may cause an error, and stop the compilation. See figure 
-\ref{lst:uninitvar} for a code example.
-
-The relevant warnings are:
-
-\begin{itemize}
-    \item Uninitialized variable
-    \item Maybe uninitialized
-    \item Overflow
-    \item Deprecated declarations
-        \footnote{Complete this list}
-\end{itemize}
-
-\figa
-    \lstinputlisting[language=C, firstline=3]{code/uninitvar.c}
-\figb{A toy program showing an uninitialized variable.}{lst:uninitvar}
-
-If \textcode{CONFIG\_A} is not enabled in the program in figure 
-~\ref{lst:uninitvar} it will return the warning 
-'\texttt{'n' is used uninitialized in this function [-Wuninitialized]}' and the 
-output, when the program is run, will be '\texttt{0Hello world}',
-which is wrong, as the program was meant to output '\texttt{Hello World}'.
-
-    \paragraph{The irrelevant warnings}
-are warnings that will not stop the compilation, and will not make the program 
-output wrong things. Warnings like \emph{unused function}, \emph{unused 
-variable}, \emph{unused label}, and \emph{unused value}, will all end up as 
-dead code, which is bad for fitting a kernel on some hardware with limited 
-space. Apart from that it is nothing else than code pollution. See figure 
-~\ref{lst:unusedvar} for a code example  of an unused variable.
-
-The irrelevant warnings are:
-
-\begin{itemize}
-    \item Unused function
-    \item Unused variable
-    \item Unused label
-    \item Unused value
-        \footnote{Complete this list}
-\end{itemize}
-
-\figa
-    \lstinputlisting[language=C, firstline=3]{code/unusedvar.c}
-\figb{A program resulting in an unused variable warning.}{lst:unusedvar}
-
-This will return the warning '\texttt{unused variable 'n' [-Wunused-variable]}'.
-
-\fi % iffalse 51 lines up
 
 
 Every time a compilation is running, \emph{GCC} will output warning and error 
@@ -1103,86 +1030,16 @@ number}, and a \emph{message} describing the warning in english.
 When a compilation is done, the output is scraped and categorized, and then 
 uploaded to a database, for easy querying during and after the project. 
 
-See the figures ~\ref{fig:conftable}, ~\ref{fig:bugstable}, and 
-~\ref{fig:filestable} for the database tables.
-\\
 
-% 55 lines down
-\figa
-    \begin{tabular}{c|c|c}
-        \hline 
-        \hline
-        \multicolumn{3}{c}{\textbf{Configurations}} \\
-        \hline
-        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
-        \hline
-        hash & char(64) & primary key \\
-        exit\_status & int(1) \\
-        conf\_errs & text \\
-        linux\_version & varchar(100) & primary key \\
-        original & longtext \\
-        \hline
-        \hline
-    \end{tabular}
-\figb{The Configurations table}{fig:conftable}
+            %% ANALYZING DATA
+            \section{Analyzing Data}
+This report is a quantitative analysis of warnings in all of the Linux kernel.
+The analysis of the warnings is purely quantitative, and this report will not 
+contain any in-depth analysis of some of the warnings. The different warning 
+types will be categorized according to severity.
 
-\figa
-    \begin{tabular}{c|c|c}
-        \hline
-        \hline
-        \multicolumn{3}{c}{\textbf{Bugs}} \\
-        \hline
-        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
-        \hline
-        hash & char(64) & primary key \\
-        type & varchar(50) \\
-        linux\_version & varchar(100) \\
-        config\_hash & char(64) \\
-        subsystem & varchar(30) \\
-        original & longtext \\
-        \hline
-        \hline
-    \end{tabular}
-\figb{The Bugs table referring to the Configurations table}{fig:bugstable}
-
-\figa
-    \begin{tabular}{c|c|c}
-        \hline
-        \hline
-        \multicolumn{3}{c}{\textbf{Files}} \\
-        \hline
-        \textbf{Name} & \textbf{Type} &\textbf{primary key} \\
-        \hline
-        id & int(11) & primary key \\
-        path & varchar(50) \\
-        line & varchar(15) \\
-        bug\_id & char(64) \\
-        \hline
-        \hline
-    \end{tabular}
-\figb{The Files table referring to the Bugs table}{fig:filestable}
-
-% first figa 55 lines up
-
-
-\section{Analyzing Data}
-This report is a quantitative analysis in comparisson to 
-    \cite{42bugs}
-, which is a qualitative analysis of bugs in Linux.
-
-In this paper, warnings are analysed, not errors, seeing as the format of the 
-error messages prohibits to automatically make sense of categorization.
-
-
-
-\section{Original Objective}
-The original objective of this report was to categorize errors and not 
-warnings, and make a quantitative analysis on those. The majority of the error
-messages do not have an error type classified, but just a filename, and a 
-message.
-\\
-
-
+in comparisson to\cite{42bugs} , which 
+is a qualitative analysis of bugs in Linux.
 
 
 
@@ -1249,8 +1106,9 @@ avalanche effect.
 \figb{Distribution of warnings in the stable kernel}{stablewarndis}
 
 
-    \subsection{Subsystems With Errors}
-Every warning with a subsystem is distributed as in figure \ref{stablessdis}. 
+            %% SUBSYSTEMS WITH WARNINGS
+            \section{Subsystems With Warnings}
+Every warning with a subsystem is distributed as in Figure \ref{stablessdis}. 
 Many warnings contain multiple subsystems, so the percentages will not equal 
 100\%.
 
@@ -1361,18 +1219,10 @@ Many warnings contain multiple subsystems, so the percentages will not equal
 \figb{Percentage of subsystems that were present in errorneous compilations}{}
 
 
-\section{Analyzing the data}
 
 
-    \section{Number of valid configurations}
 
-There was a hope, that something could be said about the percentage of valid 
-configurations out of all possible combinations.
-
-Some mandatory features were fixed, and an experiment was run, but after 100,000
-configurations, none of them were valid. This can only be used to say something
-about the upper bound of the percentage.
-
+\iffalse % --- 32 lines down
 
 \section{Observations}
 
@@ -1384,7 +1234,7 @@ of the times, it will output a warning about unmet dependencies. One might
 suspect that configurations, which yielded a warning would result in
 compilation errors. 
 
-As can be seen in figure \ref{tbl:confwarns}, fewer of the stable kernels that 
+As can be seen in Figure \ref{tbl:confwarns}, fewer of the stable kernels that 
 had configuration warnings also had an error in the compilation. But the rise 
 in erroneous compilations from configurations without config warnings to 
 configurations with config warnings is very little, and is claimed irrelevant.
@@ -1403,85 +1253,79 @@ configurations with config warnings is very little, and is claimed irrelevant.
 \figb{Percentage of the configs with and without warnings, which resulted in an 
     erroneous compilation}{tbl:confwarns}
 
+\fi % --- 32 lines up
+
 % TODO
-/iffalse
+\iffalse
   . write how many bugs/config on average there were.
   . mention that security has none.
-/fi
+\fi
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           THREATS TO VALIDITY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-    \chapter{Threats to Validity}
-\label{ch:ttv}
-
-\emph{Blahblah about Threats to validity...}
-
-\section{Generalization}
-\label{sec:gen}
-
-One major threat to validity is in the representativeness of the random 
-configurations. Since the configurations are created using the \textcode{make 
-randconfig} method, some configurations are more likely to be generated than 
-others.
-
-This means, that when something is generally said about all of the Linux 
-Kernel, instead something is said about mostly a subset of Linuxes. See figure 
-\ref{fig:repsubset} for a visualization of subsets which are both 
-representative, and not representative.
-
-\figa
-    \emph{Show an image of true representativeness}
-\figb{A representative subset}{fig:repsubset}
-
-Three ways was thought of, that would make the configurations more 
-generalizable. If successful with any of the methods, they could have been 
-committed to the Linux kernel. Unfortunately, none of them were successful.
+            \newpage
+            \chapter{Threats to Validity}
+            \label{ch:ttv}
 
 
-    \subsection*{Changing the code of \texttt{randconfig}}
-The first idea was to change the code of \texttt{randconfig}, so it would know
-what the possibilities of each outcome should be. See figure 
-\ref{randconfigtoy33} for a visualization.
+            %% EXTERNAL VALIDITY
+            \section{External Validity}
+            \label{sec:extval}
 
-This was deemed impossible due to the very large feature model. The 
-\emph{Abstract Syntax Tree (AST)} would simply not fit in memory of any 
-computer.
-    \footnote{Give short example}
+            %%% GENERALIZATION
+            \subsection{Generalization}
+            \label{sec:consel}
 
+All the selected configurations are not a representative subset of all possible
+configurations, and therefore does not fully represent all of the Linux kernel. 
+The method by which the configurations are selected, does not select 
+configurations between the whole configuration space equally.
 
-    \subsection*{Permutation of Kconfig files}
-Another idea was to take all the spread out Kconfig files, and concatenate 
-them all into one big text file, which would then be modified and exposed to 
-syntactic desugaring. If the order of the features were randomized, then the 
-coins would not be flipped in the same order every time, and this could have an 
-effect on the dependent features. 
+There is a bias towards selecting configurations that will not visit the 
+deepest layers of the dependency tree.
+
+In Figure \ref{fig:reprrand} a blue area represents the whole configuration 
+space, and red dots inside a blue area represent a subset of all the 
+configurations, which is in a given sample.
 \\
 
-It turned out, that \texttt{randconfig} does not regard the order of the 
-kconfig files. The Kconfig files are loaded, and \texttt{randconfig} then 
-utilizes the AST and randomly selects from the root of that, which gives the
-same result as when Kconfig is not permuted.
+Figure \ref{fig:repr} shows a sample, which is represesentatively distributed 
+over the configuration space. 
+\\
+
+Figure \ref{fig:rand} shows a sample, which is not representatively 
+distributed. All the dots tend to cluster together around certain areas of the 
+configuration space, and if one was to tell what the configuration space looked 
+like by only looking at the sample, it would look like the yellow area.
+
+\figa
+    \subfigure[A representative sample]{
+        \includegraphics{svg/repr.eps}
+        \label{fig:repr}
+    }
+    \subfigure[An unrepresentative sample]{
+        \includegraphics{svg/rand.eps}
+        \label{fig:rand}
+    }
+\figb{A representative subset}{fig:reprrand}
 
 
-    \subsection*{Generate and Filter}
-The third idea was to manually generate a configuration file, and then check - 
-somehow - if the config file was valid, and then use it if it was valid. By 
-not looking at dependencies, but only considering \emph{choice} options and 
-enabling \emph{mandatory features}, a configuration file was created by 
-randomly flipping a coin per each feature.
-
-This seemed doable, but after generating 100,000 configurations, not one 
-valid configuration was found.
-
-It was considered running \emph{SharpSAT} (or \emph{\#SAT}) to count the number
-of valid configurations, but it was deemed out of scope of this project.
-    \footnote{Link to sharpSAT thingy}
+            %% INTERNAL VALIDITY
+            \section{Internal Validity}
+            \label{sec:intval}
 
 
-    \subsection{Features in Stable vs. Unstable}
+            %%% 9 DIFFERENT IN_DEVELOPMENT VERSIONS
+            \subsection{9 Different In-Development Versions}
+There was used multiple different in-development versions of the Linux kernel to 
+minimize the skewing of warnings. One could argue that 9 different versions was 
+not enough to get rid of over-representation of certain warnings.
+
+
+            %%% MORE FEATURES IN THE IN-DEVELOPMENT VERSION
+            \subsection{More Features in the In-Development version}
 In the unstable Linux version, there are 20 more features than in the stable 
 one. This means that there is a possibility that errors might happen in this 
 new code.
@@ -1494,7 +1338,8 @@ If it was done the other way around, the unstable version would always set the
 new features to the default value, and they would therefore not be randomized.
 
 
-    \subsection{Gcc versions}
+            %%% GCC VERSIONS
+            \subsection{Gcc versions}
 Roughly a third of the compilations were done with GCC version 5.1.0 and two 
 thirds with GCC version 4.9.2. This should not matter on what warnings are 
 returned. There is only one new warning that is enabled by the \texttt{-Wall} 
@@ -1503,20 +1348,6 @@ flag in version 5.1.0
 , and none of this type was found.
 
 
-    \subsection{Architecture}
-
-To create a true representative sample space, all the different architectures 
-should be compiled for. There exist 31 different architectures, but the most 
-common one for laptop and server use is the \texttt{x86} architecture.
-
-This architecture is the only one, that are compiled for in this project, as 
-getting the cross compilers for all the different architectures would be very 
-cumbersome. 
-\\
-
-
-This potentially leaves out 97\% \footnote{is this number true. Should I 
-calculate?} of the possible configurations to check.
 
 \subsection{Firmware}
 
@@ -1552,7 +1383,33 @@ not in the Linux distribution's repository, and it would have been too time
 consuming to have it installed. 
 
 Therefore this also marks as a threat to validity.
-% ---- 19 lines
+% ---- // 19 lines
+
+% --- Copied from further up ---
+The following is a list of mandatory features, which are added to decrease the 
+amount of host errors. In an early period of the project, it was found out that 
+these specific features with specific values would stop the compilation every 
+time.
+
+It decreases the configuration space of this project, but otherwise 
+would just give a lot of false positives.
+\\
+
+All these lines are added to the configurations, which are generated in
+this project.
+
+\begin{itemize}
+    \item \textcode{CONFIG\_STANDALONE=y}
+    \item \textcode{CONFIG\_FW\_LOADER=n}
+    \item \textcode{CONFIG\_SECCOMP=y}
+    \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
+    \item \textcode{CONFIG\_*LZ4*=n}
+        \footnote{This means that all features having to do with \emph{lz4} 
+                    were disabled}
+\end{itemize}
+
+% ----- //
+
 
 \begin{itemize}
     %\item Only run on x86 architecture
@@ -1561,32 +1418,6 @@ Therefore this also marks as a threat to validity.
     \item Internal vs. External validity
     \item The mandatory features?
 \end{itemize}
-
-\section{Generate'n'Filter}
-
-
-
-\begin{itemize}
-    \item Uniform distribution
-    \item Too low percentage
-    \item Get a lower bound on the percentage
-    \item sharpSAT?
-\end{itemize}
-
-\section{elvisconfig}
-
-
-\section{RandomSAT}
-
-
-% TODO
-\iffalse
-  . Maybe the permutation script can be used elsewhere (Thorsten seemed 
-    interested)
-  . There are extra features in linux-next.. is that a threat to validity
-  . I only have 4-5 different versions of linux-next. That is probably internal 
-    validity.
-\fi
 
 
 
@@ -1617,14 +1448,21 @@ Therefore this also marks as a threat to validity.
 \bibliographystyle{siam}
 \bibliography{bib}
 
-\newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           APPENDIX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Appendices}
-\section{Kconfig language}
-\section{Data}
+            \newpage
+            \chapter{Appendices}
+
+
+            %%% KCONFIG LANGUAGE
+            \section{\textsc{Kconfig} language}
+            \label{app:kconfig}
+
+
+            %% DATA
+            \section{Data}
 
 \end{document}
 
