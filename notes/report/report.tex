@@ -350,10 +350,10 @@ various uses.
 % \figb{Visualization of the sizes of the subsystems}{fig:subsystems}
 % ---
 
-The \texttt{drivers/} subsystem is by far the largest subsystem (57\%). It 
-contains all device drivers. It is also mostly contributed to by hardware 
-vendors.
-    \footnote{Source? and is it true? -What would Greg Kroah Hartman say?}
+The \texttt{drivers/} subsystem is by far the largest subsystem (with 57\% of 
+the lines of code). It contains all device drivers. It is also mostly 
+contributed to by hardware vendors.
+
 Since it is the largest subsystem, one could suspect it to contain the most 
 warnings. And even when taking relative size into account, one could suspect this
 on the grounds of the majority of the code being written by hardware vendors.
@@ -728,7 +728,10 @@ be enabled to make sure it will stop.
 
 This is an error, and will \emph{not} be categorized.
 
+
             \subsection*{frame-larger-than=}
+
+
             \subsection*{implicit-function-declaration}
 This is given, when a a function has not been declared, but is being used.
 
@@ -766,6 +769,7 @@ or
 The warning refers to the \textcode{!ret}, which should have been inside 
 parentheses to be correct, like so \textcode{(!ret)}.
 
+This is categorized as \emph{severe}.
 
             \subsection*{maybe-uninitialized}
 is when there is an uncertainty about a variable being uninitialized. In the 
@@ -793,9 +797,11 @@ This will be categorized as \emph{severe}.
 
 
             \subsection*{return-type}
-This will be shown when there is a function, which has no return type. 
+This will be shown when there is a non-void function, which has no return 
+statement.
 
-This is categorized as an \emph{unsevere} warning.
+NOT  CATEGORIZED
+%This is categorized as an \emph{unsevere} warning.
 
 
             \subsection*{switch-bool}
@@ -1045,9 +1051,11 @@ is a qualitative analysis of bugs in Linux.
 \newpage
 \chapter{Results}
 
-A total of 42,060 configurations were compiled. Half of them from the 
+A total of 42,060 experiments were run. Half of them from the 
 in-development Linux version, and the other half of the latest stable version 
 of Linux.
+\\
+
 
             %% STABLE LINUX VERSION
             \section{Stable Linux Version}
@@ -1056,6 +1064,10 @@ experiment runs with the stable Linux kernel. The distinct warnings are only
 counted once per experiment run.
 
 The ones that causes errors are marked with red background.
+\\
+
+A total of 245,000 warnings were collected from these experiments, with the 
+highest amount of warnings for a single experiment being 111.
 \\
 
 17\% of the compilations stopped with an error. These errors were mostly 
@@ -1075,32 +1087,34 @@ files over and over.
     \begin{tabular}{r|d|c}
         \hline
         \hline
-        \textbf{Warning} & \multicolumn{1}{c}{\textbf{Percentage}} & 
-            \textbf{Category}\\
+        \textbf{Warning} & \multicolumn{1}{|c|}{\textbf{Percentage}} & 
+        \textbf{Category}\\
         \hline
 
         {unused-function} & 59. \% & Code pollution \\
         maybe-uninitialized & 45. \% & Severe \\
-        logical-not-parentheses & 30. \% & Unsevere \\
+        logical-not-parentheses & 30. \% & Severe \\
         unused-variable & 29. \% & Code pollution \\
         cpp & 24. \% & Unsevere \\
         uninitialized & 19. \% & Severe \\
-            \rowcolor{red}
+            \rowcolor{red!40}
         {ERROR} & 17. \%  & - \\
-        pointer-to-int-cast & 17.\% & Unsevere \\
-        discarded-array-qualifiers & 17.\% & Unsevere \\
+        pointer-to-int-cast & 17.\% & Severe \\
+        discarded-array-qualifiers & 17.\% & xxx \\
         switch-bool & 15.\% & Severe \\
-        frame-larger-than= & 14.\% & Severe \\
+        frame-larger-than= & 14.\% & xxx \\
         array-bounds & 11.  \% & Severe \\
-        return-type & 7.7 \% & Severe \\
-        int-to-pointer-cast & 7.6 \% & Unsevere \\
+        return-type & 7.7 \% & xxx \\
+        int-to-pointer-cast & 7.6 \% & Severe \\
         overflow & 6.5 \% & Severe \\
         unused-label & 5.4 \% & Code Pollution \\
         deprecated-declarations & 5.4 \% & Severe \\
+            \rowcolor{red!40}
         error=implicit-function-declaration & 4.6 \% & - \\
-        int-conversion & 2.7 \% & xxx \\
-        implicit-function-declaration & 1.0 \% & xxx \\
-        incompatible-pointer-types & 0.74 \% & xxx \\
+        int-conversion & 2.7 \% & Unsevere \\
+        implicit-function-declaration & 1.0 \% & Unsevere \\
+        incompatible-pointer-types & 0.74 \% & Unsevere \\
+            \rowcolor{red!40}
         error=implicit-int & 0.029 \% & - \\
 
         \hline
@@ -1110,11 +1124,26 @@ files over and over.
 
 
 With these results, we can answer \textbf{RQ1:} 
+\\
+
+\textbf{Observation 1:}
+The most common warnings in the \emph{severe} categorization is: 
+\emph{maybe-uninitialized}, \emph{logical-not-parentheses}, and 
+\emph{uninitialized}.
+\\
+
+\textbf{Observation 2:}
+The warnings \emph{unused-function} and \emph{unused-variable} are among the 
+top 4 of all warnings.
 
 
 
 
 %RQ1: What warnings are the most common in the stable Linux kernel?
+
+% TODO
+% . Write about what warnings from Wall there was NOT found
+% . Relate it to 42bugs?
 
 
 
@@ -1131,19 +1160,8 @@ The greyed out rows are for subsystems that are not a major part of the kernel
 functionality. This is inspired by\cite{42bugs}.
 \\
 
-            \def \fn {Source on this.}
-The \texttt{drivers/} subsystem is by far the most represented subsystem in all
-of the compilation runs. This suits the information about \texttt{drivers/} 
-being the largest subsystem, and also that this subsystem is in particular 
-contributed to by hardware vendors\f.
-
-There are near zero warnings in the \texttt{security/} subsystem. This can both 
-be an indication of a small subsystem, but rather, that it is an important 
-subsystem, which a lot of work are put into. 
-
 
 \figa
-    %\begin{tabular}{r|r@{.}l}
     \begin{tabular}{r|d}
         \hline
         \hline
@@ -1160,22 +1178,22 @@ subsystem, which a lot of work are put into.
         crypto/ &  17. \%  \\
         sound/ &  16. \%  \\
         mm/ &  14. \%  \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!40}
         {usr/} &  12. \%  \\ % Same exact number as samples/
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!60}
         {samples/} &  12. \%  \\ % Same exact number as usr/
         lib/ &  11. \%  \\
         block/ &  8.5  \% \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!60}
         {scripts/} &  1.8 \% \\
         security/ &  0.091 \% \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!40}
         {ipc/} &  0.0048 \% \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!40}
         {init/} &  0.0048 \% \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!60}
         {tools/} &  0.0048 \% \\
-            \rowcolor[gray]{0.8} 
+            \rowcolor{gray!40}
         {virt/} &  0.0 \% \\
 
         \hline
@@ -1184,115 +1202,34 @@ subsystem, which a lot of work are put into.
 \figb{Distribution of all subsystems within the warnings}{stablessdis}
 
 
+With these results,  the following observations can be made:
 
+            \def \fn {Source on this.}
 
-\iffalse % --- 65 lines down
+\textbf{Observation 3:}
+In 93\% of the experiments, the \texttt{drivers/} subsystem was present in a 
+warning. This suits the information about \texttt{drivers/} being the largest 
+subsystem, and also that this subsystem is in particular contributed to by 
+hardware vendors\f.
+\\
 
-\figa
-    \begin{tabular}{c|c|c|c}
-        \hline
-        \hline
-        ss     & errors  & loc [M]     & err/loc \\
-        \hline 
-        usr     & 2471    & 845          & 290 \% \\
-        samples & 2471    & 7,500        & 32\% \\
-        include & 2421    & 692,000      & 0.35 \% \\
-        drivers & 1405    & 10,800,000   & 0.013 \% \\
-        lib     & 99      & 1,050,00     & 0.094 \% \\
-        init    & 1       & 5,730        & 0.017 \% \\
-        ipc     & 1       & 8,860        & 0.011 \% \\
-        net     & 88      & 890,000      & 0.0099 \% \\
-        crypto  & 8       & 83,900       & 0.0095 \% \\
-        arch/x86 & 26     & 343,000      & 0.0076 \% \\
-        scripts & 5       & 90,700       & 0.0055 \% \\
-        sound   & 26      & 876,000      & 0.0030 \% \\
-        mm      & 3       & 108,000      & 0.0028 \% \\
-        fs      & 31      & 1,170,000    & 0.0026 \% \\
-        kernel  & 6       & 244,000      & 0.0025 \% \\
-        arch    & 26      & 3,440,000    & 0.00076 \% \\
-        firmware & 0       & 129,000      & 0.00046 \% \\
-        virt    & 0       & 10,500       & 0    \% \\
-        tools   & 1       & 218,000      & 0    \% \\
-        block   & 0       & 38,100       & 0    \% \\
-        security & 0       & 75,500       & 0   \% \\
-        \hline
-        \hline
-    \end{tabular}
-\figb{}{}
+\textbf{Observation 4:}
+There are near zero warnings in the \texttt{security/} subsystem. This can both 
+be an indication of a small subsystem, but rather, that it is an important 
+subsystem, which a lot of work are put into. 
 
-\figa
-    \begin{tabular}{l|r}
-        \hline
-        \hline
-        \textbf{Subsystem} & \textbf{Percent} \\
-        \hline
-        
-        samples & 68\%\\
-        usr     & 68\%\\
-        include & 67\%\\
-        drivers/    &   39\% \\
-        lib     & 2.7\%\\
-        net     & 2.4\%\\
-        fs/         & 0.86\% \\
-        sound   & 0.72\%\\
-        arch/   & 0.71\%\\
-        crypto/ & 0.22\%\\
-        kernel  & 0.17\%\\
-        scripts & 0.13\%\\
-        mm/ & 0.083\% \\
-        init    & 0.028\%\\
-        ipc     & 0.028\%\\
-        security & 0.0\%\\
-        block/  & 0.0\%\\
-
-        \hline
-        \hline
-        
-    \end{tabular}
-\figb{Percentage of subsystems that were present in errorneous compilations}{}
-
-\fi % --- 65 lines up
-
-
-
-
-\iffalse % --- 32 lines down
-
-\section{Observations}
-
-
-    \subsection{Configuration Warnings}
-When creating a random configuration, 25\%
-    \footnote{get the correct percentage}
-of the times, it will output a warning about unmet dependencies. One might
-suspect that configurations, which yielded a warning would result in
-compilation errors. 
-
-As can be seen in Figure \ref{tbl:confwarns}, fewer of the stable kernels that 
-had configuration warnings also had an error in the compilation. But the rise 
-in erroneous compilations from configurations without config warnings to 
-configurations with config warnings is very little, and is claimed irrelevant.
-
-\figa
-    \begin{tabular}{c|c|c}
-    \hline
-    \hline
-        & \textbf{Stable} & \textbf{Unstable} \\
-    \hline
-    No config warnings & 17\% & 36\%\\
-    Config warnings & 19\% & 40\%\\
-    \hline
-    \hline
-    \end{tabular}
-\figb{Percentage of the configs with and without warnings, which resulted in an 
-    erroneous compilation}{tbl:confwarns}
-
-\fi % --- 32 lines up
 
 
 
             %% IN-DEVELOPMENT VERSION VS. STABLE VERSION
             \section{In-Development Version vs.\ Stable Version}
+
+
+The results show some differences, and the following observations can be made.
+
+--- table with comparisson ---
+
+
 
 
 
@@ -1562,6 +1499,10 @@ installed on the build system.
 
 
 
+% TODO
+% . coccinelle
+% . Coverity 
+
 
 
 
@@ -1571,12 +1512,22 @@ installed on the build system.
 \newpage
 \chapter{Related Work}
 
+\textbf{Variability bugs}
+The paper \emph{42 Variability Bugs in the Linux Kernel...} is looking at bugs 
+in the linux kernel from a qualitative angle rather than a quantitative angle. 
+The bugs are manually analysed, and discussed.
+
+This report is somewhat a continuation of the research in that paper.
+
+
 % TODO
 \iffalse
-  . 42 bugs
+  \ 42 bugs
   . Variability in ...
   . Paper from Iago
   . Fengguang Wu and Intel
+  . Jaccard Similarity (?)
+  . http://codemonkey.org.uk/tag/coverity/ <- Correlate data with this guys drivers/staging thing.
 \fi
 
 

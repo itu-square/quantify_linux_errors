@@ -1,17 +1,11 @@
-mainmenu MOBILE
     config CALLS
-        bool "Needed to make calls"
-    config GPS
-        bool "GPS location system"
-    config MEDIA
-        bool "Media modules"
-        default y
+        def_bool y 
     config SCREEN
-        bool "Screen module"
-        default y
+        def_bool y
 
     choice
         prompt "Choose screen type"
+        default HD
         depends on SCREEN
         config COLOR
             bool "Color screen"
@@ -21,10 +15,15 @@ mainmenu MOBILE
             bool "High Definition screen"
     endchoice
 
-    if HD
+    config GPS
+        bool "GPS location system"
+    config MEDIA
+        bool "Media modules"
+        depends on HD
+
+    if MEDIA
         config CAMERA
             bool "Camera support"
         config MP3
             bool "MP3 support"
     endif
-endmenu
