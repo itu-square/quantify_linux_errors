@@ -127,6 +127,7 @@
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{1.0,1.0,1.0}
+
 \lstdefinestyle{mystyle}{
   backgroundcolor=\color{backcolour},   
   commentstyle=\color{codegreen},
@@ -139,12 +140,14 @@
   captionpos=b,                    
   keepspaces=true,                 
   numbers=left,                    
-  numbersep=1pt,                  
+  numbersep=5pt,                  
   showspaces=false,                
   showstringspaces=false,
   showtabs=false,                  
-  tabsize=2
+  tabsize=2,
 }
+
+
 \lstset{style=mystyle}
 
 \begin{document}
@@ -364,34 +367,23 @@ the \texttt{arm} architecture is used mostly for mobile devices.
 In this project, only the \texttt{x86} architecture will be used.
 \\
 
-The \texttt{fs/} subsystem (6\%) is code regarding filesystems. 
+The \texttt{fs/} subsystem (6\%) is code regarding filesystems, the 
+\texttt{net/} subsystem (5\%) is about networking, and the \texttt{mm/} 
+subsystem (.6\%) is about memory management.
 
-The \texttt{sound/} subsystem (5\%).
-
-The \texttt{net/} subsystem (5\%) is about networking.
-
-The \texttt{include/} subsystem (4\%) is.
-
-The \texttt{kernel/} subsystem (\%) is.
-
-The \texttt{mm/} subsystem (\%) is about memory management.
-The \texttt{crypto/} subsystem (\%) is.
-The \texttt{security/} subsystem (\%) is.
-The \texttt{block/} subsystem (\%) is.
+Then there are \texttt{sound/}(5\%), \texttt{include/} (4\%), \texttt{kernel/} 
+(1\%), \texttt{crypto/} (.4\%), \texttt{security/}  (.4\%), and \texttt{block/} 
+(.2\%).
+\\
 
 Other smaller subsystems are:
 
-\texttt{virt/},
-\texttt{ipc/},
-\texttt{init/},
-\texttt{usr/},
-\texttt{lib/},
+\texttt{virt/}, \texttt{ipc/}, \texttt{init/}, \texttt{usr/}, and \texttt{lib/}.
+\\
 
 And infrastructure subsystems are:
 
-\texttt{tools/},
-\texttt{scripts/},
-\texttt{samples/},
+\texttt{tools/}, \texttt{scripts/}, and \texttt{samples/}.
 
 
 % --- Not showing this graph ---
@@ -409,13 +401,12 @@ And infrastructure subsystems are:
   . Find out how to find the exact number of possible configurations. It 
     is in some article, I got by Andrzej. Plus maybe SharpSAT.
   v Write about all the subsystems and what they are for.
-        Nah, I wrote a little bit about them.
-  . Explain how to find the number of features by grepping.
-  . Maybe talk about the percentage of code in every subsystems. What is 
+  x Explain how to find the number of features by grepping.
+  v Maybe talk about the percentage of code in every subsystems. What is 
     Linux kernel made of?
-  . talk about who contributes to the kernel. (intel, novell). Both in 
+  x talk about who contributes to the kernel. (intel, novell). Both in 
     code and money?
-  . mention some more subsystems other than drivers and arch
+  v mention some more subsystems other than drivers and arch
 \fi
 
 
@@ -430,15 +421,13 @@ example in Figure \ref{featurediagramphone}. The example
 will be tiny compared to that of the Linux kernel. The feature model of the 
 Linux kernel is too big to fit in a normal sized report.
 
-In Figure \ref{featurediagramphone} there is a toy example of a feature 
-diagram. It depicts a feature model of a phone configuration, where there are 
-some mandatory features (\textbf{Screen} and \textbf{Calls}) and some optional 
-(\textbf{Media} and \textbf{GPS}), 
-and also a choice option (\textbf{Color}, \textbf{BW}, and \textbf{High 
-Definition}) for the screen type, where only one of them may be enabled. A 
-cross-tree dependency is also present, which states that \textbf{Media} with 
-all of its children can only be enabled if a \textbf{High Definition} screen is 
-enabled.
+Figure \ref{featurediagramphone} depicts a feature model of a phone 
+configuration, where there are some mandatory features (\textbf{Screen} and 
+\textbf{Calls}) and some optional (\textbf{Media} and \textbf{GPS}), and also a 
+choice option (\textbf{Color}, \textbf{BW}, and \textbf{High Definition}) for 
+the screen type, where only one of them may be enabled. A cross-tree constraint 
+is also present, which states that \textbf{Media} with all of its children can 
+only be enabled if a \textbf{High Definition} screen is enabled.
 
 There is no consensus on a unified notation for attributes in feature 
 models\cite{AAFM}.
@@ -528,11 +517,16 @@ models\cite{AAFM}.
 % 80 lines up to \figa
 
 
+The feature diagrams of \emph{VIS}s are typically wide and shallow. The Linux 
+kernel feature model hierarchy, for example, is only 8 layers deep\cite[p. 
+17]{VarModSSD}.
+
+
             \paragraph{The \textsc{Kconfig} language} 
 is the language of the feature model in Linux (also used for other projects 
-like BusyBox, BuildRoot, CoreBoot, Freetz and others)
-    \cite[p. 4]{VarModSSD}
-.
+like \textsc{BusyBox}, \textsc{BuildRoot}, \textsc{CoreBoot}, \textsc{Freetz} 
+and others)\cite[p. 4]{VarModSSD}.
+
 The configuration files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
 other. There are 1195 \textsc{Kconfig} files in total in the Linux kernel
@@ -540,15 +534,21 @@ other. There are 1195 \textsc{Kconfig} files in total in the Linux kernel
 with 956 of them relevant for the \texttt{x86/} architecture.
 \\
 
-When a configuration is created, it is saved to a file called \texttt{.config}.
-In this file, all features are prefixed with \textcode{CONFIG\_}.
+The corresponding \textsc{Kconfig} code for the phone example is in Figure 
+\ref{kconfigphone}.
+\\
+
+When a configuration file is created, it is saved to as \texttt{.config}.
+In this file, all features are prefixed with \texttt{CONFIG\_}, and this is
+the configuration of the Linux kernel. More on the configuration files in
+Section  \ref{sec:conf}.
 
 The different data types and the percentage of them in the \texttt{x86} 
 architecture are \textcode{boolean} (35\%), \textcode{tristate} 
 (61\%), \textcode{string} (0.41\%), \textcode{hex} (0.32\%), and 
 \textcode{integer} (3.7\%). For a description of the context free grammar of 
 the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
-\\
+
 
 \figa
     \lstinputlisting[]{code/kconfigphone}
@@ -559,8 +559,6 @@ the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
         VarModSSD page 19}
         \footnote{write how Kconfig is a beast sometimes. Child nodes exclusding 
         their parents}
-        \footnote{How many are there of each of these. distirbution.}
-
 
 %TODO
 \iffalse
@@ -570,7 +568,8 @@ the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
   . Should I have the Backus Naur Form of the Kconfig language here?
 \fi
 
-        \subsection{Configuring Linux}
+            \subsection{Configuring Linux}
+            \label{sec:conf}
 
 The Linux kernel comes with different ways of creating your own configuration 
 file - these are called \emph{configurators}. 
@@ -585,6 +584,8 @@ never prompt the user for anything, but create a configuration automatically:
 \begin{itemize}
     \item \texttt{allyesconfig} (enabling as much as possible) 
     \item \texttt{allnoconfig} (disabling as much as possible)
+    \item \texttt{tinyconfig} (same as \texttt{allnoconfig} but with higher 
+    compression rate, to fit on smaller devices.
     \item \texttt{defconfig} (choosing the default values for everything)
     \item \texttt{randconfig} (choosing random values for everything).
 \end{itemize}
@@ -601,10 +602,37 @@ configurators \texttt{gconfig}, \texttt{menuconfig}, \texttt{nconfig}, and
     \texttt{xconfig}}{fig:lineofconfigs}
 
 
-%TODO
-\iffalse
-  . 
-\fi
+Running \textcode{make allnoconfig} on the phone example \textsc{Kconfig} code
+in Figure \ref{kconfigphone}, will try to disable all the features in the 
+feature model. See Figure \ref{lst:allnoconfig} for the \texttt{.config} file that 
+will be generated.
+\\
+
+The \texttt{CALLS} and \texttt{SCREEN} are mandatory, and will 
+therefore be enabled. Out of the three possibilities in the choice clause, the 
+\texttt{HD} has been enabled, since it is the default choice.
+
+
+\figa
+    \subfigure[allnoconfig]{
+        \label{lst:allnoconfig}
+        \lstinputlisting[firstline=5]{code/allnoconfig}
+    }
+    \qquad %spacing
+    \subfigure[allyesconfig]{
+        \label{lst:allyesconfig}
+        \lstinputlisting[firstline=5]{code/allyesconfig}
+    }
+\figb{}{}
+
+
+Figure \ref{lst:allyesconfig} shows the \texttt{.config} that is generated by 
+the configurator \texttt{allyesconfig}.
+
+Every feature has been enabled, except \texttt{COLOR} and \texttt{BW}, which 
+must be disabled within the choice clause for the default \texttt{HD} feature 
+to be enabled.
+
 
 
         %%% COMPILING AND CATCHING WARNINGS
@@ -628,36 +656,45 @@ quantify automatically.
 
             %%% GCC WARNINGS
             \subsection{Gcc Warnings}
-Here follows a list of the warnings that was found during the experiment.
-They are ordered alphabetically. 
+All experiments are run with the \textsc{gcc}-flag 
+\textcode{-Wall}, which is a group of 33 warnings. In many cases, though, 
+the Linux kernel enables even more warning flags, so it is not expected to only 
+get warnings from the \texttt{-Wall} group.
+\\
 
-They will be categorized into these types of warnings:
+The warnings will be categorized into these types of warnings:
 
-\begin{itemize}
-    \item Severe warnings
+\begin{enumerate}
+    \item \textbf{Severe warnings}
 
 These warnings will have a chance of breaking the code by returning a wrong
-value, or breaking the compilation.
+value, doing wrong logic, or breaking the compilation.
 
-    \item Code pollution warnings
+    \item \textbf{Code pollution warnings}
 
 These warnings will not break the code, or return wrong values, but will play a 
 role in fitting the Linux kernel on a device with space limitations (such as 
 embedded devices).
 
-    \item Unsevere
+    \item \textbf{Unsevere warnings}
 
-These warnings are deemed unsevere for this report. This does not mean, that 
-they can not be severe in other projects.
+These warnings are deemed unsevere. This does not mean, that they can not be 
+severe in other projects, but at least regarding correct values, and space 
+limitations, 
 
-\end{itemize}
+\end{enumerate}
+
+
+Here follows a list of the warnings that was found during the experiment.
+They are ordered alphabetically, and when code snippets from the Linux kernel 
+are present, they are simpilified.
 
 
             \subsection*{array-bounds}
 is given, when \textsc{gcc} is certain that a subscript to an array is always 
 out of bounds.
 
-This will be classified as a \emph{severe} warning.
+This will be categorized as a \emph{severe} warning.
 
 % See example in figure \ref{lst:arraybounds}.
 
@@ -693,8 +730,23 @@ This is an error, and will \emph{not} be categorized.
 
             \subsection*{frame-larger-than=}
             \subsection*{implicit-function-declaration}
+This is given, when a a function has not been declared, but is being used.
+
+This is categorized as \emph{unsevere}.
+
+
             \subsection*{incompatible-pointer-types}
+This shows when there is converted between pointers, which have incompatible 
+types.
+
+This is categorized as \emph{unsevere}.
+
+
             \subsection*{int-conversion}
+This warns about incompatible conversions between integers and pointers.
+
+This is categorized as \emph{unsevere}.
+
             \subsection*{int-to-pointer-cast}
 \emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
 
@@ -735,13 +787,9 @@ wrong data, and is categorized as a \emph{severe} warning.
 
             \subsection*{pointer-to-int-cast}
             \label{par:pointertoint}
-This warning would normally be sign of bad code. It is usually when a pointer 
-is cast to a \texttt{long} and then later cast back into a function call. This 
-is widely spread in Linux to simulate the effects of \emph{Object Oriented 
-Programming}.
+This warns about a pointer being cast to an integer with a different size.
 
-This will be categorized as \emph{Unsevere}.
-    \footnote{source: Claus... find other source.}
+This will be categorized as \emph{severe}.
 
 
             \subsection*{return-type}
@@ -751,8 +799,9 @@ This is categorized as an \emph{unsevere} warning.
 
 
             \subsection*{switch-bool}
-This warning is shown when a \textcode{switch} statement has \textcode{case}
-values that are outside the \texttt{boolean} value range.
+This warning is shown when a \texttt{boolean} is used in a \texttt{switch} 
+statement. When dealing with a \texttt{boolean}, an \texttt{if} statement 
+should suffice, and this warning might indicate that the wrong variable is used.
 
 This is categorized as \emph{unsevere}.
 
@@ -790,6 +839,10 @@ It is also categorized as \emph{code pollution}.
 
 
             \subsection*{unused-label}
+This is the same as the \texttt{unused-function} and \texttt{unused-variable} 
+warnings with a label instead.
+
+This is categorized as \emph{code pollution}.
 
 
 %TODO
@@ -812,7 +865,7 @@ Linux kernel by checking randomly generated Linux kernels for warnings.
 This includes addressing the following research questions:
 \\
 
-\textbf{RQ1:} What warnings are the most common in the stable Linux kernel.
+\textbf{RQ1:} What warnings are the most common in the stable Linux kernel?
 \\
 
 \textbf{RQ2:} Where do most warnings occur?
@@ -849,135 +902,6 @@ universe. So getting a list of all the possible configurations is not possible
 (at least not with 2 bit computers).
 
 
-\iffalse % 128 lines down
-            %% THE BUILT-IN RANDCONFIG
-            \section{The Built-In \texttt{randconfig} Configurator}
-Unfortunately, the built-in \texttt{randconfig} is not representative, but is 
-biased towards features higher up in the feature model tree. See Section 
-\ref{ch:ttv} about Threats to Validity for more information about how 
-\texttt{randconfig} is biased.
-
-So, for the sample to be representative, another way to generate configurations 
-must be found.
-\\
-
-Figure ~\ref{randconfigtoy} shows a toy example of a \textsc{Kconfig} feature 
-model written in the \textsc{Kconfig} language.  It is a very small example 
-with only two features, but it will easily explain some limitations of using 
-\texttt{randconfig}.
-\\
-
-There are two features (\texttt{A} and \texttt{B}) in the example, which can be 
-enabled or disabled, and feature \texttt{B} depends on \texttt{A} being enabled.
-This leaves three possible outcomes. 
-
-One where both is enabled, one where only \texttt{A} is enabled, and one where 
-none of them are enabled. The outcome where only \texttt{B} is enabled is an 
-invalid configuration since \texttt{B} depends on \texttt{A}.
-
-\figa
-    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
-        depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
-\figb{A toy \textsc{Kconfig} feature model}{randconfigtoy}
-
-Figure \ref{fig:randtoy50} shows how \texttt{randconfig} will decide whether 
-the features are enabled or disabled. It always goes from the top of the tree 
-and down. So feature \texttt{A} will always be decided for at first. And since 
-it is a \texttt{boolean} there will be a fifty fifty chance.
-\\
-
-Then it proceeds further down in the dependency tree, and decides for feature
-\texttt{B}, which also has a fifty fifty chance.
-
-For the creation to be representative, all the three possible configurations 
-should have equal chance of being created (33\%). See Figure 
-\ref{fig:randtoy33} for a visualization of how the selection should 
-be to be representative.
-
-% --- 68 lines down ---
-\figa
-    \subfigure[How \texttt{randconfig} will select]{
-    \label{fig:randtoy50}
-    \begin{tikzpicture}
-        % Names of configs
-        \draw (2,4) node {\textcode{CONFIG\_A}};
-        \draw (4,2) node {\textcode{CONFIG\_B}};
-
-        % yeses and nos
-        \draw (1,3) node {\textcode{=n}};
-        \draw (3,3) node {\textcode{=y}};
-        \draw (3,1) node {\textcode{=n}};
-        \draw (5,1) node {\textcode{=y}};
-
-        % lines not necessarily from above and down
-        \draw[-] (1.9,3.8) edge (1,3.2);
-        \draw[-] (2.1,3.8) edge (3,3.2);
-        \draw[-] (3,2.8) edge (4,2.2);
-        \draw[-] (3,1.2) edge (4,1.8);
-        \draw[-] (5,1.2) edge (4,1.8);
-
-        % Draw percentages
-        \draw (1,3.5) node {\tiny{50\%}};
-        \draw (3,3.5) node {\tiny{50\%}};
-        \draw (3,1.5) node {\tiny{50\%}};
-        \draw (5,1.5) node {\tiny{50\%}};
-
-        \draw (1,2.5) node {\textbf{\underline{50\%}}};
-        \draw (3,0.5) node {\textbf{\underline{25\%}}};
-        \draw (5,0.5) node {\textbf{\underline{25\%}}};
-
-    \end{tikzpicture}
-    }
-% ==== The next graph ====
-    \subfigure[Representative selection]{
-    \label{fig:randtoy33}
-    \begin{tikzpicture}
-
-        % Names of configs
-        \draw (9,4) node {\textcode{CONFIG\_A}};
-        \draw (11,2) node {\textcode{CONFIG\_B}};
-
-        % yeses and nos
-        \draw (8,3) node {\textcode{=n}};
-        \draw (10,3) node {\textcode{=y}};
-        \draw (10,1) node {\textcode{=n}};
-        \draw (12,1) node {\textcode{=y}};
-
-        % lines not necessarily from above and down
-        \draw[-] (8.9,3.8) edge (8,3.2);
-        \draw[-] (9.1,3.8) edge (10,3.2);
-        \draw[-] (10,2.8) edge (11,2.2);
-        \draw[-] (10,1.2) edge (11,1.8);
-        \draw[-] (12,1.2) edge (11,1.8);
-
-        % Draw percentages
-        \draw (8,3.5) node {\tiny{33\%}};
-        \draw (10,3.5) node {\tiny{67\%}};
-        \draw (10,1.5) node {\tiny{50\%}};
-        \draw (12,1.5) node {\tiny{50\%}};
-
-        \draw (8,2.5) node {\textbf{\underline{33\%}}};
-        \draw (10,0.5) node {\textbf{\underline{33\%}}};
-        \draw (12,0.5) node {\textbf{\underline{33\%}}};
-    \end{tikzpicture}
-    }
-\figb{}{}
-% --- 68 lines up ---
-
-Representativeness is not of high prioritization for the Linux kernel 
-developers, the \texttt{randconfig} function is merely used as a simple fuzz 
-testing tool.
-
-This ultimately means that \texttt{randconfig} is not representative in its 
-configuration creation. (See more about representativeness in the section 
-\ref{rephunt}.)
-\\
-
-
-See chapter~\ref{ch:ttv} about Threats to Validity on page \pageref{ch:ttv} 
-for a more thorough description of the specific features.
-
-\fi  % 128 lines up
 
 
 
@@ -1127,16 +1051,25 @@ of Linux.
 
             %% STABLE LINUX VERSION
             \section{Stable Linux Version}
-In table \ref{stablewarndis} is shown the distribution of warnings in the 
-stable Linux kernel. The warnings that will cause code pollution are typed in 
-grey and the more severe ones, that might cause a compilation error is typed 
-in black.
+In Figure \ref{stablewarndis} is shown the distribution of warnings in the 
+experiment runs with the stable Linux kernel. The distinct warnings are only 
+counted once per experiment run.
+
+The ones that causes errors are marked with red background.
+\\
 
 17\% of the compilations stopped with an error. These errors were mostly 
 errors, which were specific for the build machine because of missing libraries 
 or programs, and will not be looked into.  The compilations that had errors 
 were made to stop after the first error was found to not have data pollution 
 caused by an avalanche effect.
+\\
+
+Many of the warnings found, are the same exact warnings, happening in the same 
+files over and over.
+
+% TODO
+% . Actual number of files, bugs, configs
 
 \figa
     \begin{tabular}{r|d|c}
@@ -1176,6 +1109,16 @@ caused by an avalanche effect.
 \figb{Distribution of warnings in the stable kernel}{stablewarndis}
 
 
+With these results, we can answer \textbf{RQ1:} 
+
+
+
+
+%RQ1: What warnings are the most common in the stable Linux kernel?
+
+
+
+
             %% SUBSYSTEMS WITH WARNINGS
             \section{Subsystems With Warnings}
 Figure \ref{stablessdis} shows the distribution of subsystems with warnings in 
@@ -1195,8 +1138,8 @@ being the largest subsystem, and also that this subsystem is in particular
 contributed to by hardware vendors\f.
 
 There are near zero warnings in the \texttt{security/} subsystem. This can both 
-be an indication of a small subsystem, but also, that it is an important 
-subsystem. Security is a key issue in the world of computers.
+be an indication of a small subsystem, but rather, that it is an important 
+subsystem, which a lot of work are put into. 
 
 
 \figa
@@ -1408,7 +1351,131 @@ like by only looking at the sample, it would look like the yellow area.
         \includegraphics{svg/rand.eps}
         \label{fig:rand}
     }
-\figb{A representative subset}{fig:reprrand}
+\figb{Showing both representative (a) and unrepresentative (b) samples}{fig:reprrand}
+
+            %% THE BUILT-IN RANDCONFIG
+            \subsection{The Built-In \texttt{randconfig} Configurator}
+Unfortunately, the built-in \texttt{randconfig} is not representative, but is 
+biased towards features higher up in the feature model tree. See Section 
+\ref{ch:ttv} about Threats to Validity for more information about how 
+\texttt{randconfig} is biased.
+
+So, for the sample to be representative, another way to generate configurations 
+must be found.
+\\
+
+Figure ~\ref{randconfigtoy} shows a toy example of a \textsc{Kconfig} feature 
+model written in the \textsc{Kconfig} language.  It is a very small example 
+with only two features, but it will easily explain some limitations of using 
+\texttt{randconfig}.
+\\
+
+There are two features (\texttt{A} and \texttt{B}) in the example, which can be 
+enabled or disabled, and feature \texttt{B} depends on \texttt{A} being enabled.
+This leaves three possible outcomes. 
+
+One where both is enabled, one where only \texttt{A} is enabled, and one where 
+none of them are enabled. The outcome where only \texttt{B} is enabled is an 
+invalid configuration since \texttt{B} depends on \texttt{A}.
+
+\figa
+    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+        depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
+\figb{A toy \textsc{Kconfig} feature model}{randconfigtoy}
+
+Figure \ref{fig:randtoy50} shows how \texttt{randconfig} will decide whether 
+the features are enabled or disabled. It always goes from the top of the tree 
+and down. So feature \texttt{A} will always be decided for at first. And since 
+it is a \texttt{boolean} there will be a fifty fifty chance.
+\\
+
+Then it proceeds further down in the dependency tree, and decides for feature
+\texttt{B}, which also has a fifty fifty chance.
+
+For the creation to be representative, all the three possible configurations 
+should have equal chance of being created (33\%). See Figure 
+\ref{fig:randtoy33} for a visualization of how the selection should 
+be to be representative.
+
+% --- 68 lines down ---
+\figa
+    \subfigure[How \texttt{randconfig} will select]{
+    \label{fig:randtoy50}
+    \begin{tikzpicture}
+        % Names of configs
+        \draw (2,4) node {\textcode{CONFIG\_A}};
+        \draw (4,2) node {\textcode{CONFIG\_B}};
+
+        % yeses and nos
+        \draw (1,3) node {\textcode{=n}};
+        \draw (3,3) node {\textcode{=y}};
+        \draw (3,1) node {\textcode{=n}};
+        \draw (5,1) node {\textcode{=y}};
+
+        % lines not necessarily from above and down
+        \draw[-] (1.9,3.8) edge (1,3.2);
+        \draw[-] (2.1,3.8) edge (3,3.2);
+        \draw[-] (3,2.8) edge (4,2.2);
+        \draw[-] (3,1.2) edge (4,1.8);
+        \draw[-] (5,1.2) edge (4,1.8);
+
+        % Draw percentages
+        \draw (1,3.5) node {\tiny{50\%}};
+        \draw (3,3.5) node {\tiny{50\%}};
+        \draw (3,1.5) node {\tiny{50\%}};
+        \draw (5,1.5) node {\tiny{50\%}};
+
+        \draw (1,2.5) node {\textbf{\underline{50\%}}};
+        \draw (3,0.5) node {\textbf{\underline{25\%}}};
+        \draw (5,0.5) node {\textbf{\underline{25\%}}};
+
+    \end{tikzpicture}
+    }
+% ==== The next graph ====
+    \subfigure[Representative selection]{
+    \label{fig:randtoy33}
+    \begin{tikzpicture}
+
+        % Names of configs
+        \draw (9,4) node {\textcode{CONFIG\_A}};
+        \draw (11,2) node {\textcode{CONFIG\_B}};
+
+        % yeses and nos
+        \draw (8,3) node {\textcode{=n}};
+        \draw (10,3) node {\textcode{=y}};
+        \draw (10,1) node {\textcode{=n}};
+        \draw (12,1) node {\textcode{=y}};
+
+        % lines not necessarily from above and down
+        \draw[-] (8.9,3.8) edge (8,3.2);
+        \draw[-] (9.1,3.8) edge (10,3.2);
+        \draw[-] (10,2.8) edge (11,2.2);
+        \draw[-] (10,1.2) edge (11,1.8);
+        \draw[-] (12,1.2) edge (11,1.8);
+
+        % Draw percentages
+        \draw (8,3.5) node {\tiny{33\%}};
+        \draw (10,3.5) node {\tiny{67\%}};
+        \draw (10,1.5) node {\tiny{50\%}};
+        \draw (12,1.5) node {\tiny{50\%}};
+
+        \draw (8,2.5) node {\textbf{\underline{33\%}}};
+        \draw (10,0.5) node {\textbf{\underline{33\%}}};
+        \draw (12,0.5) node {\textbf{\underline{33\%}}};
+    \end{tikzpicture}
+    }
+\figb{}{}
+% --- 68 lines up ---
+
+Representativeness is not of high prioritization for the Linux kernel 
+developers, the \texttt{randconfig} function is merely used as a simple fuzz 
+testing tool.
+
+This ultimately means that \texttt{randconfig} is not representative in its 
+configuration creation. (See more about representativeness in the section 
+\ref{rephunt}.)
+\\
+
 
 
             %% INTERNAL VALIDITY
@@ -1418,23 +1485,25 @@ like by only looking at the sample, it would look like the yellow area.
 
             %%% 9 DIFFERENT IN_DEVELOPMENT VERSIONS
             \subsection{9 Different In-Development Versions}
-There was used multiple different in-development versions of the Linux kernel to 
-minimize the skewing of warnings. One could argue that 9 different versions was 
-not enough to get rid of over-representation of certain warnings.
+There is used multiple different in-development versions of the Linux kernel to 
+minimize the skewing of warnings. If only one version of the in-development 
+version is used, it gives a very one-sighted view of the in-development 
+versions, where certain bugs may be over-represented. The more different 
+versions of the in-development Linux should be used, to get a more uniform 
+results.
 
 
             %%% MORE FEATURES IN THE IN-DEVELOPMENT VERSION
             \subsection{More Features in the In-Development version}
-In the unstable Linux version, there are 20 more features than in the stable 
-one. This means that there is a possibility that errors might happen in this 
-new code.
+In the in-development Linux version, there are 20 more features than in the 
+stable version. The configurations are created in the in-development version, 
+and are copied over to the stable version. This will result in some unknown 
+features being set on the stable version, but there is no code corresponding to 
+the features, so no harm is done.
 
-Configurations are created in the unstable version, and when the stable version 
-runs the same configuration file, it will just disregard these unknown features.
+If they are created in the stable version, instead, they will never be given 
+random values, but always default values, which will skew the results.
 \\
-
-If it was done the other way around, the unstable version would always set the 
-new features to the default value, and they would therefore not be randomized.
 
 
             %%% GCC VERSIONS
@@ -1442,81 +1511,57 @@ new features to the default value, and they would therefore not be randomized.
 Roughly a third of the compilations were done with GCC version 5.1.0 and two 
 thirds with GCC version 4.9.2. This should not matter on what warnings are 
 returned. There is only one new warning that is enabled by the \texttt{-Wall} 
-flag in version 5.1.0
-    \footnote{\texttt{-Wc++14compat}}
-, and none of this type was found.
-
-
-
-\subsection{Firmware}
-
-Some places in the kernel, there are drivers, which rely on some external 
-proprietary binary blob, before they can be built. These binaries are not in 
-the kernel, but would have to be downloaded specifically and put in certain 
-folders in the kernel tree.
-
-These are throwing errors, which are local errors, and therefore invalid. The 
-task of getting all the drivers into the kernel tree was too great, so instead, 
-those configurations are simply skipped.
-
-This gives another bias in the sample, which now does not contain any 
-configurations with these features on.
-
-
-% --- 19 lines copied from further up
-The feature \textcode{CONFIG\_STANDALONE} for instance, has been enabled in all 
-the configurations in this project. If this feature is disabled, it allows for 
-firmware drivers to be compiled in the kernel. But these firmware drivers are 
-not open source, and must be placed in the kernel directories manually for the 
-compilation to work.
-
-Since it would be too cumbersome to find all the proprietary drivers, this 
-option of enabling the \textcode{CONFIG\_STANDALONE} feature has been chosen, 
-and will commit to a threat to validity in respect to representativeness.
+flag in version 5.1.0 (\texttt{-Wc++14compat}), and none of this type was found.
 \\
 
-Also every feature that had some relation to the \emph{z4c} library has been 
-diabled. This would require the host \footnote{explain what a host and target 
-are at some point further up} to have this library installed. This library was 
-not in the Linux distribution's repository, and it would have been too time 
-consuming to have it installed. 
+There is a possibility though, that \textsc{gcc} has been improved to be better 
+at finding certain warnings, and therefore the newer version will find more 
+warnings that older version.
 
-Therefore this also marks as a threat to validity.
-% ---- // 19 lines
 
-% --- Copied from further up ---
-The following is a list of mandatory features, which are added to decrease the 
-amount of host errors. In an early period of the project, it was found out that 
-these specific features with specific values would stop the compilation every 
-time.
 
-It decreases the configuration space of this project, but otherwise 
-would just give a lot of false positives.
+            %%% FIRMWARE
+            \subsection{Firmware}
+When building certain firmware drivers in Linux, external proprietary drivers 
+are needed, before they can be built. This firmware is not in the kernelcode, 
+but must be downloaded from the hardware vendors homepages.
 \\
 
-All these lines are added to the configurations, which are generated in
-this project.
+There are libraries on the internet which contain these firmware drivers, but 
+in this report, they will not be included. These drivers are in a sense not a 
+part of the open source Linux kernel, and are out of scope with this report.
+\\
+
+To disable configurations, which would require these proprietary firmware 
+drivers, the following features were given a fixed value in the configurations:
 
 \begin{itemize}
     \item \textcode{CONFIG\_STANDALONE=y}
     \item \textcode{CONFIG\_FW\_LOADER=n}
-    \item \textcode{CONFIG\_SECCOMP=y}
     \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
-    \item \textcode{CONFIG\_*LZ4*=n}
-        \footnote{This means that all features having to do with \emph{lz4} 
-                    were disabled}
 \end{itemize}
 
-% ----- //
 
+Also every feature that had some relation to the \textsc{z4c} library has been 
+disabled, since it was not installed on the build system.
+
+So all features, which were related to the \textsc{z4c} library were also given 
+a fixed value.
 
 \begin{itemize}
-    %\item Only run on x86 architecture
-    \item randconfig bias
-    %\item firmware blobs
-    \item Internal vs. External validity
-    \item The mandatory features?
+    \item \textcode{CONFIG\_*LZ4*=n}
 \end{itemize}
+
+
+Furthermore this feature is fixed, since it is also dependent on a library not 
+installed on the build system.
+
+\begin{itemize}
+    \item \textcode{CONFIG\_SECCOMP=y}
+\end{itemize}
+
+
+
 
 
 
