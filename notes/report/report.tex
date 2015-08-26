@@ -92,7 +92,7 @@
 % Graphics
 \usepackage{graphicx}   % need for figures
 \usepackage{color}      % use if color is used in text 
-\usepackage[table]{xcolor}     % use for text background color
+\usepackage[table]{xcolor}     % use for table and text background color
 \usepackage{tikz}
 \usetikzlibrary{arrows}
 \usepackage{float}
@@ -253,8 +253,7 @@ distibution\cite
 \\
 
 It was first developed in 1991 by \emph{Linus Torvalds}, and has since been 
-growing. Today the code base is 19 million lines of code\footnote
-    {\textcode{grep -r '.*' * | wc} in the kernel root folder}.
+growing. Today the code base is 19 million lines of code.
 
 
         \section{Variability}
@@ -295,14 +294,6 @@ hierarchy where certain people have authority over a specific part of the
 kernel\footnote
     {See the \textcode{MAINTAINERS} file in the root folder of the Linux kernel}
 
-\begin{center}
-
-
-    \emph{
-        Comment from the Linux team or something...
-    }
-\end{center}
-
 
         \subsection*{Stable Releases}
 
@@ -319,15 +310,15 @@ repeated.
 
         \subsection*{In-development Releases}
 
+        \def \fn {See the original post about it here: 
+        \url{https://lkml.org/lkml/2008/2/11/512}}
 The \emph{linux-next} tree is a \emph{git} repository, which 
 merges over 200 other \emph{git} repositories\cite
     {nextTrees},
 which are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
 merging these other trees every day and the merge conflicts are handled. 
 The \emph{linux-next} tree always contain the newest commits and is the main 
-testing version, and the latest in-development version\footnote
-    {See the original post about it here: 
-    \url{https://lkml.org/lkml/2008/2/11/512}}.
+testing version, and the latest in-development version\f.
 \\
 
 For this thesis project, both the \emph{linux-next} tree and the latest stable 
@@ -345,33 +336,63 @@ From the directory structure, over configuration, to compilation of the kernel.
         \subsection{Subsystems}
 
 The directories in the root folder of the Linux kernel source code are called 
-\emph{subsystems}. 
-
+\emph{subsystems}, and they contain code for different purposes. Some are large 
+crucial subsystems, and some are smaller and more for niche setups, and some 
+are infrastructure subsystems\cite{42bugs}, which contain scripts and tools for
+various uses.
+\\
 % --- Not showing this graph ---
 % \figa
 %     \includegraphics{plots/subsystemsizes.eps}
 % \figb{Visualization of the sizes of the subsystems}{fig:subsystems}
 % ---
 
-The \texttt{drivers/} subsystem is by far the largest subsystem. It contains 
-all hardware drivers. It is also mostly contributed to by hardware vendors.
+The \texttt{drivers/} subsystem is by far the largest subsystem (57\%). It 
+contains all device drivers. It is also mostly contributed to by hardware 
+vendors.
     \footnote{Source? and is it true? -What would Greg Kroah Hartman say?}
 Since it is the largest subsystem, one could suspect it to contain the most 
-errors. And even when taking relative size into account, one could suspect this
+warnings. And even when taking relative size into account, one could suspect this
 on the grounds of the majority of the code being written by hardware vendors.
 \\
 
-The \texttt{arch/} subsystem contains architecture specific source code. 
-There are 29 architectures in the \texttt{arch/} folder, which is why Linux is 
-the operating system, which supports the most architectures in the world.
-    \cite{22thbirthday}
-.
+The \texttt{arch/} subsystem (18\%) contains architecture specific source code. 
+There are 29 architectures in the \texttt{arch/} subsystem. To highlight a few, 
+the \texttt{x86} architecture is used for most common personal computers,
+the \texttt{arm} architecture is used mostly for mobile devices.
+
+In this project, only the \texttt{x86} architecture will be used.
 \\
 
-The \texttt{mm/} subsystem is for memory management, \texttt{security} is 
-libraries regarding security, and \texttt{kernel} is the where the kernel 
-specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and 
-\texttt{lib/}
+The \texttt{fs/} subsystem (6\%) is code regarding filesystems. 
+
+The \texttt{sound/} subsystem (5\%).
+
+The \texttt{net/} subsystem (5\%) is about networking.
+
+The \texttt{include/} subsystem (4\%) is.
+
+The \texttt{kernel/} subsystem (\%) is.
+
+The \texttt{mm/} subsystem (\%) is about memory management.
+The \texttt{crypto/} subsystem (\%) is.
+The \texttt{security/} subsystem (\%) is.
+The \texttt{block/} subsystem (\%) is.
+
+Other smaller subsystems are:
+
+\texttt{virt/},
+\texttt{ipc/},
+\texttt{init/},
+\texttt{usr/},
+\texttt{lib/},
+
+And infrastructure subsystems are:
+
+\texttt{tools/},
+\texttt{scripts/},
+\texttt{samples/},
+
 
 % --- Not showing this graph ---
 % \figa
@@ -387,7 +408,8 @@ specific code is. Other subsystems are \texttt{sound/}, \texttt{net/}, and
     from Andrzej). like 2**11,000
   . Find out how to find the exact number of possible configurations. It 
     is in some article, I got by Andrzej. Plus maybe SharpSAT.
-  . Write about all the subsystems and what they are for.
+  v Write about all the subsystems and what they are for.
+        Nah, I wrote a little bit about them.
   . Explain how to find the number of features by grepping.
   . Maybe talk about the percentage of code in every subsystems. What is 
     Linux kernel made of?
@@ -596,34 +618,46 @@ be commented on in the next section about the \textsc{gcc} warnings.
 The warnings have the output format \textcode{[-Wwarningtype]}, and this is 
 output whenever there is a warning. This makes the warnings very easy to 
 quantify automatically.
-\\
 
-If an error occurs during compilation, \textsc{gcc} will stop, and give an error
-message. The error messages though, are not as fulfilling as the warning 
-messages. Often an erroneous subprocess will return an errorcode to 
-\texttt{GCC}, which will then stop. 
-
-All that is shown is the errorcode, and the directory in which it occured.
-
-    \footnote{example of an error message}
-\\
-
-An error need not be a bug in the Linux kernel code. It can be a missing program
-on the machine that is compiling the code (the \emph{host machine}). These will
-be called \emph{host errors}.
-\\
+%If an error occurs during compilation, \textsc{gcc} will stop, and give an error
+%message. The error messages though, are not as fulfilling as the warning 
+%messages. Often an erroneous subprocess will return an errorcode to 
+%\texttt{GCC}, which will then stop. 
 
 
 
+            %%% GCC WARNINGS
+            \subsection{Gcc Warnings}
+Here follows a list of the warnings that was found during the experiment.
+They are ordered alphabetically. 
 
-        \subsection{GCC Warnings}
-Here follows a list of the warnings that was found during the compilations. 
-They are ordered alphabetically.
+They will be categorized into these types of warnings:
+
+\begin{itemize}
+    \item Severe warnings
+
+These warnings will have a chance of breaking the code by returning a wrong
+value, or breaking the compilation.
+
+    \item Code pollution warnings
+
+These warnings will not break the code, or return wrong values, but will play a 
+role in fitting the Linux kernel on a device with space limitations (such as 
+embedded devices).
+
+    \item Unsevere
+
+These warnings are deemed unsevere for this report. This does not mean, that 
+they can not be severe in other projects.
+
+\end{itemize}
 
 
-            \paragraph{array-bounds}
-is given, when GCC is certain that a subscript to an array is always out of 
-bounds.
+            \subsection*{array-bounds}
+is given, when \textsc{gcc} is certain that a subscript to an array is always 
+out of bounds.
+
+This will be classified as a \emph{severe} warning.
 
 % See example in figure \ref{lst:arraybounds}.
 
@@ -632,44 +666,56 @@ bounds.
 % \figb{}{lst:arraybounds}
 
 
-            \paragraph{cpp}
+            \subsection*{cpp}
 will show \textcode{\#warning} directives written in the code. This is a warning
 message that the coder can pass to the compiler. Often they will not result in 
 an error.
 
-
-            \paragraph{deprecated-declarations}
-will show warnings when functions, variables, or types have been declared 
-deprecated be a programmer.
+This is categorized as \emph{unsevere}.
 
 
-            \paragraph{discarded-array-qualifiers}
-            \paragraph{error=}
-is a prefix, which means that the warning will cause an error. Sometimes 
-developers do not want a specific warning to happen without the compilation 
-stopping. Then they can enable this flag in the makefile.
+            \subsection*{deprecated-declarations}
+This will show a warning when a function is used, which a programmer has 
+declared deprecated. This typically means that a function is run, which is old
+and has been replaced by another function.
 
-There is also a \texttt{no-error=}, which nullifies the \texttt{error=} flag.
+This is categorized as \emph{severe}.
 
 
-            \paragraph{frame-larger-than=}
-            \paragraph{implicit-function-declaration}
-            \paragraph{incompatible-pointer-types}
-            \paragraph{int-conversion}
-            \paragraph{int-to-pointer-cast}
+            \subsection*{discarded-array-qualifiers}
+            \subsection*{error=}
+This warning is a prefix, which can be put in front of all warning types. It 
+means that the warning will cause an error. Sometimes developers do not want a 
+specific warning to happen without the compilation stopping. Then this flag can 
+be enabled to make sure it will stop.
+
+This is an error, and will \emph{not} be categorized.
+
+            \subsection*{frame-larger-than=}
+            \subsection*{implicit-function-declaration}
+            \subsection*{incompatible-pointer-types}
+            \subsection*{int-conversion}
+            \subsection*{int-to-pointer-cast}
 \emph{See the section about pointer-to-int on page \pageref{par:pointertoint}}
 
-            \paragraph{logical-not-parentheses}
-occurs when the left hand side of an expression contains a \emph{logical not} 
-(a \texttt{!} in C). An example is \textcode{if (!ret == template[i].fail)}
-    \footnote{From the file \texttt{crypto/testmgr.c}}
-.
+
+            \subsection*{logical-not-parentheses}
+This warning occurs when the left hand side of an expression contains a 
+\emph{logical not} (a \texttt{!} in C). An example is 
+    \textcode{if (!ret == template[i].fail)} 
+from the file \texttt{crypto/testmgr.c}.
+
+The statement can be interpreted like 
+\textcode{! (ret == template[i].fail)} 
+or 
+\textcode{(!ret) == template[i].fail}
+
 
 The warning refers to the \textcode{!ret}, which should have been inside 
 parentheses to be correct, like so \textcode{(!ret)}.
 
 
-            \paragraph{maybe-uninitialized}
+            \subsection*{maybe-uninitialized}
 is when there is an uncertainty about a variable being uninitialized. In the 
 case in Figure \ref{lst:maybeuninitializedreal} there is a 
 \texttt{switch-case} where \texttt{sgn} is not initialized in all of the cases.
@@ -683,24 +729,47 @@ warning.
 \figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
 
 
-            \paragraph{overflow}
+            \subsection*{overflow}
+This is when an integer is truncated into an unsigned type. This can lead to 
+wrong data, and is categorized as a \emph{severe} warning.
 
-
-            \paragraph{pointer-to-int-cast}
+            \subsection*{pointer-to-int-cast}
             \label{par:pointertoint}
 This warning would normally be sign of bad code. It is usually when a pointer 
 is cast to a \texttt{long} and then later cast back into a function call. This 
 is widely spread in Linux to simulate the effects of \emph{Object Oriented 
 Programming}.
+
+This will be categorized as \emph{Unsevere}.
     \footnote{source: Claus... find other source.}
 
 
-            \paragraph{return-type}
-            \paragraph{switch-bool}
-            \paragraph{uninitialized}
-            \paragraph{unused-function}
-is a warning about a function that has never been called. This represents dead 
-code, or code pollution. 
+            \subsection*{return-type}
+This will be shown when there is a function, which has no return type. 
+
+This is categorized as an \emph{unsevere} warning.
+
+
+            \subsection*{switch-bool}
+This warning is shown when a \textcode{switch} statement has \textcode{case}
+values that are outside the \texttt{boolean} value range.
+
+This is categorized as \emph{unsevere}.
+
+
+            \subsection*{uninitialized}
+This warns about uninitialized variables. The variable has been declared, but 
+has not yet been given a value.
+
+This is categorized as a \emph{severe} warning.
+
+
+            \subsection*{unused-function}
+This is a warning about a function, which has been declared and initialized, 
+but has never been called. 
+
+This is categorized as \emph{code pollution}.
+\\
 
 In the example in Figure \ref{lst:unusedfuncreal}, the function 
 \texttt{bq27x00\_powersupply\_unregister} will not be called if the feature 
@@ -713,12 +782,14 @@ unused function.
     \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
 
 
-            \paragraph{unused-variable}
-is basically the same as \texttt{unused-function}, but only with a variable 
-instead of a function. There will be no example of this.
+            \subsection*{unused-variable}
+is the same as \texttt{unused-function}, but only with a variable instead of a 
+function. There will be no example of this.
+
+It is also categorized as \emph{code pollution}.
 
 
-            \paragraph{unused-label}
+            \subsection*{unused-label}
 
 
 %TODO
@@ -1050,55 +1121,54 @@ is a qualitative analysis of bugs in Linux.
 \newpage
 \chapter{Results}
 
-A total of 42,060 configurations were compiled. Half of them from the unstable 
-Linux version, and the other half a stable version of Linux.
+A total of 42,060 configurations were compiled. Half of them from the 
+in-development Linux version, and the other half of the latest stable version 
+of Linux.
 
-    \subsection{Stable}
+            %% STABLE LINUX VERSION
+            \section{Stable Linux Version}
 In table \ref{stablewarndis} is shown the distribution of warnings in the 
 stable Linux kernel. The warnings that will cause code pollution are typed in 
 grey and the more severe ones, that might cause a compilation error is typed 
 in black.
 
-17\% of the compilations stopped with an error. These errors were often host 
-errors, and will not be looked into. The compilations that had errors were made 
-to stop after the first error was found to not have data pollution caused by an 
-avalanche effect.
+17\% of the compilations stopped with an error. These errors were mostly 
+errors, which were specific for the build machine because of missing libraries 
+or programs, and will not be looked into.  The compilations that had errors 
+were made to stop after the first error was found to not have data pollution 
+caused by an avalanche effect.
 
 \figa
-    \begin{tabular}{r|d}
+    \begin{tabular}{r|d|c}
         \hline
         \hline
-        \textbf{Warning} & \multicolumn{1}{c}{\textbf{Percentage}} \\
+        \textbf{Warning} & \multicolumn{1}{c}{\textbf{Percentage}} & 
+            \textbf{Category}\\
         \hline
 
-            \rowcolor[gray]{0.8}
-        {unused-function} & 59. \% \\
-        maybe-uninitialized & 45. \% \\
-        logical-not-parentheses & 30. \% \\
-            \rowcolor[gray]{0.8}
-        unused-variable & 29. \% \\
-        cpp & 24. \% \\
-        uninitialized & 19. \% \\
+        {unused-function} & 59. \% & Code pollution \\
+        maybe-uninitialized & 45. \% & Severe \\
+        logical-not-parentheses & 30. \% & Unsevere \\
+        unused-variable & 29. \% & Code pollution \\
+        cpp & 24. \% & Unsevere \\
+        uninitialized & 19. \% & Severe \\
             \rowcolor{red}
-        {ERROR} & 17. \%  \\
-        pointer-to-int-cast & 17.\% \\
-        discarded-array-qualifiers & 17.\% \\
-        switch-bool & 15.\% \\
-        frame-larger-than= & 14.\% \\
-        array-bounds & 11.  \% \\
-        return-type & 7.7 \% \\
-        int-to-pointer-cast & 7.6 \% \\
-        overflow & 6.5 \% \\
-            \rowcolor[gray]{0.8}
-        unused-label & 5.4 \% \\
-        deprecated-declarations & 5.4 \% \\
-            \rowcolor[gray]{0.8}
-        error=implicit-function-declaration & 4.6 \% \\
-        int-conversion & 2.7 \% \\
-        implicit-function-declaration & 1.0 \% \\
-        incompatible-pointer-types & 0.74 \% \\
-            \rowcolor[gray]{0.8}
-        error=implicit-int & 0.029 \% \\
+        {ERROR} & 17. \%  & - \\
+        pointer-to-int-cast & 17.\% & Unsevere \\
+        discarded-array-qualifiers & 17.\% & Unsevere \\
+        switch-bool & 15.\% & Severe \\
+        frame-larger-than= & 14.\% & Severe \\
+        array-bounds & 11.  \% & Severe \\
+        return-type & 7.7 \% & Severe \\
+        int-to-pointer-cast & 7.6 \% & Unsevere \\
+        overflow & 6.5 \% & Severe \\
+        unused-label & 5.4 \% & Code Pollution \\
+        deprecated-declarations & 5.4 \% & Severe \\
+        error=implicit-function-declaration & 4.6 \% & - \\
+        int-conversion & 2.7 \% & xxx \\
+        implicit-function-declaration & 1.0 \% & xxx \\
+        incompatible-pointer-types & 0.74 \% & xxx \\
+        error=implicit-int & 0.029 \% & - \\
 
         \hline
         \hline
@@ -1108,9 +1178,26 @@ avalanche effect.
 
             %% SUBSYSTEMS WITH WARNINGS
             \section{Subsystems With Warnings}
-Every warning with a subsystem is distributed as in Figure \ref{stablessdis}. 
-Many warnings contain multiple subsystems, so the percentages will not equal 
-100\%.
+Figure \ref{stablessdis} shows the distribution of subsystems with warnings in 
+all of the compilations on the stable Linux version.
+
+In many compilation runs, there were multiple warnings, so the percentages will 
+not add up to 100\%.
+
+The greyed out rows are for subsystems that are not a major part of the kernel 
+functionality. This is inspired by\cite{42bugs}.
+\\
+
+            \def \fn {Source on this.}
+The \texttt{drivers/} subsystem is by far the most represented subsystem in all
+of the compilation runs. This suits the information about \texttt{drivers/} 
+being the largest subsystem, and also that this subsystem is in particular 
+contributed to by hardware vendors\f.
+
+There are near zero warnings in the \texttt{security/} subsystem. This can both 
+be an indication of a small subsystem, but also, that it is an important 
+subsystem. Security is a key issue in the world of computers.
+
 
 \figa
     %\begin{tabular}{r|r@{.}l}
@@ -1151,9 +1238,12 @@ Many warnings contain multiple subsystems, so the percentages will not equal
         \hline
         \hline
     \end{tabular}
-\figb{Distribution of all subsystems with warnings}{stablessdis}
+\figb{Distribution of all subsystems within the warnings}{stablessdis}
 
 
+
+
+\iffalse % --- 65 lines down
 
 \figa
     \begin{tabular}{c|c|c|c}
@@ -1218,6 +1308,7 @@ Many warnings contain multiple subsystems, so the percentages will not equal
     \end{tabular}
 \figb{Percentage of subsystems that were present in errorneous compilations}{}
 
+\fi % --- 65 lines up
 
 
 
@@ -1254,6 +1345,14 @@ configurations with config warnings is very little, and is claimed irrelevant.
     erroneous compilation}{tbl:confwarns}
 
 \fi % --- 32 lines up
+
+
+
+            %% IN-DEVELOPMENT VERSION VS. STABLE VERSION
+            \section{In-Development Version vs.\ Stable Version}
+
+
+
 
 % TODO
 \iffalse
