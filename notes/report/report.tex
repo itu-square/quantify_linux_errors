@@ -698,7 +698,7 @@ value or doing wrong logic.
 
     \item \textbf{Code pollution warnings}
 
-These warnings will not break the code, or return wrong values, merely be 
+These warnings will not break the code, or return wrong data, merely be 
 unused code. This plays a role in fitting the Linux kernel on devices with 
 space limitations (such as embedded devices).
 
@@ -730,7 +730,7 @@ Linux kernel are present, they are simpilified.
 This warning is given, when \textsc{gcc} is certain that a subscript to an array is always 
 out of bounds.
 
-This will be categorized as a \emph{wrong value} warning.
+This will be categorized as a \emph{wrong data} warning.
 
 % See example in figure \ref{lst:arraybounds}.
 
@@ -752,21 +752,13 @@ This will show a warning when a function is used, which a programmer has
 declared deprecated. This typically means that a function is run, which is old
 and has been replaced - or has not yet been replaced - by another function.
 
-This is categorized as a \emph{wrong value} warning.
+This is categorized as a \emph{wrong data} warning.
 
 
-            \subsection*{discarded-array-qualifiers}
+            \subsection*{frame-larger-than=NUMBER}
+This is a warning that the stack frame is larger than NUMBER.
 
-
-            \subsection*{error=}
-This is a prefix, which can be put in front of all warning types. It 
-will treat the warning as an error, because the developers do not want a 
-specific warning to happen without the compilation stopping. 
-
-This is an error, and will be categorized as \emph{irrelevant}.
-
-
-            \subsection*{frame-larger-than=}
+This is categorized as \emph{irrelevant}.
 
 
             \subsection*{implicit-function-declaration}
@@ -775,23 +767,33 @@ This is given, when a a function has not been declared, but is being used.
 This is categorized as \emph{bad code practice}.
 
 
+            \iffalse % --- only in gcc 5.9
+
             \subsection*{incompatible-pointer-types}
 This shows when there is converted between pointers, which have incompatible 
 types.
 
-This is categorized as a \emph{wrong value} warning.
+This is categorized as a \emph{wrong data} warning.
 
+            \fi % ---
+
+
+            \iffalse % --- only in gcc 5.2
 
             \subsection*{int-conversion}
 This warns about incompatible conversions between integers and pointers.
 
-This is categorized as \emph{wrong value}.
+This is categorized as \emph{wrong data}.
+
+            \fi % ---
 
             \subsection*{int-to-pointer-cast}
 This warns about an integer being cast to a pointer with a different size.
 
-This will be categorized as \emph{wrong value}.
+This will be categorized as \emph{wrong data}.
 
+
+            \iffalse % --- This was only in gcc 5.2
 
             \subsection*{logical-not-parentheses}
 This warning occurs when the left hand side of an expression contains a 
@@ -807,11 +809,14 @@ the same in all cases:
     \item \textcode{(!ret) == template[i].fail}
 \end{itemize}
 
-This is categorized as \emph{wrong value}.
+This is categorized as \emph{wrong data}.
+
+            \fi % --- 17 lines up
 
 
             \subsection*{maybe-uninitialized}
-This warning shows when there is an uncertainty about a variable being uninitialized. In the 
+This warning is related to the \emph{uninitialized} warning. This shows when 
+there is an uncertainty about a variable being uninitialized. In the 
 case in Figure \ref{lst:maybeuninitializedreal} there is a \texttt{switch-case} 
 where the variable \textcode{sgn} is not initialized in all of the cases.
 
@@ -824,18 +829,18 @@ return this warning.
     }
 \figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
 
-This is categorized as \emph{wrong value}.
+This is categorized as \emph{wrong data}.
 
 
             \subsection*{overflow}
 This is when an integer is truncated into an unsigned type. This can lead to 
-wrong data, and is categorized as a \emph{wrong value} warning.
+wrong data, and is categorized as a \emph{wrong data} warning.
 
 
             \subsection*{pointer-to-int-cast}
 This warns about a pointer being cast to an integer with a different size.
 
-This will be categorized as \emph{wrong value}.
+This will be categorized as \emph{wrong data}.
 
 
             \subsection*{return-type}
@@ -846,19 +851,22 @@ This is categorized as a \emph{bad code practice} warning.
 % TODO: is it really?
 
 
+            \iffalse % --- Was only in gcc 5.2
+
             \subsection*{switch-bool}
 This warning is shown when a \texttt{boolean} is used in a \texttt{switch} 
 statement. When dealing with a \texttt{boolean}, an \texttt{if} statement 
 should suffice, and this warning might indicate that the wrong variable is used.
 
-This is categorized as \emph{wrong value}.
+This is categorized as \emph{wrong data}.
 
+            \fi % ---
 
             \subsection*{uninitialized}
 This warns about uninitialized variables. The variable has been declared, but 
 has not yet been given a value.
 
-This is categorized as a \emph{wrong value} warning.
+This is categorized as a \emph{wrong data} warning.
 
 
             \subsection*{unused-function}
@@ -1169,8 +1177,6 @@ caused by an avalanche effect.
         {unused-function} & 59. \% & Code pollution \\
             \rowcolor{red!20}
         maybe-uninitialized & 45. \% & Wrong data \\
-            \rowcolor{red!20}
-        logical-not-parentheses & 30. \% & Wrong data \\
             \rowcolor{blue!20}
         unused-variable & 29. \% & Code pollution \\
             \rowcolor{gray!30}
@@ -1181,29 +1187,23 @@ caused by an avalanche effect.
         ERROR & 17. \%  & Irrelevant \\
             \rowcolor{red!20}
         pointer-to-int-cast & 17.\% & Wrong data \\
-        discarded-array-qualifiers & 17.\% & xxx \\
+            \rowcolor{gray!30}
+        frame-larger-than= & 14.\% & Irrelevant \\
             \rowcolor{red!20}
-        switch-bool & 15.\% & Wrong data \\
-        frame-larger-than= & 14.\% & xxx \\
-            \rowcolor{red!20}
-        array-bounds & 11.  \% & Wrong value \\
+        array-bounds & 11.  \% & Wrong data \\
             \rowcolor{green!20}
         return-type & 7.7 \% & Bad Code Practice \\
             \rowcolor{red!20}
         int-to-pointer-cast & 7.6 \% & Wrong data \\
             \rowcolor{red!20}
-        overflow & 6.5 \% & Wrong value \\
+        overflow & 6.5 \% & Wrong data \\
             \rowcolor{blue!20}
         unused-label & 5.4 \% & Code Pollution \\
             \rowcolor{red!20}
         deprecated-declarations & 5.4 \% & Wrong data \\
         %error=implicit-function-declaration & 4.6 \% & Irrelevant \\
-            \rowcolor{red!20}
-        int-conversion & 2.7 \% & Wrong data \\
             \rowcolor{green!20}
         implicit-function-declaration & 5.6 \% & Bad code practice \\ % 4.6 added from 2 lines up.
-            \rowcolor{red!20}
-        incompatible-pointer-types & 0.74 \% & Wrong data \\
         %error=implicit-int & 0.029 \% & - \\
 
         \hline
@@ -1217,26 +1217,24 @@ The following observations have been made:
 
 \textbf{Observation 1:}
 The most common warnings in the \emph{Wrong data} category are: 
-\emph{x}, \emph{x}, and 
-\emph{x}.
+\emph{maybe-uninitialized} and \emph{uninitialized}, which are two related 
+warnings.
 \\
 
 \textbf{Observation 2:}
-The most common warnings in the \emph{Code pollution} category are: 
-\emph{x}, \emph{x}, and 
-\emph{x}.
-\\
+Two out of three \emph{code pollution} warnings \emph{unused-function} and 
+\emph{unused-variable} are both in the top 3 of most common warnings.
 
-\textbf{Observation 3:}
-The most common warnings in the \emph{Bad code practice} category are: 
-\emph{x}, \emph{x}, and 
-\emph{x}.
+The most common warnings in the \emph{Code pollution} category are: 
+\emph{unused-function} and \emph{unused-variable}
 \\
 
 With these observations, \textbf{RQ1} can be answered.
 \\
 
 \textbf{Conclusion 1:}
+The most common warnings, are warnings regarding \emph{code pollution}, and
+next come warnings related to variables being uninitialized.
 
 
 
@@ -1255,7 +1253,7 @@ all of the compilations on the stable Linux version.
 In many compilation runs, there were multiple warnings, in the same subsystems. 
 they are only counted once.
 
-The green and blue rows are subsystems that are not a major part of the kernel 
+The red rows are subsystems that are not a major part of the kernel 
 functionality, as mentioned in  Section \ref{sec:linuxss}.
 \\
 
@@ -1277,22 +1275,22 @@ functionality, as mentioned in  Section \ref{sec:linuxss}.
         crypto/ &  17. \%  \\
         sound/ &  16. \%  \\
         mm/ &  14. \%  \\
-            \rowcolor{gray!40}
+            \rowcolor{red!30}
         {usr/} &  12. \%  \\ % Same exact number as samples/
-            \rowcolor{gray!60}
+            \rowcolor{red!40}
         {samples/} &  12. \%  \\ % Same exact number as usr/
         lib/ &  11. \%  \\
         block/ &  8.5  \% \\
-            \rowcolor{gray!60}
+            \rowcolor{red!40}
         {scripts/} &  1.8 \% \\
         security/ &  0.091 \% \\
-            \rowcolor{gray!40}
+            \rowcolor{red!30}
         {ipc/} &  0.0048 \% \\
-            \rowcolor{gray!40}
+            \rowcolor{red!30}
         {init/} &  0.0048 \% \\
-            \rowcolor{gray!60}
+            \rowcolor{red!40}
         {tools/} &  0.0048 \% \\
-            \rowcolor{gray!40}
+            \rowcolor{red!30}
         {virt/} &  0.0 \% \\
 
         \hline
@@ -1321,62 +1319,73 @@ subsystem, which a lot of work are put into.
             \section{In-Development Version vs.\ Stable Version}
 
 \figa
-    \begin{tabular}{r|d|d|c}
+    \subfigure[Stable version]{
+    \begin{tabular}{r|d}
         \hline
         \hline
-        \textbf{Warning} & \multicolumn{1}{|c|}{\textbf{Stable}} & 
-        \textbf{In-Dev} & \textbf{Category}\\
+        \textbf{Warning} & \multicolumn{1}{c}{\textbf{\%}} \\
         \hline
 
             \rowcolor{blue!20}
-        {unused-function} & 59. \% & 62. \% & Code pollution \\
+        {unused-function} & 59. \% \\
             \rowcolor{red!20}
-        maybe-uninitialized & 45. \% & 44. \% & Wrong data \\
-            \rowcolor{red!20}
-        logical-not-parentheses & 30. \% & 29. \% & Wrong data \\
+        maybe-uninitialized & 45. \% \\
             \rowcolor{blue!20}
-        unused-variable & 29. \% & 51. \% & Code pollution \\
+        unused-variable & 29. \% \\
             \rowcolor{gray!30}
-        cpp & 24. \% & 22. \% & Irrelevant \\
+        cpp & 24. \% \\
             \rowcolor{red!20}
-        uninitialized & 19. \% & 18. \% & Wrong data \\
+        uninitialized & 19. \% \\
             \rowcolor{gray!30}
-        ERROR & 17. \%  & 38. \% & Irrelevant \\
+        ERROR & 17. \%  \\
             \rowcolor{red!20}
-        pointer-to-int-cast & 17.\% & 17. \% & Wrong data \\
-        discarded-array-qualifiers & 17.\% & 17. \% & xxx \\
+        pointer-to-int-cast & 17.\% \\
+            \rowcolor{gray!30}
+        frame-larger-than= & 14.\% \\
             \rowcolor{red!20}
-        switch-bool & 15.\% & 15. \% & Wrong data \\
-        frame-larger-than= & 14.\% & 7.8 \% & xxx \\
-            \rowcolor{red!20}
-        array-bounds & 11.  \% & 10. \% & Wrong value \\
+        array-bounds & 11.  \% \\
             \rowcolor{green!20}
-        return-type & 7.7 \% & 7.8 \% & Bad Code Practice \\
-            \rowcolor{red!20}
-        int-to-pointer-cast & 7.6 \% & 25. \% & Wrong data \\
-            \rowcolor{red!20}
-        overflow & 6.5 \% & 6.0 \% & Wrong value \\
-            \rowcolor{blue!20}
-        unused-label & 5.4 \% & 4.7 \% & Code Pollution \\
-            \rowcolor{red!20}
-        deprecated-declarations & 5.4 \% & 5.2 \% & Wrong data \\
-        %error=implicit-function-declaration & 4.6 \% & Irrelevant \\
-            \rowcolor{red!20}
-        int-conversion & 2.7 \% & 4.2 \% & Wrong data \\
-            \rowcolor{green!20}
-        implicit-function-declaration & 5.6 \% & 23. \% & Bad code practice \\ % 4.6 added from 2 lines up.
-            \rowcolor{red!20}
-        incompatible-pointer-types & 0.74 \% & 3.2 \% & Wrong data \\
-        %error=implicit-int & 0.029 \% & - \\
+        return-type & 7.7 \% \\
 
         \hline
         \hline
     \end{tabular}
-\figb{Distribution of warnings in the stable kernel}{stablewarndis}
+    }
+    \subfigure[In-development version]{
+    \begin{tabular}{r|d}
+        \hline
+        \hline
+        \textbf{Warning} & \multicolumn{1}{c}{\textbf{\%}} \\
+        \hline
 
-The results show some differences, and the following observations can be made.
+            \rowcolor{blue!20}
+        {unused-function} & 62. \% \\
+            \rowcolor{blue!20}
+        unused-variable & 51. \% \\
+            \rowcolor{red!20}
+        maybe-uninitialized & 44. \% \\
+            \rowcolor{gray!30}
+        ERROR & 38. \%  \\
+            \rowcolor{red!20}
+        int-to-pointer-cast & 25. \% \\
+            \rowcolor{green!20}
+        implicit-function-declaration & 23. \% \\
+            \rowcolor{gray!30}
+        cpp & 22. \% \\
+            \rowcolor{red!20}
+        uninitialized & 18. \% \\
+            \rowcolor{red!20}
+        pointer-to-int-cast & 17.\% \\
+            \rowcolor{red!20}
+        array-bounds & 10.  \% \\
 
---- table with comparisson ---
+        \hline
+        \hline
+    \end{tabular}
+    }
+\figb{Comparrison of the top 10 warnings}{stablewarndis}
+
+
 
 
 
@@ -1396,30 +1405,26 @@ The results show some differences, and the following observations can be made.
             \section{External Validity}
             \label{sec:extval}
 
-            %%% GENERALIZATION
-            \subsection{Generalization}
-            \label{sec:consel}
 
-All the selected configurations are not a representative subset of all possible
-configurations, and therefore does not fully represent all of the Linux kernel. 
-The method by which the configurations are selected, does not select 
-configurations between the whole configuration space equally.
+            %%% ONLY ONE SOFTWARE PRODUCT
+            \section{Only One Software Product}
 
-There is a bias towards selecting configurations that will not visit the 
-deepest layers of the dependency tree.
+
+            %%% ONLY ONE ARCHITECTURE
+            \section{Only One Architecture}
+
+
+
+            %% INTERNAL VALIDITY
+            \section{Internal Validity}
+            \label{sec:intval}
 
             %% THE BUILT-IN RANDCONFIG
             \subsection{The Built-In \texttt{randconfig} Configurator}
             \label{sec:randconfbias}
 
-Unfortunately, the built-in \texttt{randconfig} is not representative, but is 
-biased towards features higher up in the feature model tree. See Section 
-\ref{ch:ttv} about Threats to Validity for more information about how 
-\texttt{randconfig} is biased.
-
-So, for the sample to be representative, another way to generate configurations 
-must be found.
-\\
+The built-in configurator \texttt{randconfig} is not representative, but is 
+biased towards features higher up in the feature model tree. 
 
 Figure ~\ref{randconfigtoy} shows a toy example of a \textsc{Kconfig} feature 
 model written in the \textsc{Kconfig} language.  It is a very small example 
@@ -1436,8 +1441,10 @@ none of them are enabled. The outcome where only \texttt{B} is enabled is an
 invalid configuration since \texttt{B} depends on \texttt{A}.
 
 \figa
-    \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
+    \subfigure{
+        \lstinputlisting[language=C, firstline=1, morekeywords={prompt, config, 
         depends, on, bool, endchoice, choice,{||}}]{code/kconfigrandconfigtoy}
+    }
 \figb{A toy \textsc{Kconfig} feature model}{randconfigtoy}
 
 Figure \ref{fig:randtoy50} shows how \texttt{randconfig} will decide whether 
@@ -1535,11 +1542,6 @@ configuration creation. (See more about representativeness in the section
 
 
 
-            %% INTERNAL VALIDITY
-            \section{Internal Validity}
-            \label{sec:intval}
-
-
             %%% 9 DIFFERENT IN_DEVELOPMENT VERSIONS
             \subsection{9 Different In-Development Versions}
 Multiple different in-development versions of the Linux kernel are used to 
@@ -1564,16 +1566,19 @@ random values, but always default values, which will skew the results.
 
 
             %%% GCC VERSIONS
-            \subsection{Gcc versions}
+            \subsection{\textsc{gcc} Versions}
 Roughly a third of the compilations were done with GCC version 5.1.0 and two 
 thirds with GCC version 4.9.2. This should not matter on what warnings are 
 returned. There is only one new warning that is enabled by the \texttt{-Wall} 
 flag in version 5.1.0 (\texttt{-Wc++14compat}), and none of this type was found.
 \\
 
-There is a possibility though, that \textsc{gcc} has been improved to be better 
-at finding certain warnings, and therefore the newer version will find more 
-warnings that older version.
+The warning \texttt{discarded-array-qualifiers} showed only on the experiments 
+with the newer version, as the only one. This warning was discarded.
+\\
+
+There is a possibility though, that the newer version is better 
+at finding certain warnings, which will not be clear to see in the data.
 
 
 
@@ -1624,16 +1629,23 @@ installed on the build system.
 % . Coverity 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                      DISCUSSION AND FUTURE WORK
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            \newpage
+            \chapter{Discussion and Future Work}
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           RELATED WORK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\chapter{Related Work}
+            \newpage
+            \chapter{Related Work}
 
-\textbf{Variability bugs}
-The paper \emph{42 Variability Bugs in the Linux Kernel...}\cite{42paper} is 
+            \subsection*{Variability bugs}
+The paper \emph{42 Variability Bugs in the Linux Kernel...}\cite{42bugs} is 
 looking at bugs in the linux kernel from a qualitative angle rather than 
 quantitative.  The bugs are manually analysed, and discussed.
 
