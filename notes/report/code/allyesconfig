@@ -1,0 +1,13 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# Linux Kernel Configuration
+#
+CONFIG_CALLS=y
+CONFIG_SCREEN=y
+# CONFIG_COLOR is not set
+# CONFIG_BW is not set
+CONFIG_HD=y
+CONFIG_GPS=y
+CONFIG_MEDIA=y
+CONFIG_CAMERA=y
+CONFIG_MP3=y
