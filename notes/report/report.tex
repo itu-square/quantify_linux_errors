@@ -64,6 +64,10 @@
 
 % Creating my own inline code font
 \newcommand{\textcode}[1]{\fboxsep=1pt\texttt{\colorbox{gray!20}{#1}}}
+\newcommand{\textred}[1]{\fboxsep=1pt{\colorbox{red!20}{#1}}}
+\newcommand{\textgreen}[1]{\fboxsep=1pt{\colorbox{green!20}{#1}}}
+\newcommand{\textgray}[1]{\fboxsep=1pt{\colorbox{gray!20}{#1}}}
+\newcommand{\textblue}[1]{\fboxsep=1pt{\colorbox{blue!20}{#1}}}
 
 % Recreating the figure thingy
 \newcommand{\figa}{
@@ -190,7 +194,7 @@ Software projects with a high variability rate can be configured, to suit many
 needs with the same code base. Possibly the largest open source project, which 
 also happens to be the project with the highest variability rate
 is the Linux kernel. It contains approximately 10,000 different configuration 
-options.
+options in the feature model.
 \\
 
 The basis for this paper is another  paper: \emph{42 Variability 
@@ -227,39 +231,33 @@ are located.
 \newpage
         \chapter{Background}
 
-A \emph{Linux} operating system is often referring to a \emph{GNU/Linux} 
-operating system, where the Linux part of \emph{GNU/Linux} is the Linux kernel, 
-and the \emph{GNU} part is a software bundle with utilities (eg. a shell, a 
-compiler, etc...) \cite{gnupack}. Both is 
-needed, to have a working operating system. 
-
-This report will only focus on the \emph{Linux kernel}, and not the \emph{GNU} 
-bundle.
-
-
         \section{Variability}
-Many software products are configurable in some way. This creates the 
+Many software products are configurable in some way. Configurability creates the 
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different functionalities. 
 \\
 
 This is called \emph{variability} in software, and a software product of 
-this type is called a \emph{Software Product Line} (SPL). software products 
+this type is called a \emph{Software Product Line} (SPL). Software products 
 with different functionalities can be derived from the same source code base, 
-and the code in its entirety is not a valid product\cite[p. 1]{IntDatSPL}.
+and the code in its entirety is not a valid product\cite[p. 1]{IntDatSPL}, it 
+has to be configured.
 \\
 
         \def \fn {14,387 across all architectures, with an average of 9,984 per 
-        architecture, and 10,335 for the \texttt{x86/} architecture}
+        architecture, and 10,335 for the \texttt{x86} architecture, which is used
+        in this project.}
 
 Software with a high-degree of variability is usually refered to as 
 \emph{Variability-Intensive Systems} or \emph{VISs}. Linux is a \emph{VIS} with 
-more than 14,000 different configuration option, called \emph{features}\f.
-Other examples of \textsc{VISs} are \textsc{BusyBox}, \textsc{Eclipse}, 
+more than 14,000\f different configuration options, called \emph{features}.
+Other examples of \emph{VISs} are \textsc{BusyBox}, \textsc{Eclipse}, 
 \textsc{Amazon Elastic Compute Service}, and \textsc{Drupal Content Management 
 Framework}\cite[p. 1]{VarTesDrupal} to name a few.
 \\
 
+All features in a software product line, and their options and relations are 
+described in a \emph{feature model}.
 
         \subsection{Feature Models}
 
@@ -273,18 +271,21 @@ to that of the Linux kernel. With many thousands of features, the feature model
 of the Linux kernel is too big to fit on a normal sized paper.
 
 Figure \ref{featurediagramphone} depicts a feature model of a phone 
-configuration, where there are some mandatory features: \textbf{Screen} and 
-\textbf{Calls}, and some optional: \textbf{GPS} and \textbf{Media}, with 2 
-optional features \textbf{Camera} and \textbf{MP3} depending on \textbf{Media}.
+configuration with 10 features, where some are mandatory: \textbf{Screen} and 
+\textbf{Calls}, and some are optional: \textbf{GPS} and \textbf{Media}, which has 2
+optional features \textbf{Camera} and \textbf{MP3} depending on it.
 
 There is also some choice options \textbf{Color}, \textbf{BW}, and \textbf{High 
-Definition} for the screen type, where only one of them may be enabled. A 
+Definition} for the screen type, where only one of them may be enabled. 
+\textbf{High Definition} is the default choice. A 
 cross-tree constraint is also present, which states that \textbf{Media} with 
 all of its children can only be enabled if a \textbf{High Definition} screen is 
 enabled.
 
 The feature diagram is inspired by \cite{AAFM}, but there is no consensus on a 
-unified notation for attributes in feature models\cite{AAFM}.
+unified notation for attributes in feature models\cite{AAFM}. And for there is 
+for example no notation in the diagram, that \textbf{High Definition} is the 
+default value for the choice clause.
 
 
 % The feature diagram
@@ -381,12 +382,12 @@ kernel feature model hierarchy, for example, is only 8 layers deep\cite[p.
 
             \def \fn {See the \textcode{README} file in the Linux kernel tree}
 
-The Linux kernel is written in by many thousand of people all over 
+The Linux kernel is written by many thousand of people all over 
 the world, and has been ported to more than 20 architectures\f, which makes it 
 very scalable, it is the operating system that supports the most hardware in
 the world\cite{22thbirthday,gkh}.
 
-Its use case ranges from small embedded devices like mobile phones, GPSs to 
+Its use cases range from small embedded devices like mobile phones and GPSs to 
 supercomputers. In fact 98\% of the top 500 supercomputers in the world run a 
 Linux distribution\cite{top500}. 
 \\
@@ -397,11 +398,16 @@ growing. Today the code base is 19 million lines of code.
 
             \section{Linux Kernel Development}
 
-            \def \fn {See the \textcode{MAINTAINERS} file in the root folder of the Linux kernel}
+            \def \fn {See the \textcode{MAINTAINERS} file in  
+            the Linux kernel tree}
 
-The Linux kernel development model is unique in the  way, that it is developmed 
-by many thousands of people all over the world. There is a hierarchy of people, 
-who are head-maintainers of different parts of the kernel\f.
+The Linux kernel development model is unique in the  way, that it is developed 
+by many thousands of people all over the world. According to \cite{gkh}, 
+approximately 75\% of the contributions come from companies, and 25\% come from 
+individuals. 
+
+There is a hierarchy of people, who are head-maintainers of different parts of 
+the kernel\f.
 
 
             \subsection*{Stable Releases}
@@ -420,8 +426,8 @@ fixed, a new stable version is created, and the whole process is repeated.
             \def \fn {See the original post about it here: 
             \url{https://lkml.org/lkml/2008/2/11/512}}
 
-During development, new code is added to the development version of Linux, 
-which is called \emph{linux-next}. This has been the main in-development version
+During development, new code is added to the in-development version of Linux.
+This version is called \emph{linux-next}, and has been the main in-development version
 since 2008\f.
 \\
 
@@ -432,7 +438,7 @@ which are all based on the \emph{mainline} tree. The \emph{linux-next} tree is
 merging these other trees and the merge conflicts are handled every day.
 \\
 
-This thesis project uses both the \emph{linux-next} tree and the latest stable 
+This project uses both the \emph{linux-next} tree and the latest stable 
 version. They will be referred to as the \textbf{in-development} 
 version, and the \textbf{stable} version. As time of experiment execution, the 
 latest stable version is \emph{4.1.1}.
@@ -460,7 +466,8 @@ subsystems, which contain scripts and tools for various uses\cite{42bugs}.
 
 The \texttt{drivers/} subsystem is by far the largest subsystem (with 57\% of 
 the total lines of code). It contains all device drivers. It is also mostly 
-contributed to by hardware vendors.
+contributed to by hardware vendors, who want their hardware to be able to run 
+on Linux.
 \\
 
 The \texttt{arch/} subsystem (18\%) contains architecture specific source code. 
@@ -520,27 +527,28 @@ And infrastructure subsystems are:
 other projects like \textsc{BusyBox}, \textsc{BuildRoot}, \textsc{CoreBoot}, 
 \textsc{Freetz} and others)\cite[p. 4]{VarModSSD}.
 
-            \def \fn{Found with the command \textcode{find . | grep Kconfig | wc}}
+            \def \fn{Found with the command \textcode{find .\ | grep Kconfig | wc}}
 
-The feature model files have the prefix \textcode{Kconfig}, and are 
+The \textsc{Kconfig} files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
-other. There are 1195 \textsc{Kconfig} files in total in the Linux kernel\f
+other. There are 1195 \textsc{Kconfig} files in total in the stable Linux kernel\f
 with 956 of them relevant for the \texttt{x86} architecture.
 \\
 
-The corresponding \textsc{Kconfig} code for the phone example can be seen in 
-Figure \ref{kconfigphone}.
+The corresponding \textsc{Kconfig} code for the phone example in Figure 
+\ref{featurediagramphone} can be seen in Figure \ref{kconfigphone}. It 
+is a simple example, which lacks some of the possible data types, and other 
+syntax available in \textsc{Kconfig}.
 
 For a description of the context free grammar of 
 the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
 \\
 
-When a configuration file is generated, it is saved as \texttt{.config}.
-In this file, all features are prefixed with \texttt{CONFIG\_}, and this is
-the configuration of the Linux kernel. More on the configuration files in
-Section  \ref{sec:conf}.
+            \def \fn {The percentages are of the 10,335 features available for 
+                the \texttt{x86} architecture}
 
-The different data types in the Kconfig language are \textcode{boolean} (35\%), 
+The different data types in the Kconfig language used in Linux are 
+\textcode{boolean} (35\%)\f, 
 \textcode{tristate} (61\%), \textcode{string} (0.41\%), \textcode{hex} 
 (0.32\%), and \textcode{integer} (3.7\%). \texttt{tristate} is a datatype 
 with three possible values: \texttt{y},\texttt{n}, and \texttt{m}, where 
@@ -552,12 +560,12 @@ This does not mean that \texttt{m} and \texttt{n} will be the same in this
 project.
 
 
-The percentages are of the 10,335 features available for the \texttt{x86} 
-architecture.
 
 
 \figa
-    \lstinputlisting[]{code/kconfigphone}
+    \subfigure{
+        \lstinputlisting[]{code/kconfigphone}
+    }
 \figb{\textsc{Kconfig} code for the phone example}{kconfigphone}
 
 
@@ -603,9 +611,12 @@ never prompt the user for anything, but create a configuration automatically:
 \end{itemize}
 
 
+When a configuration file is generated, it is saved as \texttt{.config}.
+In this file, all features are prefixed with \texttt{CONFIG\_}, and this is
+the configuration of the Linux kernel. 
 
 Running the configurator \texttt{allnoconfig} on the \textsc{Kconfig} code for 
-the phone example. in Figure \ref{kconfigphone}, will disable all the features 
+the phone example will disable all the features 
 in the feature model that can be disabled. Figure \ref{lst:allnoconfig} shows 
 the \texttt{.config} file that will be generated when running 
 \texttt{allnoconfig}.
@@ -613,7 +624,8 @@ the \texttt{.config} file that will be generated when running
 
 The \texttt{CALLS} and \texttt{SCREEN} are mandatory, and will 
 therefore be enabled. Out of the three possibilities in the choice clause, the 
-\texttt{HD} feature has been enabled, since it is the default choice.
+\texttt{HD} feature has been enabled, since it is the default choice. Everything
+else is disabled.
 
 
 \figa
@@ -633,8 +645,7 @@ Figure \ref{lst:allyesconfig} shows the \texttt{.config} file that is generated 
 the configurator \texttt{allyesconfig}.
 
 Every feature has been enabled, except \texttt{COLOR} and \texttt{BW}, which 
-must be disabled within the choice clause for the default \texttt{HD} feature 
-to be enabled.
+must be disabled because only one feature within the choice clause can be enabled.
 \\
 
 Running \texttt{allnoconfig} on the Linux kernel, will enable 228 features and 
@@ -662,22 +673,18 @@ posted in the standard output in the terminal.
 
 In a warning output, there is information about a possible coding mistake that 
 might break the code. There are 100s of different warning types, that can be 
-enabled. 30 of the these can be enabled by giving the \textcode{-Wall} flag 
-to the compiler  This will enable warnings \emph{about contructions that some 
-users consider questionable}\textsc{gcc}\cite{gccwarnings}.
-
-Some of the warnings are more severe than others, that will be commented on in 
-the next section about the \textsc{gcc} warnings.
-\\
+enabled. 33 of the these can be enabled by giving the \textcode{-Wall} flag 
+to the compiler \textsc{gcc}\cite{gccwarnings}. This will enable warnings 
+\emph{"about contructions that some users consider questionable"}\cite{gccwarnings}.
 
 
 
             %%% GCC WARNINGS
-            \subsection{Gcc Warnings}
+            \subsection{\textsc{gcc} Warnings}
             \label{sec:gccwarns}
 All experiments are run with the \textsc{gcc}-flag 
 \textcode{-Wall}, which is a group of 33 warnings. In many cases, though, 
-the Linux kernel enables even more warning flags, so it is not expected to only 
+the Linux kernel enables even more warning flags by itself, so it is not expected to only 
 get warnings from the \texttt{-Wall} group.
 \\
 
@@ -691,15 +698,25 @@ value or doing wrong logic.
 
     \item \textbf{Code pollution warnings}
 
-These warnings will not break the code, or return wrong values, merely by 
+These warnings will not break the code, or return wrong values, merely be 
 unused code. This plays a role in fitting the Linux kernel on devices with 
 space limitations (such as embedded devices).
+
+It can confuse other programmers, who think the code is being used.
 
     \item \textbf{Bad code practice warnings}
 
 These warnings are deemed unsevere. This does not mean, that they can not be 
 severe in other projects, it is usually a heads up to the programmer, that some 
 bad practices have been used.
+
+This can also contribute to confusing programmers, who might misunderstand the 
+logic.
+
+
+    \item \textbf{Irrelevant warnings}
+
+These are unsevere warning types.
 
 \end{enumerate}
 
@@ -746,7 +763,7 @@ This is a prefix, which can be put in front of all warning types. It
 will treat the warning as an error, because the developers do not want a 
 specific warning to happen without the compilation stopping. 
 
-This is an error, and will \emph{not} be categorized.
+This is an error, and will be categorized as \emph{irrelevant}.
 
 
             \subsection*{frame-larger-than=}
@@ -794,7 +811,7 @@ This is categorized as \emph{wrong value}.
 
 
             \subsection*{maybe-uninitialized}
-is when there is an uncertainty about a variable being uninitialized. In the 
+This warning shows when there is an uncertainty about a variable being uninitialized. In the 
 case in Figure \ref{lst:maybeuninitializedreal} there is a \texttt{switch-case} 
 where the variable \textcode{sgn} is not initialized in all of the cases.
 
@@ -802,7 +819,9 @@ If \textsc{gcc} cannot see for sure that the variable is initialized, it will
 return this warning.
 
 \figa
-    \lstinputlisting[language=C]{code/maybeuninitializedreal}
+    \subfigure{
+        \lstinputlisting[language=C]{code/maybeuninitializedreal}
+    }
 \figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
 
 This is categorized as \emph{wrong value}.
@@ -823,7 +842,7 @@ This will be categorized as \emph{wrong value}.
 This will be shown when there is a non-void function, which has no return 
 statement.
 
-This is categorized as an \emph{bad code practice} warning.
+This is categorized as a \emph{bad code practice} warning.
 % TODO: is it really?
 
 
@@ -885,7 +904,7 @@ This is categorized as \emph{code pollution}.
 \emph{Objective:}
 This report aims to make a quantitative analysis of warnings in all of the
 Linux kernel by checking randomly generated Linux kernels for warnings and 
-generalize.
+then generalize.
 %The warnings functions as a proxy for errors.
 
 This includes addressing the following research questions:
@@ -897,7 +916,7 @@ This includes addressing the following research questions:
 \textbf{RQ2:} Where do most warnings occur?
 \\
 
-\textbf{RQ3:} Are there any signifant differences between an in-development 
+\textbf{RQ3:} Are there any significant differences between an in-development 
 version of Linux and a stable version?
 \\
 
@@ -923,9 +942,9 @@ analyzing the data and answering the research questions.
         \texttt{string}.}
 
 For the configurations to be representative every configuration must be equally 
-likely as others in the configuration space. But Since there are more than 
+likely as others in the configuration space. But since there are more than 
 10,000 different features in the feature model of the Linux kernel, there will 
-be approximately $2^{10,000}$ ($10^{3080}$) possible configurations in the 
+be approximately $2^{10,000}$ ($=10^{3080}$) possible configurations in the 
 configuration space, assuming the feature model is 100\% \texttt{boolean}s and 
 there are no cross-constraints.  This is more than the estimated number of 
 atoms in the universe, so getting a list of all the possible configurations is 
@@ -937,6 +956,8 @@ not possible (at least not with today's computers).
 The experimental setup consists of a loop, where a configuration is generated,
 the Linux kernel is then compiling with this configuration, and the output 
 warnings are categorized and collected.
+
+Notice that the Linux kernels are not installed and executed.
 \\
 
 The experiment has mainly been carried out on a computer at the IT University 
@@ -1050,7 +1071,9 @@ check for propositional satisfiability.
 
 
 Out of these five methods, \texttt{randconfig} is selected as a proxy for 
-getting a representative sample.
+getting a representative sample, on the grounds that the other methods either
+do not work as intended, or depends on too much time or expertise to be realistic 
+in this project.
 
 \iffalse
   v 4 different ways
@@ -1084,7 +1107,7 @@ number}, and a \emph{message} describing the warning in english.
             %% ANALYZING DATA
             \section{Analyzing Data}
 The warnings will be quantitatively analyzed.  The analysis of the warnings is 
-purely quantitative, and this report will not contain any in-depth analysis of 
+ quantitative, and this project will not contain in-depth analysis of 
 any of the warnings in comparisson to\cite{42bugs}, which is a qualitative 
 analysis of bugs in Linux.
 
@@ -1100,9 +1123,9 @@ The different warning types will be categorized according to section
 
 A total of 42,060 experiments were run. Half of them from the in-development 
 Linux version, and the other half of the latest stable version of Linux.
-
-Also 506,000 bugs were found and 4,600,000 files.
 \\
+
+A total of 506,000 bugs were found and 4,600,000 files.
 
 
             %% STABLE LINUX VERSION
@@ -1111,16 +1134,16 @@ In Figure \ref{stablewarndis} is shown the distribution of warnings in the
 experiments run with the stable Linux kernel. The distinct warning types are 
 only counted once per experiment run.
 
-The ones that causes errors are marked with red background.
+The warning categories are colored like this: \textred{Wrong data}, 
+\textblue{Code pollution}, \textgreen{Bad code practice}, and 
+\textgray{irrelevant}.
 \\
 
 A total of 245,000 warnings were collected from these experiments, with the 
 highest amount of warnings for a single experiment being 111.  Many of the 
 warnings found, are the same exact warnings, happening in the same files over 
-and over, which is natural since many different experiments are bound to create 
-some of the same warnings.
-
-It is the same code base, so...
+and over. This is natural, since many different experiments are bound to create 
+some of the same warnings, as it all comes from the same code base.
 \\
 
 17\% of the compilations stopped with an error. These errors were mostly 
@@ -1142,31 +1165,46 @@ caused by an avalanche effect.
         \textbf{Category}\\
         \hline
 
+            \rowcolor{blue!20}
         {unused-function} & 59. \% & Code pollution \\
-        maybe-uninitialized & 45. \% & Severe \\
-        logical-not-parentheses & 30. \% & Severe \\
+            \rowcolor{red!20}
+        maybe-uninitialized & 45. \% & Wrong data \\
+            \rowcolor{red!20}
+        logical-not-parentheses & 30. \% & Wrong data \\
+            \rowcolor{blue!20}
         unused-variable & 29. \% & Code pollution \\
-        cpp & 24. \% & Unsevere \\
-        uninitialized & 19. \% & Severe \\
-            \rowcolor{red!40}
-        {ERROR} & 17. \%  & - \\
-        pointer-to-int-cast & 17.\% & Severe \\
+            \rowcolor{gray!30}
+        cpp & 24. \% & Irrelevant \\
+            \rowcolor{red!20}
+        uninitialized & 19. \% & Wrong data \\
+            \rowcolor{gray!30}
+        ERROR & 17. \%  & Irrelevant \\
+            \rowcolor{red!20}
+        pointer-to-int-cast & 17.\% & Wrong data \\
         discarded-array-qualifiers & 17.\% & xxx \\
-        switch-bool & 15.\% & Severe \\
+            \rowcolor{red!20}
+        switch-bool & 15.\% & Wrong data \\
         frame-larger-than= & 14.\% & xxx \\
-        array-bounds & 11.  \% & Severe \\
-        return-type & 7.7 \% & xxx \\
-        int-to-pointer-cast & 7.6 \% & Severe \\
-        overflow & 6.5 \% & Severe \\
+            \rowcolor{red!20}
+        array-bounds & 11.  \% & Wrong value \\
+            \rowcolor{green!20}
+        return-type & 7.7 \% & Bad Code Practice \\
+            \rowcolor{red!20}
+        int-to-pointer-cast & 7.6 \% & Wrong data \\
+            \rowcolor{red!20}
+        overflow & 6.5 \% & Wrong value \\
+            \rowcolor{blue!20}
         unused-label & 5.4 \% & Code Pollution \\
-        deprecated-declarations & 5.4 \% & Severe \\
-            \rowcolor{red!40}
-        error=implicit-function-declaration & 4.6 \% & - \\
-        int-conversion & 2.7 \% & Unsevere \\
-        implicit-function-declaration & 1.0 \% & Unsevere \\
-        incompatible-pointer-types & 0.74 \% & Unsevere \\
-            \rowcolor{red!40}
-        error=implicit-int & 0.029 \% & - \\
+            \rowcolor{red!20}
+        deprecated-declarations & 5.4 \% & Wrong data \\
+        %error=implicit-function-declaration & 4.6 \% & Irrelevant \\
+            \rowcolor{red!20}
+        int-conversion & 2.7 \% & Wrong data \\
+            \rowcolor{green!20}
+        implicit-function-declaration & 5.6 \% & Bad code practice \\ % 4.6 added from 2 lines up.
+            \rowcolor{red!20}
+        incompatible-pointer-types & 0.74 \% & Wrong data \\
+        %error=implicit-int & 0.029 \% & - \\
 
         \hline
         \hline
@@ -1178,17 +1216,25 @@ The following observations have been made:
 \\
 
 \textbf{Observation 1:}
-The most common warnings in the \emph{severe} categorization is: 
-\emph{maybe-uninitialized}, \emph{logical-not-parentheses}, and 
-\emph{uninitialized}.
+The most common warnings in the \emph{Wrong data} category are: 
+\emph{x}, \emph{x}, and 
+\emph{x}.
 \\
 
 \textbf{Observation 2:}
-The warnings \emph{unused-function} and \emph{unused-variable} are among the 
-top 4 of all warnings.
+The most common warnings in the \emph{Code pollution} category are: 
+\emph{x}, \emph{x}, and 
+\emph{x}.
+\\
 
+\textbf{Observation 3:}
+The most common warnings in the \emph{Bad code practice} category are: 
+\emph{x}, \emph{x}, and 
+\emph{x}.
+\\
 
 With these observations, \textbf{RQ1} can be answered.
+\\
 
 \textbf{Conclusion 1:}
 
@@ -1198,7 +1244,6 @@ With these observations, \textbf{RQ1} can be answered.
 
 % TODO
 % . Write about what warnings from Wall there was NOT found
-% . Relate it to 42bugs?
 
 
 
@@ -1210,8 +1255,8 @@ all of the compilations on the stable Linux version.
 In many compilation runs, there were multiple warnings, in the same subsystems. 
 they are only counted once.
 
-The greyed out rows are for subsystems that are not a major part of the kernel 
-functionality. This is inspired by\cite{42bugs}. See section \ref{sec:linuxss}.
+The green and blue rows are subsystems that are not a major part of the kernel 
+functionality, as mentioned in  Section \ref{sec:linuxss}.
 \\
 
 
@@ -1275,6 +1320,59 @@ subsystem, which a lot of work are put into.
             %% IN-DEVELOPMENT VERSION VS. STABLE VERSION
             \section{In-Development Version vs.\ Stable Version}
 
+\figa
+    \begin{tabular}{r|d|d|c}
+        \hline
+        \hline
+        \textbf{Warning} & \multicolumn{1}{|c|}{\textbf{Stable}} & 
+        \textbf{In-Dev} & \textbf{Category}\\
+        \hline
+
+            \rowcolor{blue!20}
+        {unused-function} & 59. \% & 62. \% & Code pollution \\
+            \rowcolor{red!20}
+        maybe-uninitialized & 45. \% & 44. \% & Wrong data \\
+            \rowcolor{red!20}
+        logical-not-parentheses & 30. \% & 29. \% & Wrong data \\
+            \rowcolor{blue!20}
+        unused-variable & 29. \% & 51. \% & Code pollution \\
+            \rowcolor{gray!30}
+        cpp & 24. \% & 22. \% & Irrelevant \\
+            \rowcolor{red!20}
+        uninitialized & 19. \% & 18. \% & Wrong data \\
+            \rowcolor{gray!30}
+        ERROR & 17. \%  & 38. \% & Irrelevant \\
+            \rowcolor{red!20}
+        pointer-to-int-cast & 17.\% & 17. \% & Wrong data \\
+        discarded-array-qualifiers & 17.\% & 17. \% & xxx \\
+            \rowcolor{red!20}
+        switch-bool & 15.\% & 15. \% & Wrong data \\
+        frame-larger-than= & 14.\% & 7.8 \% & xxx \\
+            \rowcolor{red!20}
+        array-bounds & 11.  \% & 10. \% & Wrong value \\
+            \rowcolor{green!20}
+        return-type & 7.7 \% & 7.8 \% & Bad Code Practice \\
+            \rowcolor{red!20}
+        int-to-pointer-cast & 7.6 \% & 25. \% & Wrong data \\
+            \rowcolor{red!20}
+        overflow & 6.5 \% & 6.0 \% & Wrong value \\
+            \rowcolor{blue!20}
+        unused-label & 5.4 \% & 4.7 \% & Code Pollution \\
+            \rowcolor{red!20}
+        deprecated-declarations & 5.4 \% & 5.2 \% & Wrong data \\
+        %error=implicit-function-declaration & 4.6 \% & Irrelevant \\
+            \rowcolor{red!20}
+        int-conversion & 2.7 \% & 4.2 \% & Wrong data \\
+            \rowcolor{green!20}
+        implicit-function-declaration & 5.6 \% & 23. \% & Bad code practice \\ % 4.6 added from 2 lines up.
+            \rowcolor{red!20}
+        incompatible-pointer-types & 0.74 \% & 3.2 \% & Wrong data \\
+        %error=implicit-int & 0.029 \% & - \\
+
+        \hline
+        \hline
+    \end{tabular}
+\figb{Distribution of warnings in the stable kernel}{stablewarndis}
 
 The results show some differences, and the following observations can be made.
 
