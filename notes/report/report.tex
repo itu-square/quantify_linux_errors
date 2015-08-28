@@ -432,8 +432,8 @@ which are all based on the \emph{mainline} tree. The \emph{linux-next} tree is
 merging these other trees and the merge conflicts are handled every day.
 \\
 
-For this thesis project, both the \emph{linux-next} tree and the latest stable 
-version is used. They will be referred to as the \textbf{in-development} 
+This thesis project uses both the \emph{linux-next} tree and the latest stable 
+version. They will be referred to as the \textbf{in-development} 
 version, and the \textbf{stable} version. As time of experiment execution, the 
 latest stable version is \emph{4.1.1}.
 
@@ -939,10 +939,11 @@ the Linux kernel is then compiling with this configuration, and the output
 warnings are categorized and collected.
 \\
 
-The compilations has mainly been done on a computer at the IT University 
+The experiment has mainly been carried out on a computer at the IT University 
 of Copenhagen. The computer has $32\times2.8 MHz$ and $128 GB$ of RAM, and the 
 average time to compile a kernel and upload the data was around 1 minute and 35 
-seconds. Also a laptop with 4 cores and 8 GB of RAM has been used.
+seconds. Also a conventional laptop with $4\times2.5 MHz$  and 8 GB of RAM has 
+been used.
 \\
 
 To say something about all of the Linux kernel, the generated configurations 
@@ -1007,8 +1008,8 @@ bias for features in the upper levels of the dependency tree, as
 \texttt{randconfig} has.
 
 This would require good knowledge of programming in the \textsc{C} language
-and also an algorithmic way of solving this without the time complexity 
-escalating.
+and also an algorithmic way of estimating the number of features in all the 
+subtrees.
 
 
     \item \textbf{Permuting \textsc{Kconfig}}
@@ -1075,6 +1076,9 @@ The warning and error outputs from \textsc{gcc} will be saved for analysis.
 
 A warning output will contain a \emph{bug type}, a \emph{filename}, \emph{line 
 number}, and a \emph{message} describing the warning in english.
+\\
+
+--- blabla about how to categorize ---
 
 
             %% ANALYZING DATA
@@ -1440,7 +1444,7 @@ configuration creation. (See more about representativeness in the section
 
             %%% 9 DIFFERENT IN_DEVELOPMENT VERSIONS
             \subsection{9 Different In-Development Versions}
-There is used multiple different in-development versions of the Linux kernel to 
+Multiple different in-development versions of the Linux kernel are used to 
 minimize the skewing of warnings. If only one version of the in-development 
 version is used, it gives a very one-sighted view of the in-development 
 versions, where certain bugs may be over-represented. The more different 
