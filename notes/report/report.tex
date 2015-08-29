@@ -68,6 +68,10 @@
 \newcommand{\textgreen}[1]{\fboxsep=1pt{\colorbox{green!20}{#1}}}
 \newcommand{\textgray}[1]{\fboxsep=1pt{\colorbox{gray!20}{#1}}}
 \newcommand{\textblue}[1]{\fboxsep=1pt{\colorbox{blue!20}{#1}}}
+    \def \redmid{gray!20}
+    \def \reddark{gray!40}
+\newcommand{\textreddark}[1]{\fboxsep=1pt{\colorbox{\reddark}{#1}}}
+\newcommand{\textredmid}[1]{\fboxsep=1pt{\colorbox{\redmid}{#1}}}
 
 % Recreating the figure thingy
 \newcommand{\figa}{
@@ -485,13 +489,13 @@ The \texttt{fs/} subsystem (6\%) is code regarding filesystems, the
 subsystem (.6\%) is about memory management.
 
 Then there are \texttt{sound/}(5\%), \texttt{include/} (4\%), \texttt{kernel/} 
-(1\%), \texttt{crypto/} (.4\%), \texttt{security/}  (.4\%), and \texttt{block/} 
-(.2\%).
+(1\%), \texttt{crypto/} (.4\%), \texttt{security/}  (.4\%), \texttt{lib/} 
+(.6\%), and \texttt{block/} (.2\%).
 \\
 
 Other smaller subsystems are:
 
-\texttt{virt/}, \texttt{ipc/}, \texttt{init/}, \texttt{usr/}, and \texttt{lib/}.
+\texttt{virt/}, \texttt{ipc/}, \texttt{init/}, and \texttt{usr/}.
 \\
 
 And infrastructure subsystems are:
@@ -1216,45 +1220,38 @@ The following observations have been made:
 \\
 
 \textbf{Observation 1:}
-The most common warnings in the \emph{Wrong data} category are: 
+The most common warnings in the \textred{Wrong data} category are: 
 \emph{maybe-uninitialized} and \emph{uninitialized}, which are two related 
 warnings.
 \\
 
 \textbf{Observation 2:}
-Two out of three \emph{code pollution} warnings \emph{unused-function} and 
+Two out of three \textblue{code pollution} warnings \emph{unused-function} and 
 \emph{unused-variable} are both in the top 3 of most common warnings.
-
-The most common warnings in the \emph{Code pollution} category are: 
-\emph{unused-function} and \emph{unused-variable}
 \\
 
 With these observations, \textbf{RQ1} can be answered.
 \\
 
 \textbf{Conclusion 1:}
-The most common warnings, are warnings regarding \emph{code pollution}, and
-next come warnings related to variables being uninitialized.
-
+The warning types that appear the most, are warnings regarding \textblue{code 
+pollution}, and next come warning types related to variables being uninitialized.
 
 
 %RQ1: What warnings are the most common in the stable Linux kernel?
-
-% TODO
-% . Write about what warnings from Wall there was NOT found
 
 
 
             %% SUBSYSTEMS
             \section{Subsystems}
 Figure \ref{stablessdis} shows the distribution of subsystems with warnings in 
-all of the compilations on the stable Linux version.
-
-In many compilation runs, there were multiple warnings, in the same subsystems. 
-they are only counted once.
+all of the experiment runs on the stable Linux version. In many experiment runs, 
+there were multiple warnings in the same subsystems. These are only counted 
+once.
 
 The red rows are subsystems that are not a major part of the kernel 
-functionality, as mentioned in  Section \ref{sec:linuxss}.
+functionality, as mentioned in  Section \ref{sec:linuxss}. These are the 
+\textredmid{smaller} subsystems, and the \textreddark{infrastructure} subsystems.
 \\
 
 
@@ -1275,48 +1272,54 @@ functionality, as mentioned in  Section \ref{sec:linuxss}.
         crypto/ &  17. \%  \\
         sound/ &  16. \%  \\
         mm/ &  14. \%  \\
-            \rowcolor{red!30}
+            \rowcolor{\redmid}
         {usr/} &  12. \%  \\ % Same exact number as samples/
-            \rowcolor{red!40}
+            \rowcolor{\reddark}
         {samples/} &  12. \%  \\ % Same exact number as usr/
         lib/ &  11. \%  \\
         block/ &  8.5  \% \\
-            \rowcolor{red!40}
+            \rowcolor{\reddark}
         {scripts/} &  1.8 \% \\
         security/ &  0.091 \% \\
-            \rowcolor{red!30}
+            \rowcolor{\redmid}
         {ipc/} &  0.0048 \% \\
-            \rowcolor{red!30}
+            \rowcolor{\redmid}
         {init/} &  0.0048 \% \\
-            \rowcolor{red!40}
+            \rowcolor{\reddark}
         {tools/} &  0.0048 \% \\
-            \rowcolor{red!30}
+            \rowcolor{\redmid}
         {virt/} &  0.0 \% \\
 
         \hline
         \hline
     \end{tabular}
-\figb{Distribution of all subsystems within the warnings}{stablessdis}
+\figb{Distribution of all subsystems within the warnings from the stable Linux}{stablessdis}
 
 
 With these results,  the following observations can be made:
 \\
 
 \textbf{Observation 3:}
-In 93\% of the experiments, the \texttt{drivers/} subsystem was present in a 
-warning.
+The subsystem, which appear the most in the warnings, is by far the 
+\texttt{drivers/} subsystem.
 \\
 
 \textbf{Observation 4:}
-There are near zero warnings in the \texttt{security/} subsystem. This can both 
-be an indication of a small subsystem, but rather, that it is an important 
-subsystem, which a lot of work are put into. 
+There are near zero warnings in the \texttt{security/} subsystem. 
+\\
+
+\textbf{Conclusion 2:}
+
 
 
 
 
             %% IN-DEVELOPMENT VERSION VS. STABLE VERSION
             \section{In-Development Version vs.\ Stable Version}
+
+
+% TODO 
+% Some text
 
 \figa
     \subfigure[Stable version]{
@@ -1387,6 +1390,16 @@ subsystem, which a lot of work are put into.
 
 
 
+% TODO
+% Goddammit, this was kinda wrong, because paths are like '/include/drivers/xxx',
+% which would count as a 'drivers/' warning.
+% SQL FIX: 
+% select count(distinct config) from bugs where linux_version rlike '4.1.1' and 
+% (original rlike '^kernel/' or original rlike ' kernel/' or original rlike 
+% '\\nkernel/' or original rlike '\\[kernel');
+
+
+
 
 
 
@@ -1406,12 +1419,19 @@ subsystem, which a lot of work are put into.
             \label{sec:extval}
 
 
-            %%% ONLY ONE SOFTWARE PRODUCT
-            \section{Only One Software Product}
-
-
             %%% ONLY ONE ARCHITECTURE
-            \section{Only One Architecture}
+            \subsection{Only One Architecture}
+
+The experiment is only run on the \texttt{x86} architecture. There are more than
+20 different architectures supported. For the results to say anything about all 
+of the other architectures, a cross-compiler for each architecture will have to
+be installed on the building system.
+
+            \def \fn {Can be found here: 
+            \url{https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.9.0/}}
+
+This is possible through various scripts, and by installing a new version of
+\textsc{gcc} per new architecture\f.
 
 
 
@@ -1635,6 +1655,12 @@ installed on the build system.
             \newpage
             \chapter{Discussion and Future Work}
 
+            %% MORE THAN LINUX
+            \section{More Than Linux}
+
+This experiment only runs on the linux kernel, but there are variability in many
+other software products. A similar experiment could be run on other products to 
+see it the results correlate.
 
 
 
