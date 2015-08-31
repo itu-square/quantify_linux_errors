@@ -150,7 +150,7 @@
   showstringspaces=false,
   showtabs=false,                  
   tabsize=2,
-  emph={\#ifdef,endif},
+  emph={ifdef,endif,\#},
   emphstyle={\color{red}}
 }
 
@@ -186,10 +186,27 @@
 \setcounter{page}{1}
 
 
-\begin{abstract}
-    \emph{---Leave blank until the end---}
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %        ABSTRACT
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            \begin{abstract}
 
-\end{abstract}
+The Linux kernel is the largest open source project to implement variability. It
+has more than 14,000 options in total that can be switched on and off. This can 
+generate more variants of the Linux kernel, than there are atoms in the 
+universe, and bugs can be harder to find with the extra dimension of 
+variability.
+\\
+
+In this project, a sample of these variants are produced and checked for compile
+warnings to get an insight in the distribution of warning types, and the 
+location of the warnings. The experiment is run both on a stable version of the 
+Linux kernel, and an in-development version, which are compared regarding types 
+and location of the warnings.
+
+
+
+            \end{abstract}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,6 +256,7 @@ are located.
 
             %% VARIABILITY
             \section{Variability}
+
 Many software products are configurable in some way. Configurability creates the 
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different functionalities. 
@@ -246,9 +264,9 @@ different kinds of hardware, or different functionalities.
 
 This is called \emph{variability} in software, and a software product of 
 this type is called a \emph{Software Product Line} (SPL). Software products 
-with different functionalities can be derived from the same source code base, 
-and the code in its entirety is not a valid product\cite[p. 1]{IntDatSPL}, it 
-has to be configured.
+with different functionalities (\emph{variants}) can be derived from the same 
+source code base, and the code in its entirety is not a valid product\cite[p. 
+1]{IntDatSPL}, it has to be configured.
 \\
 
         \def \fn {14,387 across all architectures, with an average of 9,984 per 
@@ -393,21 +411,22 @@ kernel feature model hierarchy, for example, is only 8 layers deep\cite[p.
             %%% BUGS IN VARIABILITY
             \subsection{Bugs In Variability}
 
-Bugs in variability programs do not necessarily generate a bug with every 
-configuration. A simple example is shown in Figure \ref{lst:varbug}. There are
-only two feature in the feature model: \texttt{A}, and 
-\texttt{B}, and thus there are four different configurations for this 
-program; \texttt{\{\}}, \texttt{\{A\}}, \texttt{\{B\}}, and \texttt{\{A,B\}}.
+Bugs in variability programs do not necessarily generate a bug in every 
+variant of the program. A simple example is shown in Figure \ref{lst:varbug}. 
+There are only two feature in the feature model: \texttt{A}, and \texttt{B}, 
+and thus there are four different configurations for this program; 
+\texttt{\{\}}, \texttt{\{A\}}, \texttt{\{B\}}, and \texttt{\{A,B\}}.
 
-The feature model, denoted $\psi_{FM}$, for this example contains four configurations, 
-$\kappa_0$, $\kappa_1$, $\kappa_2$, and $\kappa_3$, which can be denoted as 
-conjunctions on logic form like this: $\kappa_0 = \neg A \wedge \neg B$, and 
-$\kappa_1 = \neg A \wedge B$.
+The feature model, denoted $\psi_{FM}$, for this example contains four 
+configurations, $\kappa_0$, $\kappa_1$, $\kappa_2$, and $\kappa_3$, which can 
+be denoted as conjunctions on logic form like this: $\kappa_0 = \neg A \wedge 
+\neg B$, and $\kappa_1 = \neg A \wedge B$.
 \\
 
 In the variant of the program with configuration $\kappa_0$, the compilation of 
 the program will return an \texttt{uninitialized} warning, since the compiler 
-never visits the two \textcode{\#ifdef}-clauses.
+never visits the two \textcode{\#ifdef}-clauses. In all other variants of the
+program, there will be no warning, because \textcode{var} gets initialized.
 
 \figa
     \subfigure{
@@ -470,11 +489,13 @@ This version is called \emph{linux-next}, and has been the main in-development v
 since 2008\f.
 \\
 
-The \emph{linux-next} tree is a \textsc{git} repository, which 
-merges over 200 other \textsc{git} repositories\cite
-    {nextTrees},
-which are all based on the \emph{mainline} tree. The \emph{linux-next} tree is 
-merging these other trees and the merge conflicts are handled every day.
+            \def \fn {\textsc{git} is a version control system that is created
+            by and for the Linux kernel project}
+
+The \emph{linux-next} tree is a \textsc{git}\f repository, which merges over 200 
+other \textsc{git} repositories\cite {nextTrees}, which are all based on the 
+\emph{mainline} tree. The \emph{linux-next} tree is merging these other trees 
+and the merge conflicts are handled every day.
 \\
 
 This project uses both the \emph{linux-next} tree and the latest stable 
@@ -1017,11 +1038,11 @@ collected.
 Notice that the Linux kernels are not installed and executed in the experiment.
 \\
 
-The experiment is mainly carried out on a computer at the IT University 
-of Copenhagen. The computer has a $32\times2.8 MHz$ cpu and $128 GB$ of RAM, and the 
-average time to run an experiment loop is around 1 minute and 35 
-seconds. Also a conventional laptop with a $4\times2.5 MHz$  cpu and 4 GB of RAM has 
-been used.
+The experiment is mainly carried out on a computer at the IT University of 
+Copenhagen. The computer has a $32\times2.8 MHz$ cpu and $128 GB$ of RAM, and 
+the average time to run an experiment loop is around 1 minute and 35 seconds. 
+Also a conventional laptop with a $4\times2.5 MHz$  cpu and 4 GB of RAM has 
+been used. The experiment runs for little over a month.
 \\
 
 
@@ -1194,7 +1215,7 @@ The analysis is in the next chapter.
 A total of 42,060 experiments were run. Half of them from the in-development 
 Linux version, and the other half of the latest stable version of Linux.
 
-A total of 506,000 bugs were found and 4,600,000 files.
+A total of 400,000 warnings were returned with 3,800,000 filenames.
 \\
 
 The stable Linux version is analyzed at first, to answer the first two research 
@@ -1302,7 +1323,8 @@ With these observations, \textbf{RQ1} can be answered.
 
 \underline{\textbf{Conclusion 1:}}
 The warning types that appear the most, are warnings regarding \textblue{code 
-pollution}, and next come warning types related to variables being uninitialized.
+pollution}, and next come warning types related to variables being 
+uninitialized.
 
 
 %RQ1: What warnings are the most common in the stable Linux kernel?
@@ -1318,7 +1340,8 @@ once.
 
 The gray rows are subsystems that are not a major part of the kernel 
 functionality, as mentioned in  Section \ref{sec:linuxss}. These are the 
-\textredmid{smaller} subsystems, and the \textreddark{infrastructure} subsystems.
+\textredmid{smaller} subsystems, and the \textreddark{infrastructure} 
+subsystems.
 \\
 
 
@@ -1359,16 +1382,6 @@ functionality, as mentioned in  Section \ref{sec:linuxss}. These are the
         {usr/} &  .076 \%  \\ % Same exact number as samples/
         block/ &  .75  \% \\
         security/ &  .0 \% \\
-            \rowcolor{\redmid}
-        {firmware/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {ipc/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {init/} &  .0 \% \\
-            \rowcolor{\reddark}
-        {tools/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {virt/} &  .0 \% \\
 
         \hline
         \hline
@@ -1382,23 +1395,24 @@ functionality, as mentioned in  Section \ref{sec:linuxss}. These are the
         \hline
 
             \rowcolor{\reddark}
-        samples/ & 272,7 \\
+        samples/ & 270. \\
             \rowcolor{\reddark}
-        scripts/ & 58,5 \\
-        crypto/ & 41,9 \\
+        scripts/ & 58. \\
+        crypto/ & 42. \\
             \rowcolor{\redmid}
-        usr/  &29,6 \\
-        mm/  & 25,1 \\
-        lib/ & 18,0 \\
-        include/ & 12,8 \\
-        arch/x86/ & 8,8 \\
-        kernel/ & 2,5 \\
-        net/ & 2,4 \\
-        fs/ & 2,3 \\
-        block/ & 1,5 \\
-        drivers/ & 1,2 \\
-        arch/ & 0,9 \\
-        sound/ & 0,4  \\
+        usr/  & 30. \\
+        mm/  & 25. \\
+        lib/ & 18. \\
+        include/ & 13. \\
+        arch/x86/ & 8.8 \\
+        kernel/ & 2.5 \\
+        net/ & 2.4 \\
+        fs/ & 2.3 \\
+        block/ & 1.5 \\
+        drivers/ & 1.2 \\
+        arch/ & 0.90 \\
+        sound/ & 0.36  \\
+        security/ & 0.0 \\
 
         \hline
         \hline
@@ -1420,13 +1434,13 @@ The subsystem, which appear the most in the warnings, is the
 There are zero warnings in the \texttt{security/} subsystem. 
 \\
 
+With these observations \textbf{RQ2} can be answered.
+\\
+
 \underline{\textbf{Conclusion 2:}}
 The subsystems with drivers, and header files have the most warnings, and the 
 security subsystem together with the most smaller, and infrastructure subsystems
 had zero or near zero warnings.
-
-
-
 
 
 
@@ -1436,7 +1450,26 @@ had zero or near zero warnings.
 
 
 In Figure \ref{comparewarn} is a comparison of the warnings between the stable
-version, and the in-development version. Only the top 10 warnings are shown.
+version, and the in-development version. Only the 6 warnings out of 15 that 
+actually change percentage are shown. All non-shown warnings had less than one 
+percent difference between the two versions.
+
+
+\textbf{Observation 5:}
+There are more warnings in the in-development version of Linux, than the stable
+version.
+\\
+
+\textbf{Observation 6:}
+There is only one type of warning that occur more in the stable version, that is
+the \texttt{frame-larger-than=} warning.
+\\
+
+With these observations \textbf{RQ3} can be answered.
+\\
+
+\underline{\textbf{Conclusion 3:}}
+There are more warnings and errors in the in-development version.
 
 
 % TODO 
@@ -1452,24 +1485,12 @@ version, and the in-development version. Only the top 10 warnings are shown.
 
             \rowcolor{blue!20}
         {unused-function} & 59. \% \\
-            \rowcolor{red!20}
-        maybe-uninitialized & 45. \% \\
             \rowcolor{blue!20}
         unused-variable & 29. \% \\
             \rowcolor{gray!30}
-        cpp & 24. \% \\
-            \rowcolor{red!20}
-        uninitialized & 19. \% \\
-            \rowcolor{gray!30}
         ERROR & 17. \%  \\
-            \rowcolor{red!20}
-        pointer-to-int-cast & 17.\% \\
             \rowcolor{gray!30}
         frame-larger-than= & 14.\% \\
-            \rowcolor{red!20}
-        array-bounds & 11.  \% \\
-            \rowcolor{green!20}
-        return-type & 7.7 \% \\
             \rowcolor{red!20}
         int-to-pointer-cast & 7.6 \% \\
             \rowcolor{green!20}
@@ -1490,8 +1511,6 @@ version, and the in-development version. Only the top 10 warnings are shown.
         {unused-function} & 62. \% \\
             \rowcolor{blue!20}
         unused-variable & 51. \% \\
-            \rowcolor{red!20}
-        maybe-uninitialized & 44. \% \\
             \rowcolor{gray!30}
         ERROR & 38. \%  \\
             \rowcolor{red!20}
@@ -1499,23 +1518,13 @@ version, and the in-development version. Only the top 10 warnings are shown.
             \rowcolor{green!20}
         implicit-function-declaration & 23. \% \\
             \rowcolor{gray!30}
-        cpp & 22. \% \\
-            \rowcolor{red!20}
-        uninitialized & 18. \% \\
-            \rowcolor{red!20}
-        pointer-to-int-cast & 17.\% \\
-            \rowcolor{red!20}
-        array-bounds & 10.  \% \\
-            \rowcolor{green!20}
-        return-type & 7.8  \% \\
-            \rowcolor{red!20}
         frame-larger-than= & 7.8  \% \\
 
         \hline
         \hline
     \end{tabular}
     }
-\figb{Comparison of the top 10 warnings}{comparewarn}
+\figb{Showing the warning types that has changed more than 1\%}{comparewarn}
 
 
 
@@ -1549,16 +1558,6 @@ version, and the in-development version. Only the top 10 warnings are shown.
             \rowcolor{\redmid}
         {usr/} &  .076 \%  \\ % Same exact number as samples/
         security/ &  .0 \% \\
-            \rowcolor{\redmid}
-        {firmware/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {ipc/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {init/} &  .0 \% \\
-            \rowcolor{\reddark}
-        {tools/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {virt/} &  .0 \% \\
 
         \hline
         \hline
@@ -1590,16 +1589,6 @@ version, and the in-development version. Only the top 10 warnings are shown.
             \rowcolor{\redmid}
         {usr/} & .12  \%  \\ % Same exact number as samples/
         security/ &  .0 \% \\
-            \rowcolor{\redmid}
-        {firmware/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {ipc/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {init/} &  .0 \% \\
-            \rowcolor{\reddark}
-        {tools/} &  .0 \% \\
-            \rowcolor{\redmid}
-        {virt/} &  .0 \% \\
 
         \hline
         \hline
@@ -1865,10 +1854,10 @@ installed on the build system.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                      DISCUSSION AND FUTURE WORK
+%                       FUTURE WORK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             \newpage
-            \chapter{Discussion and Future Work}
+            \chapter{Future Work}
 
             %% MORE THAN LINUX
             \subsection*{More Than Linux}
