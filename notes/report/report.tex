@@ -1153,17 +1153,14 @@ When a configuration file has been generated, two different Linux kernel
 versions are compiled using that configuration file, a stable Linux kernel, and 
 an in-development version. The in-development versions are suspected to be more 
 prone to contain warnings, but the warnings are also suspected to be fixed 
-quicker than the bugs in the stable version. To even out any short-lifed warnings
-multiple in-development versions are used. Nine different versions from nine following days.
-% ELVIS
+quicker than the bugs in the stable version. To even out any short-lifed 
+warnings, multiple in-development versions are used; nine different versions 
+from nine following days.
+\\
 
-% TODO ^ Maybe rephrase it a bit, if have time.
-
-by running the command 
-\textcode{make all}. This command runs \textsc{GNU Make}, which is instructed 
-how to compile the kernel with \textsc{gcc}.
-
-The warning and error outputs from \textsc{gcc} will be saved for analysis.
+The kernel is compiled by running the command \textcode{make all}. This command 
+runs \textsc{GNU Make}, which is instructed how to compile the kernel with 
+\textsc{gcc}. The warning and error outputs from \textsc{gcc} will be saved for analysis.
 \\
 
 A warning output will contain a \emph{bug type}, a \emph{filename}, \emph{line 
@@ -1303,7 +1300,7 @@ There are only found 15 different warning types. Only 8 of these are from the
 With these observations, \textbf{RQ1} can be answered.
 \\
 
-\textbf{Conclusion 1:}
+\underline{\textbf{Conclusion 1:}}
 The warning types that appear the most, are warnings regarding \textblue{code 
 pollution}, and next come warning types related to variables being uninitialized.
 
@@ -1423,7 +1420,7 @@ The subsystem, which appear the most in the warnings, is the
 There are zero warnings in the \texttt{security/} subsystem. 
 \\
 
-\textbf{Conclusion 2:}
+\underline{\textbf{Conclusion 2:}}
 The subsystems with drivers, and header files have the most warnings, and the 
 security subsystem together with the most smaller, and infrastructure subsystems
 had zero or near zero warnings.
@@ -1438,8 +1435,12 @@ had zero or near zero warnings.
             \section{In-Development Version vs.\ Stable Version}
 
 
+In Figure \ref{comparewarn} is a comparison of the warnings between the stable
+version, and the in-development version. Only the top 10 warnings are shown.
+
+
 % TODO 
-% Some text
+% Some text in this chapter...
 
 \figa
     \subfigure[Stable version]{
@@ -1469,6 +1470,10 @@ had zero or near zero warnings.
         array-bounds & 11.  \% \\
             \rowcolor{green!20}
         return-type & 7.7 \% \\
+            \rowcolor{red!20}
+        int-to-pointer-cast & 7.6 \% \\
+            \rowcolor{green!20}
+        implicit-function-declaration & 5.6 \% \\
 
         \hline
         \hline
@@ -1501,12 +1506,16 @@ had zero or near zero warnings.
         pointer-to-int-cast & 17.\% \\
             \rowcolor{red!20}
         array-bounds & 10.  \% \\
+            \rowcolor{green!20}
+        return-type & 7.8  \% \\
+            \rowcolor{red!20}
+        frame-larger-than= & 7.8  \% \\
 
         \hline
         \hline
     \end{tabular}
     }
-\figb{Comparison of the top 10 warnings}{stablewarndis}
+\figb{Comparison of the top 10 warnings}{comparewarn}
 
 
 
@@ -1596,7 +1605,7 @@ had zero or near zero warnings.
         \hline
     \end{tabular}
     }
-\figb{Comparison of the subsystems}{stablessdis}
+\figb{Comparison of the subsystems}{comparess}
 
 
 
@@ -1897,6 +1906,16 @@ creating the warning.
 
 It will be possible to narrow down which features might be generating the bug.
 
+
+            %% ANALYZE ERRORS
+            \subsection*{Analyze errors}
+
+In this project, only warnings could be automatically quantified, because of the
+nature of the errors that occured was due to the build system's missing 
+dependencies, and also due to the experiment sample not being large enough to 
+find many errors.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           RELATED WORK
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1926,9 +1945,16 @@ The mailing lists are publicly available at
 \cite{kbuildrobot,kbuildrobotall,kbuildlkp}.
 \\
 
-What is gathered of information about this project, only the mailing lists are 
-publicly available, and the experiment run data is thrown away soon after. An 
-effort was made to get their experiment data available for analysis, but no luck.
+What is gathered of information about the \texttt{kbuild-robot} project, only 
+the mailing lists are publicly available, and the experiment run data is thrown 
+away soon after. 
+
+According to \cite{summit2012,summit2013}, 30,000 kernels are compiled and run
+each day. That is about the same amount of experiment runs this project does in 
+a month.
+
+An effort was made to get their experiment data available for analysis, but no 
+luck.  
 
 
 
@@ -1938,8 +1964,8 @@ effort was made to get their experiment data available for analysis, but no luck
   \ 42 bugs
   . Variability in ...
   . Paper from Iago
-  . Fengguang Wu and Intel
-  . Jaccard Similarity (?)
+  v Fengguang Wu and Intel
+  v Jaccard Similarity (?)
   . http://codemonkey.org.uk/tag/coverity/ <- Correlate data with this guys drivers/staging thing.
 \fi
 
@@ -1950,7 +1976,21 @@ effort was made to get their experiment data available for analysis, but no luck
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             \newpage
             \chapter{Conclusion}
-The Linux kernel has been analyzed, and it is found that there are warnings all over, but not all types of them, 
+The Linux kernel has been analyzed, and there are 14 different 
+warnings that appear in the Linux kernel. The majority of these are regarding 
+code pollution, and uninitialized variables.
+\\
+
+The \texttt{drivers/} subsystem has the most warnings, but there are warnings 
+in the most subsystems with exception of some of the smaller subsystems and 
+infrastructure subsystems, and also no warnings were found in the 
+\texttt{security/} subsystem.
+\\
+
+In the in-development version of Linux, there are generally more warnings (and
+errors) than in the stable version. Half of the warnings appear about the same
+amount of the experiment runs, while the other half appear almost double as 
+many times.
 
 
 
@@ -2016,7 +2056,7 @@ symbols ::= '/-(),.'
             %%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%      DATA              %
             %%%%%%%%%%%%%%%%%%%%%%%%%%%
-            \section{Data}
+            %\section{Data}
 
 
 
