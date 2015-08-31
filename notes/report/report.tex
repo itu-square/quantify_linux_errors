@@ -150,6 +150,8 @@
   showstringspaces=false,
   showtabs=false,                  
   tabsize=2,
+  emph={\#ifdef,endif},
+  emphstyle={\color{red}}
 }
 
 
@@ -163,7 +165,7 @@
 
 % Front Page
 \date{September 1st 2015\\ IT University of Copenhagen}
-\title{A Quantitative Analysis of Warnings in Linux \\ Draft: 
+\title{A Quantitative Analysis of Variability Warnings in Linux \\ Draft: 
     \today~\currenttime}
 \author{Elvis Flesborg\\
 \texttt{efle@itu.dk}}
@@ -208,7 +210,7 @@ analysed quantitatively, and will function as a proxy for bugs.
 \\
 
 The following contributions will be made: Analysis of distributions of warnings 
-in the Linux kernel, comparisson of warnings in a stable version of the Linux 
+in the Linux kernel, comparison of warnings in a stable version of the Linux 
 kernel vs.\ an in-development version. Also an analysis of where the warnings 
 are located.
 
@@ -235,7 +237,8 @@ are located.
 \newpage
         \chapter{Background}
 
-        \section{Variability}
+            %% VARIABILITY
+            \section{Variability}
 Many software products are configurable in some way. Configurability creates the 
 possibility of tailoring the software to suit different needs. For example 
 different kinds of hardware, or different functionalities. 
@@ -263,7 +266,8 @@ Framework}\cite[p. 1]{VarTesDrupal} to name a few.
 All features in a software product line, and their options and relations are 
 described in a \emph{feature model}.
 
-        \subsection{Feature Models}
+            %%% FEATURE MODELS
+            \subsection{Feature Models}
 
 A feature model is a way of representing all the possible configurations - 
 \emph{the configuration space}. It contains all the features with their 
@@ -290,6 +294,11 @@ The feature diagram is inspired by \cite{AAFM}, but there is no consensus on a
 unified notation for attributes in feature models\cite{AAFM}. And for there is 
 for example no notation in the diagram, that \textbf{High Definition} is the 
 default value for the choice clause.
+
+The phone example is inspired by some examples from \cite{SPLOT}, which is an 
+online toolbox for variability software that also has a repository of feature 
+models and diagrams.
+
 
 
 % The feature diagram
@@ -381,8 +390,34 @@ kernel feature model hierarchy, for example, is only 8 layers deep\cite[p.
 17]{VarModSSD}.
 
 
+            %%% BUGS IN VARIABILITY
+            \subsection{Bugs In Variability}
+
+Bugs in variability programs do not necessarily generate a bug with every 
+configuration. A simple example is shown in Figure \ref{lst:varbug}. There are
+only two feature in the feature model: \texttt{A}, and 
+\texttt{B}, and thus there are four different configurations for this 
+program; \texttt{\{\}}, \texttt{\{A\}}, \texttt{\{B\}}, and \texttt{\{A,B\}}.
+
+The feature model, denoted $\psi_{FM}$, for this example contains four configurations, 
+$\kappa_0$, $\kappa_1$, $\kappa_2$, and $\kappa_3$, which can be denoted as 
+conjunctions on logic form like this: $\kappa_0 = \neg A \wedge \neg B$, and 
+$\kappa_1 = \neg A \wedge B$.
+\\
+
+In the variant of the program with configuration $\kappa_0$, the compilation of 
+the program will return an \texttt{uninitialized} warning, since the compiler 
+never visits the two \textcode{\#ifdef}-clauses.
+
+\figa
+    \subfigure{
+    \lstinputlisting[language=C,firstline=3,]{code/varbug.c}
+    }
+\figb{An example of a program with a variability bug.}{lst:varbug}
+
             
-        \section{The Linux Kernel}
+            %% THE LINUX KERNEL
+            \section{The Linux Kernel}
 
             \def \fn {See the \textcode{README} file in the Linux kernel tree}
 
@@ -485,17 +520,21 @@ In this project, only the \texttt{x86} architecture will be used.
 \\
 
 The \texttt{fs/} subsystem (6\%) is code regarding filesystems, the 
-\texttt{net/} subsystem (5\%) is about networking, and the \texttt{mm/} 
-subsystem (.6\%) is about memory management.
+\texttt{net/} subsystem (5\%) is about networking, the \texttt{mm/} 
+subsystem (.6\%) is about memory management, the \texttt{block/} subsystem 
+(.2\%) is drivers for data storage devices, and \texttt{include/} (4\%) 
+contains \emph{header} files, which the kernel needs when 
+compiling\cite{linuxorg}.
+\\
 
-Then there are \texttt{sound/}(5\%), \texttt{include/} (4\%), \texttt{kernel/} 
+Then there are \texttt{sound/}(5\%),  \texttt{kernel/} 
 (1\%), \texttt{crypto/} (.4\%), \texttt{security/}  (.4\%), \texttt{lib/} 
 (.6\%), and \texttt{block/} (.2\%).
 \\
 
 Other smaller subsystems are:
 
-\texttt{virt/}, \texttt{ipc/}, \texttt{init/}, and \texttt{usr/}.
+\texttt{virt/}, \texttt{ipc/}, \texttt{init/}, \texttt{firmware/}, and \texttt{usr/}.
 \\
 
 And infrastructure subsystems are:
@@ -679,17 +718,17 @@ In a warning output, there is information about a possible coding mistake that
 might break the code. There are 100s of different warning types, that can be 
 enabled. 33 of the these can be enabled by giving the \textcode{-Wall} flag 
 to the compiler \textsc{gcc}\cite{gccwarnings}. This will enable warnings 
-\emph{"about contructions that some users consider questionable"}\cite{gccwarnings}.
+\emph{"about contructions that some users consider 
+questionable"}\cite{gccwarnings}.
 
 
 
             %%% GCC WARNINGS
             \subsection{\textsc{gcc} Warnings}
             \label{sec:gccwarns}
-All experiments are run with the \textsc{gcc}-flag 
-\textcode{-Wall}, which is a group of 33 warnings. In many cases, though, 
-the Linux kernel enables even more warning flags by itself, so it is not expected to only 
-get warnings from the \texttt{-Wall} group.
+All experiments are run with the \textsc{gcc}-flag \textcode{-Wall}. In many 
+cases, though, the Linux kernel enables even more warning flags by itself, and
+many of the warnings in the results are not from the \texttt{-Wall} group.
 \\
 
 The warnings will be categorized into these types of warnings:
@@ -935,8 +974,8 @@ version of Linux and a stable version?
 \emph{Subject:}
 To respond to these questions there will be generated random configurations, 
 and these will be used to compile two different versions of the Linux kernel, 
-the latest stable Linux kernel version, and a two months old in-development 
-version of the Linux kernel.
+the latest stable Linux kernel version, and some two months old in-development 
+versions of the Linux kernel.
 
 The warning messages will be categorized and collected, and be subject for 
 analysis.
@@ -954,42 +993,41 @@ analyzing the data and answering the research questions.
         \texttt{string}.}
 
 For the configurations to be representative every configuration must be equally 
-likely as others in the configuration space. But since there are more than 
+likely to get generated as others in the configuration space. But since there are more than 
 10,000 different features in the feature model of the Linux kernel, there will 
 be approximately $2^{10,000}$ ($=10^{3080}$) possible configurations in the 
 configuration space, assuming the feature model is 100\% \texttt{boolean}s and 
 there are no cross-constraints.  This is more than the estimated number of 
 atoms in the universe, so getting a list of all the possible configurations is 
 not possible (at least not with today's computers).
+\\
+
+This means that there might be a generalization problem, and a clever way of 
+generating configurations will have to be found. See Section \ref{rephunt}.
+
 
 
             %% EXPERIMENTAL SETUP
             \section{Experimental Setup}
-The experimental setup consists of a loop, where a configuration is generated,
-the Linux kernel is then compiling with this configuration, and the output 
-warnings are categorized and collected.
+The experimental setup consists of a loop, which does three things. \emph{1:} a 
+configuration is generated, \emph{2:} the Linux kernel is then compiled with 
+this configuration, and \emph{3:} the output warnings are categorized and 
+collected.
 
-Notice that the Linux kernels are not installed and executed.
+Notice that the Linux kernels are not installed and executed in the experiment.
 \\
 
-The experiment has mainly been carried out on a computer at the IT University 
-of Copenhagen. The computer has $32\times2.8 MHz$ and $128 GB$ of RAM, and the 
-average time to compile a kernel and upload the data was around 1 minute and 35 
-seconds. Also a conventional laptop with $4\times2.5 MHz$  and 8 GB of RAM has 
+The experiment is mainly carried out on a computer at the IT University 
+of Copenhagen. The computer has a $32\times2.8 MHz$ cpu and $128 GB$ of RAM, and the 
+average time to run an experiment loop is around 1 minute and 35 
+seconds. Also a conventional laptop with a $4\times2.5 MHz$  cpu and 4 GB of RAM has 
 been used.
 \\
 
+
 To say something about all of the Linux kernel, the generated configurations 
-for the experiment should be a representative sample of all the possible 
-configurations. 
-
-
-
-        %% PART 1: CHOOSING THE CONFIGURATOR
-        \section{Part 1: Choosing the Configurator}
-        \label{rephunt}
-
-BLABLA about representativeness
+in part one of the experiment  should be a representative sample of all the 
+possible configurations. 
 \\
 
 
@@ -1017,6 +1055,13 @@ like by only looking at the sample, it would look like the yellow area.
         \label{fig:rand}
     }
 \figb{Showing both representative (a) and unrepresentative (b) samples}{fig:reprrand}
+
+
+
+        %% PART 1: CHOOSING THE CONFIGURATOR
+        \section{Part 1: The Hunt For Representativeness}
+        \label{rephunt}
+
 
 Five different methods are proposed and discussed to generate random 
 configurations.
@@ -1074,8 +1119,11 @@ all invalid configurations are filtered away.
     \item \textbf{RandomSAT}
 
 The Linux kernel feature model can be extracted from the \textsc{Kconfig} 
-files, to get a propositional formula\cite{lvat}. This formula can be used to 
-check for propositional satisfiability.
+files, to get a propositional formula\cite{lvat}. 
+
+This formula can be used with a SAT solver, which uniformly selects a random
+value for all features, which also satisfies the propositional formula, and
+thereby always returns a valid random configuration.
 
 
     
@@ -1090,8 +1138,8 @@ in this project.
 \iffalse
   v 4 different ways
   v randconfig
-  . fig (a) and (b) showing randconfig
-  . Showing the sample figure with dots and stuff.
+  x fig (a) and (b) showing randconfig
+  v Showing the sample figure with dots and stuff.
 \fi
 
 
@@ -1099,32 +1147,45 @@ in this project.
 
 
             %%% COMPILING AND COLLECTING DATA
-            \subsection{Compiling and Collecting Data}
+            \section{Part 2: Compiling and Collecting Data}
 
-When a configuration has been generated, the Linux kernel is compiled using 
-that configuration file by running the command \textcode{make all}. This 
-command runs \textsc{GNU Make}, which is instructed how to compile the kernel with
-\textsc{gcc}.
+When a configuration file has been generated, two different Linux kernel 
+versions are compiled using that configuration file, a stable Linux kernel, and 
+an in-development version. The in-development versions are suspected to be more 
+prone to contain warnings, but the warnings are also suspected to be fixed 
+quicker than the bugs in the stable version. To even out any short-lifed warnings
+multiple in-development versions are used. Nine different versions from nine following days.
+% ELVIS
+
+% TODO ^ Maybe rephrase it a bit, if have time.
+
+by running the command 
+\textcode{make all}. This command runs \textsc{GNU Make}, which is instructed 
+how to compile the kernel with \textsc{gcc}.
 
 The warning and error outputs from \textsc{gcc} will be saved for analysis.
 \\
 
 A warning output will contain a \emph{bug type}, a \emph{filename}, \emph{line 
-number}, and a \emph{message} describing the warning in english.
-\\
+number}, and a \emph{message} describing the warning in english. This data about the
+experiment run is saved: The original error messages, the \texttt{.config} file, 
+the Linux version, the \textsc{gcc} version.
 
---- blabla about how to categorize ---
+This way the experiment will be reproducible.
+
+
+
+
 
 
             %% ANALYZING DATA
-            \section{Analyzing Data}
+            \section{Part 3: Analyzing Data}
 The warnings will be quantitatively analyzed.  The analysis of the warnings is 
  quantitative, and this project will not contain in-depth analysis of 
-any of the warnings in comparisson to\cite{42bugs}, which is a qualitative 
+any of the warnings in comparison to\cite{42bugs}, which is a qualitative 
 analysis of bugs in Linux.
 
-The different warning types will be categorized according to section 
-\ref{sec:gccwarns}.
+The analysis is in the next chapter.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1135,13 +1196,17 @@ The different warning types will be categorized according to section
 
 A total of 42,060 experiments were run. Half of them from the in-development 
 Linux version, and the other half of the latest stable version of Linux.
-\\
 
 A total of 506,000 bugs were found and 4,600,000 files.
+\\
+
+The stable Linux version is analyzed at first, to answer the first two research 
+questions. At last, these results are hold against the results from the 
+in-development version.
 
 
-            %% STABLE LINUX VERSION
-            \section{Stable Linux Version}
+            %% STABLE LINUX WARNINGS
+            \section{Stable Linux Warnings}
 In Figure \ref{stablewarndis} is shown the distribution of warnings in the 
 experiments run with the stable Linux kernel. The distinct warning types are 
 only counted once per experiment run.
@@ -1230,6 +1295,11 @@ Two out of three \textblue{code pollution} warnings \emph{unused-function} and
 \emph{unused-variable} are both in the top 3 of most common warnings.
 \\
 
+\textbf{Observation 3:}
+There are only found 15 different warning types. Only 8 of these are from the 
+\texttt{-Wall} group.
+\\
+
 With these observations, \textbf{RQ1} can be answered.
 \\
 
@@ -1242,73 +1312,123 @@ pollution}, and next come warning types related to variables being uninitialized
 
 
 
-            %% SUBSYSTEMS
-            \section{Subsystems}
+            %% STABLE LINUX SUBSYSTEMS
+            \section{Stable Linux Subsystems}
 Figure \ref{stablessdis} shows the distribution of subsystems with warnings in 
 all of the experiment runs on the stable Linux version. In many experiment runs, 
 there were multiple warnings in the same subsystems. These are only counted 
 once.
 
-The red rows are subsystems that are not a major part of the kernel 
+The gray rows are subsystems that are not a major part of the kernel 
 functionality, as mentioned in  Section \ref{sec:linuxss}. These are the 
 \textredmid{smaller} subsystems, and the \textreddark{infrastructure} subsystems.
 \\
 
 
+% SQL:
+%   set @ss = 'scripts/';
+%   select count(distinct config) from bugs
+%       where linux_version rlike '4.1.1' and (
+%           original rlike concat(' ', @ss) or
+%           original rlike concat('^', @ss) or
+%           original rlike concat('\\n', @ss) or
+%           original rlike concat('\\[', @ss) );
+
+
 \figa
+\subfigure[Percentage of experiment runs]{
     \begin{tabular}{r|d}
         \hline
         \hline
         \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
         \hline
         
-        drivers/ &  93. \%  \\
-        include/ &  55. \%  \\
-        fs/ &  35. \%  \\ % Same exact number as arch/
-        arch/ &  35. \%  \\ % Same exact number as fs/
-        arch/x86/ &  35. \%  \\ % Same exact number as fs/ and arch/
-        kernel/ &  24. \%  \\
-        net/ &  18. \%  \\
+        drivers/ &  64. \%  \\
+        include/ &  40. \%  \\
         crypto/ &  17. \%  \\
-        sound/ &  16. \%  \\
-        mm/ &  14. \%  \\
-            \rowcolor{\redmid}
-        {usr/} &  12. \%  \\ % Same exact number as samples/
+        fs/ &  14. \%  \\ % Same exact number as arch/
             \rowcolor{\reddark}
         {samples/} &  12. \%  \\ % Same exact number as usr/
-        lib/ &  11. \%  \\
-        block/ &  8.5  \% \\
+        net/ &  10. \%  \\
+        arch/ &  9.2 \%  \\ % Same exact number as fs/
+        arch/x86/ &  9.2 \%  \\ % Same exact number as fs/ and arch/
+        lib/ &  9.1 \%  \\
+        mm/ &  7.9 \%  \\
+        kernel/ &  5.9 \%  \\
+        sound/ &  3.8 \%  \\
             \rowcolor{\reddark}
-        {scripts/} &  1.8 \% \\
-        security/ &  0.091 \% \\
+        {scripts/} & 1.6  \% \\
             \rowcolor{\redmid}
-        {ipc/} &  0.0048 \% \\
+        {usr/} &  .076 \%  \\ % Same exact number as samples/
+        block/ &  .75  \% \\
+        security/ &  .0 \% \\
             \rowcolor{\redmid}
-        {init/} &  0.0048 \% \\
+        {firmware/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {ipc/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {init/} &  .0 \% \\
             \rowcolor{\reddark}
-        {tools/} &  0.0048 \% \\
+        {tools/} &  .0 \% \\
             \rowcolor{\redmid}
-        {virt/} &  0.0 \% \\
+        {virt/} &  .0 \% \\
 
         \hline
         \hline
     \end{tabular}
+} \qquad
+\subfigure[Warnings per 1000 lines of code in the subsystem]{
+    \begin{tabular}{r|c}
+        \hline
+        \hline
+        \textbf{Subsystem} & \textbf{Warn/kLOC} \\
+        \hline
+
+            \rowcolor{\reddark}
+        samples/ & 272,7 \\
+            \rowcolor{\reddark}
+        scripts/ & 58,5 \\
+        crypto/ & 41,9 \\
+            \rowcolor{\redmid}
+        usr/  &29,6 \\
+        mm/  & 25,1 \\
+        lib/ & 18,0 \\
+        include/ & 12,8 \\
+        arch/x86/ & 8,8 \\
+        kernel/ & 2,5 \\
+        net/ & 2,4 \\
+        fs/ & 2,3 \\
+        block/ & 1,5 \\
+        drivers/ & 1,2 \\
+        arch/ & 0,9 \\
+        sound/ & 0,4  \\
+
+        \hline
+        \hline
+    \end{tabular}
+}
 \figb{Distribution of all subsystems within the warnings from the stable Linux}{stablessdis}
+
 
 
 With these results,  the following observations can be made:
 \\
 
 \textbf{Observation 3:}
-The subsystem, which appear the most in the warnings, is by far the 
-\texttt{drivers/} subsystem.
+The subsystem, which appear the most in the warnings, is the 
+\texttt{drivers/} subsystem, followed by the \texttt{include/} subsystem.
 \\
 
 \textbf{Observation 4:}
-There are near zero warnings in the \texttt{security/} subsystem. 
+There are zero warnings in the \texttt{security/} subsystem. 
 \\
 
 \textbf{Conclusion 2:}
+The subsystems with drivers, and header files have the most warnings, and the 
+security subsystem together with the most smaller, and infrastructure subsystems
+had zero or near zero warnings.
+
+
 
 
 
@@ -1386,20 +1506,97 @@ There are near zero warnings in the \texttt{security/} subsystem.
         \hline
     \end{tabular}
     }
-\figb{Comparrison of the top 10 warnings}{stablewarndis}
+\figb{Comparison of the top 10 warnings}{stablewarndis}
 
 
 
-% TODO
-% Goddammit, this was kinda wrong, because paths are like '/include/drivers/xxx',
-% which would count as a 'drivers/' warning.
-% SQL FIX: 
-% select count(distinct config) from bugs where linux_version rlike '4.1.1' and 
-% (original rlike '^kernel/' or original rlike ' kernel/' or original rlike 
-% '\\nkernel/' or original rlike '\\[kernel');
 
 
 
+\figa
+    \subfigure[Stable version]{
+    \begin{tabular}{r|d}
+        \hline
+        \hline
+        \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
+        \hline
+        
+        drivers/ &  64. \%  \\
+        include/ &  40. \%  \\
+        crypto/ &  17. \%  \\
+        fs/ &  14. \%  \\ % Same exact number as arch/
+            \rowcolor{\reddark}
+        {samples/} &  12. \%  \\ % Same exact number as usr/
+        net/ &  10. \%  \\
+        arch/ &  9.2 \%  \\ % Same exact number as fs/
+        arch/x86/ &  9.2 \%  \\ % Same exact number as fs/ and arch/
+        lib/ &  9.1 \%  \\
+        mm/ &  7.9 \%  \\
+        kernel/ &  5.9 \%  \\
+        sound/ &  3.8 \%  \\
+            \rowcolor{\reddark}
+        {scripts/} & 1.6  \% \\
+        block/ &  .75  \% \\
+            \rowcolor{\redmid}
+        {usr/} &  .076 \%  \\ % Same exact number as samples/
+        security/ &  .0 \% \\
+            \rowcolor{\redmid}
+        {firmware/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {ipc/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {init/} &  .0 \% \\
+            \rowcolor{\reddark}
+        {tools/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {virt/} &  .0 \% \\
+
+        \hline
+        \hline
+    \end{tabular}
+    }
+    \subfigure[In-development version]{
+    \begin{tabular}{r|d}
+        \hline
+        \hline
+        \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
+        \hline
+        
+        drivers/ &  62. \%  \\
+        include/ &  42. \%  \\
+            \rowcolor{\reddark}
+        {scripts/} &  25. \% \\
+        crypto/ &  16. \%  \\
+        arch/ &  14. \%  \\ % Same exact number as fs/
+        arch/x86/ &  14. \%  \\ % Same exact number as fs/ and arch/
+        fs/ &  13. \%  \\ % Same exact number as arch/
+        mm/ &  13. \%  \\
+        net/ &  10. \%  \\
+            \rowcolor{\reddark}
+        {samples/} & 9.7  \%  \\ % Same exact number as usr/
+        lib/ &  9.0 \%  \\
+        kernel/ & 3.0  \%  \\
+        sound/ &  1.5 \%  \\
+        block/ &  .27  \% \\
+            \rowcolor{\redmid}
+        {usr/} & .12  \%  \\ % Same exact number as samples/
+        security/ &  .0 \% \\
+            \rowcolor{\redmid}
+        {firmware/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {ipc/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {init/} &  .0 \% \\
+            \rowcolor{\reddark}
+        {tools/} &  .0 \% \\
+            \rowcolor{\redmid}
+        {virt/} &  .0 \% \\
+
+        \hline
+        \hline
+    \end{tabular}
+    }
+\figb{Comparison of the subsystems}{stablessdis}
 
 
 
@@ -1562,14 +1759,19 @@ configuration creation. (See more about representativeness in the section
 
 
 
-            %%% 9 DIFFERENT IN_DEVELOPMENT VERSIONS
-            \subsection{9 Different In-Development Versions}
+            %%% MULTIPLE IN_DEVELOPMENT VERSIONS
+            \subsection{Multiple In-Development Versions}
+
 Multiple different in-development versions of the Linux kernel are used to 
 minimize the skewing of warnings. If only one version of the in-development 
 version is used, it gives a very one-sighted view of the in-development 
 versions, where certain bugs may be over-represented. The more different 
 versions of the in-development Linux should be used, to get a more uniform 
 results.
+
+In this experiment, nine different versions of the in-development version was 
+used, which is not a lot. Therefore there may be an overrepresentation of 
+some warnings in the in-development version results.
 
 
             %%% MORE FEATURES IN THE IN-DEVELOPMENT VERSION
@@ -1593,12 +1795,16 @@ returned. There is only one new warning that is enabled by the \texttt{-Wall}
 flag in version 5.1.0 (\texttt{-Wc++14compat}), and none of this type was found.
 \\
 
-The warning \texttt{discarded-array-qualifiers} showed only on the experiments 
-with the newer version, as the only one. This warning was discarded.
+The warnings \texttt{discarded-array-qualifiers}, 
+\texttt{incompatible-pointer-types}, \texttt{int-conversion}, 
+\texttt{logical-not-parentheses}, and \texttt{switch-bool} showed only on the 
+experiments with the newer version of \textsc{gcc}. These warnings were 
+discarded from the results.
 \\
 
-There is a possibility though, that the newer version is better 
-at finding certain warnings, which will not be clear to see in the data.
+There is a possibility though, that the newer version is better at finding 
+certain warnings that are in the results. This will not be clear to see in the 
+data.
 
 
 
@@ -1656,13 +1862,40 @@ installed on the build system.
             \chapter{Discussion and Future Work}
 
             %% MORE THAN LINUX
-            \section{More Than Linux}
+            \subsection*{More Than Linux}
+
+            \def \fn {\url{http://vbdb.itu.dk/}}
 
 This experiment only runs on the linux kernel, but there are variability in many
 other software products. A similar experiment could be run on other products to 
-see it the results correlate.
+see it the results correlate. The paper \cite{42bugs} has an attached online 
+database of the variability bugs found in the paper. These bugs are from both 
+the Linux kernel and also \textsc{BusyBox}\f.
+
+            %% OTHER COMPILERS
+            \subsection*{Other Compilers}
+            
+
+            \def \fn {\url{http://clang.llvm.org/}}
+
+There has been some disputes between the Linux community and the \textsc{gcc} 
+creators\cite{linusgcc}. The Linux is often not too happy with how \textsc{gcc} 
+handles warnings, and in the last couple of years, there has been an initiative 
+to deprecate \textsc{gcc} as the standard compiler for Linux, and instead use 
+\textsc{LLVM Clang}\f, which is faster, and has good static analysis\cite{clang}.
 
 
+            %%  ANALYZE WARNING PRONE FEATURES
+            \subsection*{Analyze Warning-Prone Features}
+
+This experiment can be extended to look at what features, or combination of 
+features that result in warnings. When the same warning appears in the same 
+file, on different configurations, it must necessarily be the same combination 
+of a few features that generated the warning. Finding the features that all these
+configurations have in common will give a lead to what feature combination is 
+creating the warning.
+
+It will be possible to narrow down which features might be generating the bug.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           RELATED WORK
@@ -1679,6 +1912,27 @@ This report is somewhat a continuation of the research in that paper, trying to
 quantify the warnings part of the bugs.
 
 
+            %%%  INTEL AND THE KBUILD_ROBOT
+            \subsection*{Intel and the Kbuild-Robot}
+
+\textsc{Intel} is a large hardware vendor, which is one of the top ten 
+contributors to the Linux kernel\cite{gkh}. They have started a bugfix 
+initiative called \texttt{Kbuild-robot}, which every day runs part 1, and part 
+2 of this experiment on the in-development version of Linux. As a part 3 and 4, 
+some of the kernels are run, and when an error is found, the author of the change 
+is notified with an e-mail.
+
+The mailing lists are publicly available at 
+\cite{kbuildrobot,kbuildrobotall,kbuildlkp}.
+\\
+
+What is gathered of information about this project, only the mailing lists are 
+publicly available, and the experiment run data is thrown away soon after. An 
+effort was made to get their experiment data available for analysis, but no luck.
+
+
+
+
 % TODO
 \iffalse
   \ 42 bugs
@@ -1691,9 +1945,12 @@ quantify the warnings part of the bugs.
 
 
 
-\newpage
-\chapter{Conclusion}
-\emph{--- Leave empty until the end---}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                    CONCLUSION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            \newpage
+            \chapter{Conclusion}
+The Linux kernel has been analyzed, and it is found that there are warnings all over, but not all types of them, 
 
 
 
