@@ -150,7 +150,7 @@
   showstringspaces=false,
   showtabs=false,                  
   tabsize=2,
-  emph={ifdef,endif,\#},
+  emph={ifdef,endif,config,def\_bool,boolean,depends,on,if,choice,endchoice,default},
   emphstyle={\color{red}}
 }
 
@@ -165,8 +165,7 @@
 
 % Front Page
 \date{September 1st 2015\\ IT University of Copenhagen}
-\title{A Quantitative Analysis of Variability Warnings in Linux \\ Draft: 
-    \today~\currenttime}
+\title{A Quantitative Analysis of Variability Warnings in Linux}
 \author{Elvis Flesborg\\
 \texttt{efle@itu.dk}}
 \clearpage\maketitle
@@ -201,8 +200,8 @@ variability.
 In this project, a sample of these variants are produced and checked for compile
 warnings to get an insight in the distribution of warning types, and the 
 location of the warnings. The experiment is run both on a stable version of the 
-Linux kernel, and an in-development version, which are compared regarding types 
-and location of the warnings.
+Linux kernel, and an in-development version, which are then compared regarding 
+types and location of the warnings.
 
 
 
@@ -213,23 +212,23 @@ and location of the warnings.
 %                           INTRODUCTION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
-Software projects with a high variability rate can be configured, to suit many
+Software projects with a high variability rate can be configured to suit many
 needs with the same code base. Possibly the largest open source project, which 
 also happens to be the project with the highest variability rate
-is the Linux kernel. It contains approximately 10,000 different configuration 
+is the Linux kernel. It contains approximately 14,000 different configuration 
 options in the feature model.
 \\
 
 The basis for this paper is another  paper: \emph{42 Variability 
 Bugs in the Linux Kernel: A Qualitative Analysis}\cite{42bugs}, where bugs in 
-the Linux kernel are qualitatively analyzed. In this report, warnings will be 
-analysed quantitatively, and will function as a proxy for bugs.
+the Linux kernel are \underline{qualitatively} analyzed. In this report, warnings will be 
+analysed \underline{quantitatively}, and will function as a proxy for bugs.
 \\
 
 The following contributions will be made: Analysis of distributions of warnings 
 in the Linux kernel, comparison of warnings in a stable version of the Linux 
 kernel vs.\ an in-development version. Also an analysis of where the warnings 
-are located.
+are located in the source code.
 
 % TODO
 \iffalse
@@ -264,8 +263,8 @@ different kinds of hardware, or different functionalities.
 
 This is called \emph{variability} in software, and a software product of 
 this type is called a \emph{Software Product Line} (SPL). Software products 
-with different functionalities (\emph{variants}) can be derived from the same 
-source code base, and the code in its entirety is not a valid product\cite[p. 
+with different functionalities can be derived from the same 
+source code base to create different \emph{variants}. The code in its entirety is not a valid product\cite[p. 
 1]{IntDatSPL}, it has to be configured.
 \\
 
@@ -273,7 +272,7 @@ source code base, and the code in its entirety is not a valid product\cite[p.
         architecture, and 10,335 for the \texttt{x86} architecture, which is used
         in this project.}
 
-Software with a high-degree of variability is usually refered to as 
+Software Product Lines with a high-degree of variability is usually refered to as 
 \emph{Variability-Intensive Systems} or \emph{VISs}. Linux is a \emph{VIS} with 
 more than 14,000\f different configuration options, called \emph{features}.
 Other examples of \emph{VISs} are \textsc{BusyBox}, \textsc{Eclipse}, 
@@ -282,14 +281,14 @@ Framework}\cite[p. 1]{VarTesDrupal} to name a few.
 \\
 
 All features in a software product line, and their options and relations are 
-described in a \emph{feature model}.
+defined in, what is called a \emph{feature model}.
 
             %%% FEATURE MODELS
             \subsection{Feature Models}
 
-A feature model is a way of representing all the possible configurations - 
+A feature model is a way of defining all the possible configurations - 
 \emph{the configuration space}. It contains all the features with their 
-respective options and all the constraints and dependencies between the features.
+respective options and all the constraints and dependencies between other features.
 
 A visualization of a feature model is called a feature diagram, there is an 
 example in Figure \ref{featurediagramphone}. The example will be tiny compared 
@@ -304,14 +303,14 @@ optional features \textbf{Camera} and \textbf{MP3} depending on it.
 There is also some choice options \textbf{Color}, \textbf{BW}, and \textbf{High 
 Definition} for the screen type, where only one of them may be enabled. 
 \textbf{High Definition} is the default choice. A 
-cross-tree constraint is also present, which states that \textbf{Media} with 
-all of its children can only be enabled if a \textbf{High Definition} screen is 
+cross-tree constraint is also present, which states that \textbf{Media} (with 
+all of its children) can only be enabled if a \textbf{High Definition} screen is 
 enabled.
 
 The feature diagram is inspired by \cite{AAFM}, but there is no consensus on a 
-unified notation for attributes in feature models\cite{AAFM}. And for there is 
-for example no notation in the diagram, that \textbf{High Definition} is the 
-default value for the choice clause.
+unified notation for attributes in feature models\cite{AAFM}. There is 
+for example not noted in the diagram, that \textbf{High Definition} is the 
+default value for the choice clause. This can be seen in the textual representation of the feature model in Figure \ref{kconfigphone}
 
 The phone example is inspired by some examples from \cite{SPLOT}, which is an 
 online toolbox for variability software that also has a repository of feature 
@@ -413,26 +412,40 @@ kernel feature model hierarchy, for example, is only 8 layers deep\cite[p.
 
 Bugs in variability programs do not necessarily generate a bug in every 
 variant of the program. A simple example is shown in Figure \ref{lst:varbug}. 
-There are only two feature in the feature model: \texttt{A}, and \texttt{B}, 
+There are only two features in the feature model: \texttt{A}, and \texttt{B}, 
 and thus there are four different configurations for this program; 
 \texttt{\{\}}, \texttt{\{A\}}, \texttt{\{B\}}, and \texttt{\{A,B\}}.
 
 The feature model, denoted $\psi_{FM}$, for this example contains four 
 configurations, $\kappa_0$, $\kappa_1$, $\kappa_2$, and $\kappa_3$, which can 
 be denoted as conjunctions on logic form like this: $\kappa_0 = \neg A \wedge 
-\neg B$, and $\kappa_1 = \neg A \wedge B$.
+\neg B$, $\kappa_1 = A \wedge \neg B$, $\kappa_2 = \neg A \wedge  B$, and $\kappa_3 = A \wedge B$.
 \\
 
 In the variant of the program with configuration $\kappa_0$, the compilation of 
 the program will return an \texttt{uninitialized} warning, since the compiler 
 never visits the two \textcode{\#ifdef}-clauses. In all other variants of the
-program, there will be no warning, because \textcode{var} gets initialized.
+program, there will be no warning, because the variable \textcode{var} gets initialized.
+
+This is a variability bug. They can be hard for a programmer to see, since they will have to have all variants in mind when coding.
 
 \figa
-    \subfigure{
+    \subfigure[The original code]{
     \lstinputlisting[language=C,firstline=3,]{code/varbug.c}
+    } \qquad
+    \subfigure[The code in $k_0$]{
+    \lstinputlisting[language=C,firstline=3,]{code/varbug0.c}
+    } \qquad
+    \subfigure[The code in $k_1$]{
+    \lstinputlisting[language=C,firstline=3,]{code/varbug1.c}
+    } \qquad
+    \subfigure[The code in $k_2$]{
+    \lstinputlisting[language=C,firstline=3,]{code/varbug2.c}
+    } \qquad
+    \subfigure[The code in $k_3$]{
+    \lstinputlisting[language=C,firstline=3,]{code/varbug3.c}
     }
-\figb{An example of a program with a variability bug.}{lst:varbug}
+\figb{An example of a program with variablity, and the four preprocessed versions of the code.}{lst:varbug}
 
             
             %% THE LINUX KERNEL
@@ -445,7 +458,7 @@ the world, and has been ported to more than 20 architectures\f, which makes it
 very scalable, it is the operating system that supports the most hardware in
 the world\cite{22thbirthday,gkh}.
 
-Its use cases range from small embedded devices like mobile phones and GPSs to 
+Its use cases range from small embedded devices like mobile phones and GPSs over PCs and TVs to 
 supercomputers. In fact 98\% of the top 500 supercomputers in the world run a 
 Linux distribution\cite{top500}. 
 \\
@@ -461,7 +474,7 @@ growing. Today the code base is 19 million lines of code.
 
 The Linux kernel development model is unique in the  way, that it is developed 
 by many thousands of people all over the world. According to \cite{gkh}, 
-approximately 75\% of the contributions come from companies, and 25\% come from 
+approximately 75\% of the code contributions come from companies, and 25\% come from 
 individuals. 
 
 There is a hierarchy of people, who are head-maintainers of different parts of 
@@ -484,7 +497,7 @@ fixed, a new stable version is created, and the whole process is repeated.
             \def \fn {See the original post about it here: 
             \url{https://lkml.org/lkml/2008/2/11/512}}
 
-During development, new code is added to the in-development version of Linux.
+During development and in between the semi-stable versions, new code is added to the in-development version of Linux.
 This version is called \emph{linux-next}, and has been the main in-development version
 since 2008\f.
 \\
@@ -493,7 +506,7 @@ since 2008\f.
             by and for the Linux kernel project}
 
 The \emph{linux-next} tree is a \textsc{git}\f repository, which merges over 200 
-other \textsc{git} repositories\cite {nextTrees}, which are all based on the 
+other \textsc{git} repositories\cite {nextTrees}, which are all in-development versions for different parts of the code, based on the 
 \emph{mainline} tree. The \emph{linux-next} tree is merging these other trees 
 and the merge conflicts are handled every day.
 \\
@@ -587,13 +600,12 @@ And infrastructure subsystems are:
 \fi
 
             \subsection{The \textsc{Kconfig} language} 
-\textsc{Kconfig} is the language of the feature model in Linux (also used for 
-other projects like \textsc{BusyBox}, \textsc{BuildRoot}, \textsc{CoreBoot}, 
-\textsc{Freetz} and others)\cite[p. 4]{VarModSSD}.
 
             \def \fn{Found with the command \textcode{find .\ | grep Kconfig | wc}}
 
-The \textsc{Kconfig} files have the prefix \textcode{Kconfig}, and are 
+\textsc{Kconfig} is the language of the feature model in Linux (also used for 
+other projects like \textsc{BusyBox}, \textsc{BuildRoot}, \textsc{CoreBoot}, 
+\textsc{Freetz} and others)\cite[p. 4]{VarModSSD}.  The \textsc{Kconfig} files have the prefix \textcode{Kconfig}, and are 
 scattered all over the Linux kernel source code tree, where they include each 
 other. There are 1195 \textsc{Kconfig} files in total in the stable Linux kernel\f
 with 956 of them relevant for the \texttt{x86} architecture.
@@ -602,7 +614,7 @@ with 956 of them relevant for the \texttt{x86} architecture.
 The corresponding \textsc{Kconfig} code for the phone example in Figure 
 \ref{featurediagramphone} can be seen in Figure \ref{kconfigphone}. It 
 is a simple example, which lacks some of the possible data types, and other 
-syntax available in \textsc{Kconfig}.
+syntax available in \textsc{Kconfig}. Only \texttt{booleans} are used, and the \textcode{menu}-clause is not used.
 
 For a description of the context free grammar of 
 the \textsc{Kconfig} language, see the Appendix \ref{app:kconfig}.
@@ -616,13 +628,12 @@ The different data types in the Kconfig language used in Linux are
 \textcode{tristate} (61\%), \textcode{string} (0.41\%), \textcode{hex} 
 (0.32\%), and \textcode{integer} (3.7\%). \texttt{tristate} is a datatype 
 with three possible values: \texttt{y},\texttt{n}, and \texttt{m}, where 
-\texttt{m} will set the feature as a module instead of building it into the 
+\texttt{m} will set the feature as a \emph{module} instead of building it into the 
 kernel. It can then be loaded into the kernel when installing and running the 
 kernel.
 
-This does not mean that \texttt{m} and \texttt{n} will be the same in this 
-project.
-
+Since the kernels are no installed and run in this experiment, \texttt{m} could be considered the same as \texttt{n}, But there are 
+expressions in \textsc{Kconfig} like \textcode{depends on B=m}. 
 
 
 
@@ -645,15 +656,12 @@ project.
             \subsection{Configuring Linux}
             \label{sec:conf}
 
-The Linux kernel comes with different ways of choosing features - these are 
+The Linux kernel comes with different ways of choosing features from the feature model- these are 
 called \emph{configurators}. 
 
 Some of them lets the user choose the features. There is a question based 
 one: \texttt{config}, and some menu based ones: \texttt{menuconfig}, 
-\texttt{xconfig}, \texttt{nconfig}, and \texttt{gconfig}.
-\\
-
-Figure \ref{fig:lineofconfigs} shows what the graphical 
+\texttt{xconfig}, \texttt{nconfig}, and \texttt{gconfig}.  Figure \ref{fig:lineofconfigs} shows what the graphical 
 configurators \texttt{menuconfig} and 
 \texttt{xconfig} look like.
 \\
@@ -676,9 +684,7 @@ never prompt the user for anything, but create a configuration automatically:
 
 
 When a configuration file is generated, it is saved as \texttt{.config}.
-In this file, all features are prefixed with \texttt{CONFIG\_}, and this is
-the configuration of the Linux kernel. 
-
+In this file, all features are prefixed with \texttt{CONFIG\_}.  
 Running the configurator \texttt{allnoconfig} on the \textsc{Kconfig} code for 
 the phone example will disable all the features 
 in the feature model that can be disabled. Figure \ref{lst:allnoconfig} shows 
@@ -689,7 +695,7 @@ the \texttt{.config} file that will be generated when running
 The \texttt{CALLS} and \texttt{SCREEN} are mandatory, and will 
 therefore be enabled. Out of the three possibilities in the choice clause, the 
 \texttt{HD} feature has been enabled, since it is the default choice. Everything
-else is disabled.
+else is disabled. Notice that \texttt{CAMERA} and \texttt{MP3} are not present since \texttt{MEDIA} is disabled.
 
 
 \figa
@@ -707,13 +713,12 @@ else is disabled.
 
 Figure \ref{lst:allyesconfig} shows the \texttt{.config} file that is generated by 
 the configurator \texttt{allyesconfig}.
-
 Every feature has been enabled, except \texttt{COLOR} and \texttt{BW}, which 
 must be disabled because only one feature within the choice clause can be enabled.
 \\
 
-Running \texttt{allnoconfig} on the Linux kernel, will enable 228 features and 
-\texttt{allyesconfig} will enable 6976 features.
+Running \texttt{allnoconfig} on the Linux kernel with the \texttt{x86} architecture, will enable 228 features and 
+\texttt{allyesconfig} will enable 6976 features, out of the 10,335 total features in the \texttt{x86} architecture.
 
 
             %%% COMPILING AND CATCHING WARNINGS
@@ -721,25 +726,18 @@ Running \texttt{allnoconfig} on the Linux kernel, will enable 228 features and
 
 When the Linux kernel has been configured, it is ready to be compiled to create 
 the executable kernel. The compiler will then only include the code parts, 
-which are indicated by the configuration file. This is written in the source 
-code as \textcode{\#ifdef CONFIG\_FOO}.
-
-When writing code for variability software, a programmer has to be aware of the 
-\textcode{\#ifdef} clauses, and that different configurations can exist, which 
-will only enable some of the code. A programmer can fail to check all possible 
-configurations when writing the code, and accidentally make coding mistakes.
-\\
+which are indicated by the configuration file. This step is called preprocessing. This is written in the source 
+code as \textcode{\#ifdef CONFIG\_FOO} as seen in Figure \ref{lst:varbug}.
 
 When compiling the Linux kernel, the command \textcode{make all} is run, and 
-this will start the compilation. If any warnings or errors happen, they will be 
-posted in the standard output in the terminal.
+this will start the preprocessing and the compilation. The standard preprocessor and compiler for Linux is \textsc{GNU gcc}. 
 \\
 
+If any warnings or errors happen during compilation, they will be posted to standard output in the terminal.
 In a warning output, there is information about a possible coding mistake that 
-might break the code. There are 100s of different warning types, that can be 
-enabled. 33 of the these can be enabled by giving the \textcode{-Wall} flag 
-to the compiler \textsc{gcc}\cite{gccwarnings}. This will enable warnings 
-\emph{"about contructions that some users consider 
+might break the code. \textsc{gcc} has 100s of different warning types, that can be 
+checked for. 33 of the these can be enabled by giving the \textcode{-Wall} flag.
+ This will enable warnings \emph{"about contructions that some users consider 
 questionable"}\cite{gccwarnings}.
 
 
@@ -748,8 +746,8 @@ questionable"}\cite{gccwarnings}.
             \subsection{\textsc{gcc} Warnings}
             \label{sec:gccwarns}
 All experiments are run with the \textsc{gcc}-flag \textcode{-Wall}. In many 
-cases, though, the Linux kernel enables even more warning flags by itself, and
-many of the warnings in the results are not from the \texttt{-Wall} group.
+cases, though, the Linux kernel enables even more warning flags by itself.
+Many of the warnings in the results are not from the \texttt{-Wall} group.
 \\
 
 The warnings will be categorized into these types of warnings:
@@ -805,8 +803,8 @@ This will be categorized as a \emph{wrong data} warning.
 
             \subsection*{cpp}
 This shows \textcode{\#warning} directives written in the code. This is a warning
-message that the coder can pass to the compilee. Often they will not result in 
-an error, but inform about specifics.
+message that the coder can pass to the person compiling. Often they will not result in 
+an error, but inform about specific precautions one must take.
 
 This is categorized as \emph{irrelevant}.
 
@@ -891,7 +889,7 @@ return this warning.
     \subfigure{
         \lstinputlisting[language=C]{code/maybeuninitializedreal}
     }
-\figb{A real example of maybe-uninitialized function}{lst:maybeuninitializedreal}
+\figb{An example of maybe-uninitialized function}{lst:maybeuninitializedreal}
 
 This is categorized as \emph{wrong data}.
 
@@ -942,18 +940,18 @@ This is categorized as \emph{code pollution}.
 
 In the example in Figure \ref{lst:unusedfuncreal}, the function 
 \texttt{bq27x00\_powersupply\_unregister} will only be called if the feature 
-\texttt{CONFIG\_BATTERY\_BQ27X00\_I2C} is enabled, and is therefore an 
-unused function.
+\texttt{BATTERY\_BQ27X00\_I2C} is enabled, and is  an 
+unused function if the feature is disabled.
 
 \figa
     \lstinputlisting[language=C]{code/unusedfuncreal}
-\figb{A real example of an unused function - from the file 
+\figb{An example of an unused function - from 
     \texttt{drivers/power/bq27x00\_battery.c}}{lst:unusedfuncreal}
 
 
             \subsection*{unused-variable}
 This is the same as \texttt{unused-function}, but only with a variable instead 
-of a function. There will be no example of this.
+of a function. 
 
 It is also categorized as \emph{code pollution}.
 
@@ -974,9 +972,9 @@ This is categorized as \emph{code pollution}.
 \chapter{Methodology}
 
 \emph{Objective:}
-This report aims to make a quantitative analysis of warnings in all of the
-Linux kernel by checking randomly generated Linux kernels for warnings and 
-then generalize.
+This report aims to make a quantitative analysis of warnings in  the
+Linux kernel by checking randomly generated  kernels for warnings and 
+then generalize to all of Linux.
 %The warnings functions as a proxy for errors.
 
 This includes addressing the following research questions:
@@ -996,16 +994,16 @@ version of Linux and a stable version?
 To respond to these questions there will be generated random configurations, 
 and these will be used to compile two different versions of the Linux kernel, 
 the latest stable Linux kernel version, and some two months old in-development 
-versions of the Linux kernel.
+versions of the Linux kernel. They will only be configured for the \texttt{x86} architecture.
 
 The warning messages will be categorized and collected, and be subject for 
 analysis.
 \\
 
 \emph{Methodology:}
-The methodology will be in three parts. First part is finding a way of
-generating random configurations in a representative way. Second part is 
-collecting any warnings that a compilation might return. Third part is 
+The methodology will be in three parts. \underline{First} part is finding a way of
+generating random configurations in a representative way. \underline{Second} part is 
+collecting any warnings that a compilation might return. \underline{Third} part is 
 analyzing the data and answering the research questions.
 \\
 
@@ -1030,10 +1028,10 @@ generating configurations will have to be found. See Section \ref{rephunt}.
 
             %% EXPERIMENTAL SETUP
             \section{Experimental Setup}
-The experimental setup consists of a loop, which does three things. \emph{1:} a 
-configuration is generated, \emph{2:} the Linux kernel is then compiled with 
-this configuration, and \emph{3:} the output warnings are categorized and 
-collected.
+The experimental setup consists of a loop, which does five things. \emph{1:} a 
+configuration is generated, \emph{2:} the stable Linux kernel is then compiled with 
+this configuration, \emph{3:} the output warnings are categorized and 
+collected, \emph{4:} the in-development version is compiled, and \emph{5:} output warnings are categorized and collected.
 
 Notice that the Linux kernels are not installed and executed in the experiment.
 \\
@@ -1047,19 +1045,16 @@ been used. The experiment runs for little over a month.
 
 
 To say something about all of the Linux kernel, the generated configurations 
-in part one of the experiment  should be a representative sample of all the 
+in \underline{part one} of the experiment  should be a representative sample of all the 
 possible configurations. 
 \\
 
 
-In Figure \ref{fig:reprrand} a blue area represents the whole configuration 
-space, and red dots inside a blue area represent a subset of all the 
-configurations, which is in a given sample.
+To visualize the representativeness, there is i blue area in Figure \ref{fig:repr}, which represents the whole configuration 
+space, and the red dots inside the blue area represent a subset of all the 
+configurations, which is in a given sample. This sample is representatively spread out.
 \\
 
-Figure \ref{fig:repr} shows a sample, which is represesentatively distributed 
-over the configuration space. 
-\\
 
 Figure \ref{fig:rand} shows a sample, which is not representatively 
 distributed. All the dots tend to cluster together around certain areas of the 
@@ -1078,6 +1073,8 @@ like by only looking at the sample, it would look like the yellow area.
 \figb{Showing both representative (a) and unrepresentative (b) samples}{fig:reprrand}
 
 
+To say something about all of Linux, and generalize, the sample should be representative.
+
 
         %% PART 1: CHOOSING THE CONFIGURATOR
         \section{Part 1: The Hunt For Representativeness}
@@ -1091,11 +1088,11 @@ configurations.
 
     \item \textbf{Using randconfig}
 
-Using the built-in \texttt{randconfig} configurator.
-
-This comes out of the box with Linux, and always generates valid configurations,
+This method uses the built-in \texttt{randconfig} configurator, which comes out 
+of the box with Linux. It always generates valid configurations,
 and does so in a few seconds. A caveat is that it does not generate the 
-configurations representatively. Read section \ref{sec:randconfbias} about how 
+configurations representatively; it has a bias for features high up in the 
+dependency tree.  Read Section \ref{sec:randconfbias} about how 
 \texttt{randconfig} is not representative.
 
 
@@ -1117,14 +1114,14 @@ subtrees.
 This proposal will desugarize the \textsc{Kconfig} files to be in one level 
 only, by replacing \textcode{if FOO ... endif} clauses by \textcode{depends on} 
 options in the features clauses, and then randomly scramble the position of 
-the feature clauses in the files. After this, \texttt{randconfig} is run.
+the features in the files. After this, \texttt{randconfig} is run.
 
 The hope is that the \texttt{randconfig} script loads the \textsc{Kconfig} 
 files from top to bottom, and will then load in the features at random each 
 time.
 
 
-    \item \textbf{Generate and filter}
+    \item \textbf{Generate and Filter}
 
             \def \fn {It also is aware about \texttt{choice} clauses}
 
@@ -1133,14 +1130,15 @@ does not know the relation betweeen all the features. It knows all the feature
 names, and the possible values for the features, and is aware of the choice 
 clauses.
 
-It goes through the list and randomly selects values for all the features. Then 
-all invalid configurations are filtered away.
+It goes through the list of features and randomly selects values for all the features. Then 
+all invalid configurations are filtered away. If the random selection of values (done by the OS) is uniformly 
+distributed, then this method will generate representative samples.
 
 
     \item \textbf{RandomSAT}
 
 The Linux kernel feature model can be extracted from the \textsc{Kconfig} 
-files, to get a propositional formula\cite{lvat}. 
+files, to get a propositional formula using tools from \emph{Linux Variability Analysis Tools}\cite{lvat}. 
 
 This formula can be used with a SAT solver, which uniformly selects a random
 value for all features, which also satisfies the propositional formula, and
@@ -1187,8 +1185,7 @@ runs \textsc{GNU Make}, which is instructed how to compile the kernel with
 A warning output will contain a \emph{bug type}, a \emph{filename}, \emph{line 
 number}, and a \emph{message} describing the warning in english. This data about the
 experiment run is saved: The original error messages, the \texttt{.config} file, 
-the Linux version, the \textsc{gcc} version.
-
+the Linux version, and the \textsc{gcc} version.
 This way the experiment will be reproducible.
 
 
@@ -1203,7 +1200,7 @@ The warnings will be quantitatively analyzed.  The analysis of the warnings is
 any of the warnings in comparison to\cite{42bugs}, which is a qualitative 
 analysis of bugs in Linux.
 
-The analysis is in the next chapter.
+The analysis will lgo by observations in the next chapter.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1227,14 +1224,15 @@ in-development version.
             \section{Stable Linux Warnings}
 In Figure \ref{stablewarndis} is shown the distribution of warnings in the 
 experiments run with the stable Linux kernel. The distinct warning types are 
-only counted once per experiment run.
+only counted once per experiment run, so the percentage is the percentage of experiments containing at least one
+warning of that type.
 
 The warning categories are colored like this: \textred{Wrong data}, 
 \textblue{Code pollution}, \textgreen{Bad code practice}, and 
 \textgray{irrelevant}.
 \\
 
-A total of 245,000 warnings were collected from these experiments, with the 
+A total of 190,000 warnings were collected from these experiments, with the 
 highest amount of warnings for a single experiment being 111.  Many of the 
 warnings found, are the same exact warnings, happening in the same files over 
 and over. This is natural, since many different experiments are bound to create 
@@ -1333,15 +1331,15 @@ uninitialized.
 
             %% STABLE LINUX SUBSYSTEMS
             \section{Stable Linux Subsystems}
-Figure \ref{stablessdis} shows the distribution of subsystems with warnings in 
-all of the experiment runs on the stable Linux version. In many experiment runs, 
-there were multiple warnings in the same subsystems. These are only counted 
+Figure \ref{stablessdis} shows the distribution of subsystems within warning messages
+ on the stable Linux version. In many experiment runs, 
+there were multiple warnings refering  the same subsystems. These are only counted 
 once.
 
 The gray rows are subsystems that are not a major part of the kernel 
 functionality, as mentioned in  Section \ref{sec:linuxss}. These are the 
 \textredmid{smaller} subsystems, and the \textreddark{infrastructure} 
-subsystems.
+subsystems, and those are not shown in the figures if they have a percentage of 0\%.
 \\
 
 
@@ -1356,7 +1354,7 @@ subsystems.
 
 
 \figa
-\subfigure[Percentage of experiment runs]{
+\subfigure{
     \begin{tabular}{r|d}
         \hline
         \hline
@@ -1386,38 +1384,7 @@ subsystems.
         \hline
         \hline
     \end{tabular}
-} \qquad
-\subfigure[Warnings per 1000 lines of code in the subsystem]{
-    \begin{tabular}{r|c}
-        \hline
-        \hline
-        \textbf{Subsystem} & \textbf{Warn/kLOC} \\
-        \hline
-
-            \rowcolor{\reddark}
-        samples/ & 270. \\
-            \rowcolor{\reddark}
-        scripts/ & 58. \\
-        crypto/ & 42. \\
-            \rowcolor{\redmid}
-        usr/  & 30. \\
-        mm/  & 25. \\
-        lib/ & 18. \\
-        include/ & 13. \\
-        arch/x86/ & 8.8 \\
-        kernel/ & 2.5 \\
-        net/ & 2.4 \\
-        fs/ & 2.3 \\
-        block/ & 1.5 \\
-        drivers/ & 1.2 \\
-        arch/ & 0.90 \\
-        sound/ & 0.36  \\
-        security/ & 0.0 \\
-
-        \hline
-        \hline
-    \end{tabular}
-}
+} 
 \figb{Distribution of all subsystems within the warnings from the stable Linux}{stablessdis}
 
 
@@ -1425,13 +1392,13 @@ subsystems.
 With these results,  the following observations can be made:
 \\
 
-\textbf{Observation 3:}
-The subsystem, which appear the most in the warnings, is the 
+\textbf{Observation 4:}
+The subsystem, which appear the most in the warning messages, is the 
 \texttt{drivers/} subsystem, followed by the \texttt{include/} subsystem.
 \\
 
-\textbf{Observation 4:}
-There are zero warnings in the \texttt{security/} subsystem. 
+\textbf{Observation 5:}
+There are zero warnings in the \texttt{security/} subsystem, and many of the smaller and infrastructure subsystems. 
 \\
 
 With these observations \textbf{RQ2} can be answered.
@@ -1453,14 +1420,14 @@ In Figure \ref{comparewarn} is a comparison of the warnings between the stable
 version, and the in-development version. Only the 6 warnings out of 15 that 
 actually change percentage are shown. All non-shown warnings had less than one 
 percent difference between the two versions.
+\\
 
-
-\textbf{Observation 5:}
+\textbf{Observation 6:}
 There are more warnings in the in-development version of Linux, than the stable
 version.
 \\
 
-\textbf{Observation 6:}
+\textbf{Observation 7:}
 There is only one type of warning that occur more in the stable version, that is
 the \texttt{frame-larger-than=} warning.
 \\
@@ -1469,11 +1436,21 @@ With these observations \textbf{RQ3} can be answered.
 \\
 
 \underline{\textbf{Conclusion 3:}}
-There are more warnings and errors in the in-development version.
+There are generally more warnings and errors in the in-development version.
 
 
-% TODO 
-% Some text in this chapter...
+Figure \ref{comparess} shows a comparison of the warning locations. The 
+subsystems that has a percentage point differnce lower than 2\% are not 
+shown.
+\\
+
+\textbf{Observation 8:}
+The \texttt{scripts/} subsystem is the only subsystem to differ more than 5 percentage points.
+\\
+
+\underline{\textbf{Conclusion 4:}}
+The difference between the in-development version and the stable version regarding location of warnings is
+not very significant, except for the \texttt{scripts/} subsystem.
 
 \figa
     \subfigure[Stable version]{
@@ -1539,25 +1516,13 @@ There are more warnings and errors in the in-development version.
         \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
         \hline
         
-        drivers/ &  64. \%  \\
-        include/ &  40. \%  \\
-        crypto/ &  17. \%  \\
-        fs/ &  14. \%  \\ % Same exact number as arch/
-            \rowcolor{\reddark}
-        {samples/} &  12. \%  \\ % Same exact number as usr/
-        net/ &  10. \%  \\
         arch/ &  9.2 \%  \\ % Same exact number as fs/
         arch/x86/ &  9.2 \%  \\ % Same exact number as fs/ and arch/
-        lib/ &  9.1 \%  \\
         mm/ &  7.9 \%  \\
         kernel/ &  5.9 \%  \\
         sound/ &  3.8 \%  \\
             \rowcolor{\reddark}
         {scripts/} & 1.6  \% \\
-        block/ &  .75  \% \\
-            \rowcolor{\redmid}
-        {usr/} &  .076 \%  \\ % Same exact number as samples/
-        security/ &  .0 \% \\
 
         \hline
         \hline
@@ -1570,25 +1535,13 @@ There are more warnings and errors in the in-development version.
         \textbf{Subsystem} & \multicolumn{1}{c}{\textbf{Percentage}} \\
         \hline
         
-        drivers/ &  62. \%  \\
-        include/ &  42. \%  \\
             \rowcolor{\reddark}
         {scripts/} &  25. \% \\
-        crypto/ &  16. \%  \\
         arch/ &  14. \%  \\ % Same exact number as fs/
         arch/x86/ &  14. \%  \\ % Same exact number as fs/ and arch/
-        fs/ &  13. \%  \\ % Same exact number as arch/
         mm/ &  13. \%  \\
-        net/ &  10. \%  \\
-            \rowcolor{\reddark}
-        {samples/} & 9.7  \%  \\ % Same exact number as usr/
-        lib/ &  9.0 \%  \\
         kernel/ & 3.0  \%  \\
         sound/ &  1.5 \%  \\
-        block/ &  .27  \% \\
-            \rowcolor{\redmid}
-        {usr/} & .12  \%  \\ % Same exact number as samples/
-        security/ &  .0 \% \\
 
         \hline
         \hline
@@ -1615,7 +1568,7 @@ There are more warnings and errors in the in-development version.
 
 
             %%% ONLY ONE ARCHITECTURE
-            \subsection{Only One Architecture}
+            \subsection*{Only One Architecture}
 
 The experiment is only run on the \texttt{x86} architecture. There are more than
 20 different architectures supported. For the results to say anything about all 
@@ -1629,13 +1582,69 @@ This is possible through various scripts, and by installing a new version of
 \textsc{gcc} per new architecture\f.
 
 
+            %%% MULTIPLE IN_DEVELOPMENT VERSIONS
+            \subsection*{Multiple In-Development Versions}
+
+Multiple different in-development versions of the Linux kernel are used to 
+minimize the skewing of warnings. If only one version of the in-development 
+version is used, it gives a very one-sighted view of the in-development 
+versions, where certain bugs may be over-represented. The more different 
+versions of the in-development Linux should be used, to get a more uniform 
+results.
+
+In this experiment, nine different versions of the in-development version was 
+used, which is not a lot. Therefore there may be an overrepresentation of 
+some warnings in the in-development version results. 
+
+
+            %%% FIRMWARE
+            \subsection*{Firmware}
+When building certain firmware drivers in Linux, external proprietary drivers 
+are needed, before they can be built. This firmware is not in the kernelcode, 
+but must be downloaded from the hardware vendors homepages.
+\\
+
+There are libraries on the internet which contain these firmware drivers, but 
+in this report, they will not be included. These drivers are in a sense not a 
+part of the open source Linux kernel, and are out of scope with this report.
+\\
+
+To disable configurations, which would require these proprietary firmware 
+drivers, the following features were given a fixed value in the configurations:
+
+\begin{itemize}
+    \item \textcode{CONFIG\_STANDALONE=y}
+    \item \textcode{CONFIG\_FW\_LOADER=n}
+    \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
+\end{itemize}
+
+
+Also every feature that had some relation to the \textsc{z4c} library has been 
+disabled, since it was not installed on the build system.
+
+So all features, which were related to the \textsc{z4c} library were also given 
+a fixed value.
+
+\begin{itemize}
+    \item \textcode{CONFIG\_*LZ4*=n}
+\end{itemize}
+
+
+Furthermore this feature is fixed, since it is also dependent on a library not 
+installed on the build system.
+
+\begin{itemize}
+    \item \textcode{CONFIG\_SECCOMP=y}
+\end{itemize}
+
+
 
             %% INTERNAL VALIDITY
             \section{Internal Validity}
             \label{sec:intval}
 
-            %% THE BUILT-IN RANDCONFIG
-            \subsection{The Built-In \texttt{randconfig} Configurator}
+            %%% THE BUILT-IN RANDCONFIG
+            \subsection*{The Built-In \texttt{randconfig} Configurator}
             \label{sec:randconfbias}
 
 The built-in configurator \texttt{randconfig} is not representative, but is 
@@ -1746,10 +1755,6 @@ be to be representative.
 \figb{}{}
 % --- 68 lines up ---
 
-Representativeness is not of high prioritization for the Linux kernel 
-developers, the \texttt{randconfig} function is merely used as a simple fuzz 
-testing tool.
-
 This ultimately means that \texttt{randconfig} is not representative in its 
 configuration creation. (See more about representativeness in the section 
 \ref{rephunt}.)
@@ -1757,23 +1762,9 @@ configuration creation. (See more about representativeness in the section
 
 
 
-            %%% MULTIPLE IN_DEVELOPMENT VERSIONS
-            \subsection{Multiple In-Development Versions}
-
-Multiple different in-development versions of the Linux kernel are used to 
-minimize the skewing of warnings. If only one version of the in-development 
-version is used, it gives a very one-sighted view of the in-development 
-versions, where certain bugs may be over-represented. The more different 
-versions of the in-development Linux should be used, to get a more uniform 
-results.
-
-In this experiment, nine different versions of the in-development version was 
-used, which is not a lot. Therefore there may be an overrepresentation of 
-some warnings in the in-development version results.
-
 
             %%% MORE FEATURES IN THE IN-DEVELOPMENT VERSION
-            \subsection{More Features in the In-Development version}
+            \subsection*{More Features in the In-Development version}
 In the in-development Linux version, there are 20 more features than in the 
 stable version. The configurations are created in the in-development version, 
 and are copied over to the stable version. This will result in some unknown 
@@ -1786,7 +1777,7 @@ random values, but always default values, which will skew the results.
 
 
             %%% GCC VERSIONS
-            \subsection{\textsc{gcc} Versions}
+            \subsection*{\textsc{gcc} Versions}
 Roughly a third of the compilations were done with GCC version 5.1.0 and two 
 thirds with GCC version 4.9.2. This should not matter on what warnings are 
 returned. There is only one new warning that is enabled by the \texttt{-Wall} 
@@ -1805,46 +1796,6 @@ certain warnings that are in the results. This will not be clear to see in the
 data.
 
 
-
-            %%% FIRMWARE
-            \subsection{Firmware}
-When building certain firmware drivers in Linux, external proprietary drivers 
-are needed, before they can be built. This firmware is not in the kernelcode, 
-but must be downloaded from the hardware vendors homepages.
-\\
-
-There are libraries on the internet which contain these firmware drivers, but 
-in this report, they will not be included. These drivers are in a sense not a 
-part of the open source Linux kernel, and are out of scope with this report.
-\\
-
-To disable configurations, which would require these proprietary firmware 
-drivers, the following features were given a fixed value in the configurations:
-
-\begin{itemize}
-    \item \textcode{CONFIG\_STANDALONE=y}
-    \item \textcode{CONFIG\_FW\_LOADER=n}
-    \item \textcode{CONFIG\_PREVENT\_FIRMWARE\_BUILD=y}
-\end{itemize}
-
-
-Also every feature that had some relation to the \textsc{z4c} library has been 
-disabled, since it was not installed on the build system.
-
-So all features, which were related to the \textsc{z4c} library were also given 
-a fixed value.
-
-\begin{itemize}
-    \item \textcode{CONFIG\_*LZ4*=n}
-\end{itemize}
-
-
-Furthermore this feature is fixed, since it is also dependent on a library not 
-installed on the build system.
-
-\begin{itemize}
-    \item \textcode{CONFIG\_SECCOMP=y}
-\end{itemize}
 
 
 
@@ -1865,8 +1816,8 @@ installed on the build system.
             \def \fn {\url{http://vbdb.itu.dk/}}
 
 This experiment only runs on the linux kernel, but there are variability in many
-other software products. A similar experiment could be run on other products to 
-see it the results correlate. The paper \cite{42bugs} has an attached online 
+other software products. A similar experiment could be run on other software products lines to 
+see if the results correlate. The paper \cite{42bugs} has an attached online 
 database of the variability bugs found in the paper. These bugs are from both 
 the Linux kernel and also \textsc{BusyBox}\f.
 
@@ -1877,7 +1828,7 @@ the Linux kernel and also \textsc{BusyBox}\f.
             \def \fn {\url{http://clang.llvm.org/}}
 
 There has been some disputes between the Linux community and the \textsc{gcc} 
-creators\cite{linusgcc}. The Linux is often not too happy with how \textsc{gcc} 
+creators\cite{linusgcc}. The Linux developers are  often not too happy with how \textsc{gcc} 
 handles warnings, and in the last couple of years, there has been an initiative 
 to deprecate \textsc{gcc} as the standard compiler for Linux, and instead use 
 \textsc{LLVM Clang}\f, which is faster, and has good static analysis\cite{clang}.
@@ -1893,16 +1844,24 @@ of a few features that generated the warning. Finding the features that all thes
 configurations have in common will give a lead to what feature combination is 
 creating the warning.
 
-It will be possible to narrow down which features might be generating the bug.
+It will be possible to narrow down, which features might be generating the bug.
 
 
             %% ANALYZE ERRORS
-            \subsection*{Analyze errors}
+            \subsection*{Analyze Errors}
 
 In this project, only warnings could be automatically quantified, because of the
 nature of the errors that occured was due to the build system's missing 
-dependencies, and also due to the experiment sample not being large enough to 
+libraries and programs, and also due to the experiment sample not being large enough to 
 find many errors.
+
+            %%% NEW CONFIGURATTORS
+            \subsection*{New Configurators}
+
+An effort could be made to get some of the proposed configurators to run. The 
+method, which \emph{permuted \textsc{Kconfig}} would not work, but the other
+methods could be looked in to. The ability to create a representative sample 
+is important for the generalization to all of Linux.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1931,12 +1890,13 @@ some of the kernels are run, and when an error is found, the author of the chang
 is notified with an e-mail.
 
 The mailing lists are publicly available at 
-\cite{kbuildrobot,kbuildrobotall,kbuildlkp}.
+\cite{kbuildrobot,kbuildrobotall,kbuildrobotlkp}.
 \\
 
 What is gathered of information about the \texttt{kbuild-robot} project, only 
 the mailing lists are publicly available, and the experiment run data is thrown 
-away soon after. 
+away soon after, since the project is just about fixing bugs.
+
 
 According to \cite{summit2012,summit2013}, 30,000 kernels are compiled and run
 each day. That is about the same amount of experiment runs this project does in 
@@ -1978,8 +1938,8 @@ infrastructure subsystems, and also no warnings were found in the
 
 In the in-development version of Linux, there are generally more warnings (and
 errors) than in the stable version. Half of the warnings appear about the same
-amount of the experiment runs, while the other half appear almost double as 
-many times.
+amount of times in the two experiment runs. The other half has more warnings in 
+the in-development.
 
 
 
